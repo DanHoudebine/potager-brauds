@@ -965,3 +965,68 @@ function applyRectStamp(startRow, startCol) {
     renderGrid(getCurrentZone());
     showToast(`✅ ${count} cellules remplies dans la zone !`, 'success');
 }
+// ===== CONTEXT MENU =====
+function handleCellRightClick(e, r, c) {
+    e.preventDefault();
+    const zone = getZone(state.currentZoneId);
+    if (!zone) return;
+
+    const key = `${r}_${c}`;
+    const plant = zone.plants && zone.plants[key];
+    if (!plant || !plant.name) return; // rien si cellule vide
+
+    // Supprimer ancien menu si existe
+    const old = document.getElementById('contextMenu');
+    if (old) old.remove();
+
+    const menu = document.createElement('div');
+    menu.id = 'contextMenu';
+    menu.style.cssText = `
+        position: fixed;
+        top: ${e.clientY}px;
+        left: ${e.clientX}px;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 9999;
+        min-width: 160px;
+        overflow: hidden;
+    `;
+
+    menu.innerHTML = `
+        <div onclick="editPlantFromMenu(${r},${c})" style="padding:10px 16px;cursor:pointer;hover:background:#f5f5f5">✏️ Modifier</div>
+        <div onclick="deletePlantFromMenu(${r},${c})" style="padding:10px 16px;cursor:pointer;color:red">🗑️ Supprimer</div>
+    `;
+
+    document.body.appendChild(menu);
+
+    // Fermer au clic ailleurs
+    setTimeout(() => {
+        document.addEventListener('click', () => menu.remove(), { once: true });
+    }, 10);
+}
+
+function editPlantFromMenu(r, c) {
+    const old = document.getElementById('contextMenu');
+    if (old) old.remove();
+    openPlantModal(r, c);
+}
+
+function deletePlantFromMenu(r, c) {
+    const old = document.getElementById('contextMenu');
+    if (old) old.remove();
+
+    const zone = getZone(state.currentZoneId);
+    if (!zone) return;
+
+    const key = `${r}_${c}`;
+    if (!zone.plants) return;
+    delete zone.plants[key];
+
+    saveData();
+    renderGrid(zone);
+    renderLegend(zone);
+    updateStats();
+}
+
