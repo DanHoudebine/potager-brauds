@@ -622,3 +622,128 @@ function bindEvents() {
     // Photo upload
     initPhotoUpload();
 }
+function exportPDF() {
+    const zone = getCurrentZone();
+    if (!zone) return;
+
+    // Créer le contenu PDF
+    const content = document.createElement('div');
+    content.style.padding = '20px';
+    content.style.fontFamily = 'Arial, sans-serif';
+
+    // Titre
+    content.innerHTML = `
+        <h1 style="color:${zone.color || '#2d6a4f'}; text-align:center; margin-bottom:5px;">
+            🌿 ${zone.name}
+        </h1>
+        <p style="text-align:center; color:#666; margin-bottom:20px;">
+            Grille ${zone.cols} × ${zone.rows} — Imprimé le ${new Date().toLocaleDateString('fr-FR')}
+        </p>
+    `;
+
+    // Grille
+    const gridDiv = document.createElement('div');
+    gridDiv.style.display = 'grid';
+    gridDiv.style.gridTemplateColumns = `repeat(${zone.cols}, 1fr)`;
+    gridDiv.style.gap = '4px';
+    gridDiv.style.marginBottom = '30px';
+
+    const cols = zone.cols || 5;
+    const rows = zone.rows || 5;
+
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            const key = `${r}_${c}`;
+            const plant = zone.plants && zone.plants[key];
+            const cell = document.createElement('div');
+
+            cell.style.border = `2px solid ${plant ? (zone.color || '#2d6a4f') : '#ccc'}`;
+            cell.style.borderRadius = '6px';
+            cell.style.padding = '4px 2px';
+            cell.style.textAlign = 'center';
+            cell.style.minHeight = '50px';
+            cell.style.fontSize = '11px';
+            cell.style.backgroundColor = plant ? '#f0faf4' : '#fafafa';
+            cell.style.display = 'flex';
+            cell.style.flexDirection = 'column';
+            cell.style.alignItems = 'center';
+            cell.style.justifyContent = 'center';
+
+            if (plant && plant.name) {
+                cell.innerHTML = `
+                    <div style="font-size:18px;">${getTypeEmoji(plant.type)}</div>
+                    <div style="font-weight:bold; font-size:10px;">${plant.name}</div>
+                    ${plant.variety ? `<div style="color:#888; font-size:9px;">${plant.variety}</div>` : ''}
+                `;
+            } else {
+                cell.innerHTML = `<div style="color:#ddd; font-size:18px;">·</div>`;
+            }
+
+            gridDiv.appendChild(cell);
+        }
+    }
+    content.appendChild(gridDiv);
+
+    // Légende
+    const plants = {};
+    if (zone.plants) {
+        Object.values(zone.plants).forEach(p => {
+            if (p && p.name) {
+                const key = p.name;
+                if (!plants[key]) plants[key] = { ...p, count: 0 };
+                plants[key].count++;
+            }
+        });
+    }
+
+    if (Object.keys(plants).length > 0) {
+        const legend = document.createElement('div');
+        legend.innerHTML = `<h3 style="color:#2d6a4f; border-bottom: 2px solid #2d6a4f; padding-bottom:5px;">📋 Légende des plantes</h3>`;
+        
+        const table = document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+        table.style.fontSize = '12px';
+
+        table.innerHTML = `
+            <thead>
+                <tr style="background:#2d6a4f; color:white;">
+                    <th style="padding:8px; text-align:left;">Plante</th>
+                    <th style="padding:8px; text-align:left;">Variété</th>
+                    <th style="padding:8px; text-align:left;">Type</th>
+                    <th style="padding:8px; text-align:center;">Quantité</th>
+                </tr>
+            </thead>
+        `;
+
+        const tbody = document.createElement('tbody');
+        Object.values(plants).forEach((p, i) => {
+            const tr = document.createElement('tr');
+            tr.style.backgroundColor = i % 2 === 0 ? '#f9f9f9' : 'white';
+            tr.innerHTML = `
+                <td style="padding:6px 8px;">${getTypeEmoji(p.type)} ${p.name}</td>
+                <td style="padding:6px 8px; color:#666;">${p.variety || '—'}</td>
+                <td style="padding:6px 8px; color:#666;">${p.type || '—'}</td>
+                <td style="padding:6px 8px; text-align:center; font-weight:bold;">${p.count}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        table.appendChild(tbody);
+        legend.appendChild(table);
+        content.appendChild(legend);
+    }
+
+    // Options PDF
+    const options = {
+        margin: 10,
+        filename: `jardin_${zone.name}_${new Date().toLocaleDateString('fr-FR').replace(/\//g, '-')}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: cols > 10 ? 'landscape' : 'portrait' }
+    };
+
+    showToast('Génération du PDF...', 'info');
+    html2pdf().set(options).from(content).save()
+        .then(() => showToast('PDF exporté ! 📄', 'success'));
+}
