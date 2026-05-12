@@ -762,7 +762,7 @@ firebase.auth().onAuthStateChanged(user => {
     if (user) {
         currentUser = user;
         document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('mainApp').style.display = 'block';
+        document.getElementById('appMain').style.display = 'block'; // ✅ corrigé
         document.getElementById('userName').textContent = user.displayName?.split(' ')[0] || 'Jardinier';
         if (user.photoURL) {
             document.getElementById('userAvatar').src = user.photoURL;
@@ -772,7 +772,7 @@ firebase.auth().onAuthStateChanged(user => {
     } else {
         currentUser = null;
         document.getElementById('loginScreen').style.display = 'flex';
-        document.getElementById('mainApp').style.display = 'none';
+        document.getElementById('appMain').style.display = 'none'; // ✅ corrigé
     }
 });
 
