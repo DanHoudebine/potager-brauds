@@ -338,10 +338,20 @@ function deleteZone() {
 }
 
 function applyGrid() {
+    const zone = getCurrentZone();
+    if (!zone) return;
+    
     const cols = parseInt(document.getElementById('gridCols').value) || 5;
     const rows = parseInt(document.getElementById('gridRows').value) || 5;
+    
+    zone.cols = cols;
+    zone.rows = rows;
+    
     dbRef().child(`zones/${state.currentZoneId}`).update({ cols, rows })
-        .then(() => showToast('Grille mise à jour !', 'success'));
+        .then(() => {
+            renderGrid(zone);
+            showToast('Grille mise à jour ✅', 'success');
+        });
 }
 
 // ===== CALENDAR =====
@@ -439,6 +449,7 @@ function renderCalendar() {
 function renderReminders() {
     const container = document.getElementById('remindersList');
     container.innerHTML = '';
+container.style.display = 'grid';
 
     const reminders = [];
     state.zones.forEach(zone => {
