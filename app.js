@@ -911,7 +911,7 @@ function exportPDF() {
 
             if (plant && plant.name) {
                 cell.innerHTML = `
-                    <div style="font-size:18px;">${getTypeEmoji(plant.type)}</div>
+                    <div style="font-size:18px;">${getPlantEmoji(plant)}</div>
                     <div style="font-weight:bold; font-size:10px;">${plant.name}</div>
                     ${plant.variety ? `<div style="color:#888; font-size:9px;">${plant.variety}</div>` : ''}
                 `;
@@ -961,7 +961,7 @@ function exportPDF() {
             const tr = document.createElement('tr');
             tr.style.backgroundColor = i % 2 === 0 ? '#f9f9f9' : 'white';
             tr.innerHTML = `
-                <td style="padding:6px 8px;">${getTypeEmoji(p.type)} ${p.name}</td>
+                <td style="padding:6px 8px;">${getPlantEmoji(p)} ${p.name}</td>
                 <td style="padding:6px 8px; color:#666;">${p.variety || '—'}</td>
                 <td style="padding:6px 8px; color:#666;">${p.type || '—'}</td>
                 <td style="padding:6px 8px; text-align:center; font-weight:bold;">${p.count}</td>
