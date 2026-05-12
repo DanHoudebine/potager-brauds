@@ -629,16 +629,32 @@ document.getElementById('searchInput') && document.getElementById('searchInput')
 // ============================================
 
 function closeAllModals() {
-    document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+    document.querySelectorAll('.modal-overlay').forEach(m => {
+        m.style.display = 'none';
+        m.classList.remove('active');
+    });
 }
 
-document.querySelectorAll('.modal-close, .modal-cancel').forEach(btn => {
-    btn.addEventListener('click', closeAllModals);
-});
+// Boutons fermer/annuler
+document.getElementById('cancelModal') && 
+    document.getElementById('cancelModal').addEventListener('click', closeAllModals);
 
-document.querySelectorAll('.modal').forEach(modal => {
-    modal.addEventListener('click', e => {
-        if (e.target === modal) closeAllModals();
+document.getElementById('closeModal') && 
+    document.getElementById('closeModal').addEventListener('click', closeAllModals);
+
+document.getElementById('cancelZoneModal') && 
+    document.getElementById('cancelZoneModal').addEventListener('click', closeAllModals);
+
+document.getElementById('closeCalendarModal') && 
+    document.getElementById('closeCalendarModal').addEventListener('click', closeAllModals);
+
+document.getElementById('closeRemindersModal') && 
+    document.getElementById('closeRemindersModal').addEventListener('click', closeAllModals);
+
+// Clic sur l'overlay pour fermer
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) closeAllModals();
     });
 });
 
