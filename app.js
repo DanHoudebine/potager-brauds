@@ -987,11 +987,18 @@ function exportPDF() {
 // ===== SYSTÈME TAMPON =====
 let copiedPlant = null;
 
-    // Supprimer ancien menu si existant
+function handleCellRightClick(e, row, col) {
+    e.preventDefault();
+    const zone = getCurrentZone();
+    if (!zone) return;
+
+    const key = `${row}_${col}`;
+    const plant = zone.plants && zone.plants[key];
+    if (!plant || !plant.name) return;
+
     const oldMenu = document.getElementById('context-menu');
     if (oldMenu) oldMenu.remove();
 
-    // Créer le menu contextuel
     const menu = document.createElement('div');
     menu.id = 'context-menu';
     menu.style.cssText = `
@@ -1010,6 +1017,9 @@ let copiedPlant = null;
     menu.innerHTML = `
         <div style="padding:8px 16px; font-weight:bold; color:#2d6a4f; border-bottom:1px solid #eee; margin-bottom:4px;">
             ${getTypeEmoji(plant.type)} ${plant.name}
+        </div>
+        <div class="ctx-item" onclick="openPlantModal(${row}, ${col}); closeContextMenu()">
+            ✏️ Modifier
         </div>
         <div class="ctx-item" onclick="stampLine(${row}, ${col})">
             ➡️ Copier sur toute la ligne
@@ -1030,10 +1040,8 @@ let copiedPlant = null;
     document.body.appendChild(menu);
     copiedPlant = { ...plant, sourceRow: row, sourceCol: col };
 
-    // Surligner la cellule source
     highlightSourceCell(row, col);
 
-    // Fermer au clic ailleurs
     setTimeout(() => {
         document.addEventListener('click', closeContextMenu, { once: true });
     }, 100);
@@ -1067,6 +1075,18 @@ function flashCell(row, col) {
     }
 }
 
+function clearCell(row, col) {
+    const zone = getCurrentZone();
+    if (!zone) return;
+    const key = `${row}_${col}`;
+    if (zone.plants) delete zone.plants[key];
+    saveData();
+    renderGrid(zone);
+    renderLegend(zone);
+    updateStats();
+    showToast('Plante supprimée 🗑️', 'success');
+}
+
 function stampLine(row, col) {
     closeContextMenu();
     const zone = getCurrentZone();
@@ -1076,8 +1096,8 @@ function stampLine(row, col) {
     let count = 0;
 
     for (let c = 0; c < cols; c++) {
-        const key = `${row}_${c}`;
         if (c !== col) {
+            const key = `${row}_${c}`;
             zone.plants[key] = { ...copiedPlant };
             delete zone.plants[key].sourceRow;
             delete zone.plants[key].sourceCol;
@@ -1089,6 +1109,105 @@ function stampLine(row, col) {
     saveData();
     renderGrid(getCurrentZone());
     showToast(`✅ ${count} cellules remplies sur la ligne !`, 'success');
+}
+
+function stampColumn(row, col) {
+    closeContextMenu();
+    const zone = getCurrentZone();
+    if (!zone || !copiedPlant) return;
+
+    const rows = zone.rows || 5;
+    let count = 0;
+
+    for (let r = 0; r < rows; r++) {
+        if (r !== row) {
+            const key = `${r}_${col}`;
+            zone.plants[key] = { ...copiedPlant };
+            delete zone.plants[key].sourceRow;
+            delete zone.plants[key].sourceCol;
+            flashCell(r, col);
+            count++;
+        }
+    }
+
+    saveData();
+    renderGrid(getCurrentZone());
+    showToast(`✅ ${count} cellules remplies sur la colonne !`, 'success');
+}
+
+function stampRectPrompt(row, col) {
+    closeContextMenu();
+
+    const modal = document.createElement('div');
+    modal.id = 'rect-modal';
+    modal.style.cssText = `
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    `;
+
+    modal.innerHTML = `
+        <div style="background:white; border-radius:16px; padding:30px; min-width:300px; text-align:center; box-shadow:0 8px 30px rgba(0,0,0,0.3);">
+            <h3 style="color:#2d6a4f; margin-bottom:20px;">▦ Zone rectangle</h3>
+            <p style="color:#666; margin-bottom:16px;">Depuis la cellule source, copier sur :</p>
+            <div style="display:flex; gap:16px; justify-content:center; margin-bottom:20px;">
+                <div>
+                    <label style="display:block; color:#333; margin-bottom:6px; font-weight:bold;">Colonnes →</label>
+                    <input id="rect-cols" type="number" min="1" max="50" value="3"
+                        style="width:80px; padding:8px; border:2px solid #2d6a4f; border-radius:8px; text-align:center; font-size:18px;">
+                </div>
+                <div>
+                    <label style="display:block; color:#333; margin-bottom:6px; font-weight:bold;">Lignes ↓</label>
+                    <input id="rect-rows" type="number" min="1" max="50" value="3"
+                        style="width:80px; padding:8px; border:2px solid #2d6a4f; border-radius:8px; text-align:center; font-size:18px;">
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <button onclick="applyRectStamp(${row}, ${col})"
+                    style="background:#2d6a4f; color:white; border:none; padding:10px 24px; border-radius:10px; cursor:pointer; font-weight:bold;">
+                    ✅ Appliquer
+                </button>
+                <button onclick="document.getElementById('rect-modal').remove()"
+                    style="background:#eee; color:#333; border:none; padding:10px 24px; border-radius:10px; cursor:pointer;">
+                    Annuler
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+}
+
+function applyRectStamp(startRow, startCol) {
+    const zone = getCurrentZone();
+    if (!zone || !copiedPlant) return;
+
+    const nbCols = parseInt(document.getElementById('rect-cols').value) || 1;
+    const nbRows = parseInt(document.getElementById('rect-rows').value) || 1;
+
+    document.getElementById('rect-modal').remove();
+
+    let count = 0;
+
+    for (let r = startRow; r < startRow + nbRows && r < zone.rows; r++) {
+        for (let c = startCol; c < startCol + nbCols && c < zone.cols; c++) {
+            if (r === startRow && c === startCol) continue;
+            const key = `${r}_${c}`;
+            zone.plants[key] = { ...copiedPlant };
+            delete zone.plants[key].sourceRow;
+            delete zone.plants[key].sourceCol;
+            flashCell(r, c);
+            count++;
+        }
+    }
+
+    saveData();
+    renderGrid(getCurrentZone());
+    showToast(`✅ ${count} cellules remplies dans la zone !`, 'success');
 }
 
 if (plant) {
@@ -1201,48 +1320,6 @@ function applyRectStamp(startRow, startCol) {
     renderGrid(getCurrentZone());
     showToast(`✅ ${count} cellules remplies dans la zone !`, 'success');
 }
-// ===== CONTEXT MENU =====
-function handleCellRightClick(e, r, c) {
-    e.preventDefault();
-    const zone = getZone(state.currentZoneId);
-    if (!zone) return;
-
-    const key = `${r}_${c}`;
-    const plant = zone.plants && zone.plants[key];
-    if (!plant || !plant.name) return; // rien si cellule vide
-
-    // Supprimer ancien menu si existe
-    const old = document.getElementById('contextMenu');
-    if (old) old.remove();
-
-    const menu = document.createElement('div');
-    menu.id = 'contextMenu';
-    menu.style.cssText = `
-        position: fixed;
-        top: ${e.clientY}px;
-        left: ${e.clientX}px;
-        background: white;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        z-index: 9999;
-        min-width: 160px;
-        overflow: hidden;
-    `;
-
-    menu.innerHTML = `
-        <div onclick="editPlantFromMenu(${r},${c})" style="padding:10px 16px;cursor:pointer;hover:background:#f5f5f5">✏️ Modifier</div>
-        <div onclick="deletePlantFromMenu(${r},${c})" style="padding:10px 16px;cursor:pointer;color:red">🗑️ Supprimer</div>
-    `;
-
-    document.body.appendChild(menu);
-
-    // Fermer au clic ailleurs
-    setTimeout(() => {
-        document.addEventListener('click', () => menu.remove(), { once: true });
-    }, 10);
-}
-
 function editPlantFromMenu(r, c) {
     const old = document.getElementById('contextMenu');
     if (old) old.remove();
