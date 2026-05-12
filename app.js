@@ -6,24 +6,22 @@
 let state = {
     zones: [],
     currentZoneId: null,
-    selectedCell: null,  // { row, col }
+    selectedCell: null,
     editingPlantId: null
 };
 
 let currentUser = null;
-let db = null;
 let calendarDate = new Date();
+let selectedColor = '#4CAF50';
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
-    initFirebase();
     bindEvents();
+    initAuth();
 });
 
-// ===== FIREBASE =====
-function initFirebase() {
-    db = firebase.database();
-
+// ===== AUTH =====
+function initAuth() {
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
             currentUser = user;
@@ -55,44 +53,33 @@ function showApp(user) {
     name.textContent = user.displayName || user.email;
 }
 
+// ===== DB REF =====
 function dbRef() {
-    return db.ref('users/' + currentUser.uid);
+    return firebase.database().ref('users/' + currentUser.uid);
 }
 
-// ===== LOAD DATA =====
+// ===== ZONES =====
 function loadZones() {
     dbRef().child('zones').on('value', snapshot => {
-        const data = snapshot.val();
-        state.zones = data ? Object.values(data) : [];
-        renderSidebar();
+        state.zones = [];
+        snapshot.forEach(child => {
+            state.zones.push({ id: child.key, ...child.val() });
+        });
+        renderZonesList();
         updateStats();
 
-        // Recharge la zone courante si elle existe encore
         if (state.currentZoneId) {
             const zone = getZone(state.currentZoneId);
-            if (zone) {
-                selectZone(state.currentZoneId);
-            } else {
-                state.currentZoneId = null;
-                showWelcome();
-            }
-        } else {
-            showWelcome();
+            if (zone) renderZone(zone);
         }
     });
 }
 
-// ===== GETTERS =====
 function getZone(id) {
     return state.zones.find(z => z.id === id);
 }
 
-function getCurrentZone() {
-    return getZone(state.currentZoneId);
-}
-
-// ===== SIDEBAR =====
-function renderSidebar() {
+function renderZonesList() {
     const list = document.getElementById('zonesList');
     list.innerHTML = '';
 
@@ -106,8 +93,8 @@ function renderSidebar() {
         li.className = 'zone-item' + (zone.id === state.currentZoneId ? ' active' : '');
         li.innerHTML = `
             <span class="zone-dot" style="background:${zone.color}"></span>
-            <span class="zone-item-name">${zone.name}</span>
-            <span class="zone-item-count">${countPlants(zone)} 🌱</span>
+            <span class="zone-label">${zone.name}</span>
+            <span class="zone-count">${countPlants(zone)} 🌱</span>
         `;
         li.addEventListener('click', () => selectZone(zone.id));
         list.appendChild(li);
@@ -115,80 +102,60 @@ function renderSidebar() {
 }
 
 function countPlants(zone) {
-    if (!zone.grid) return 0;
-    let count = 0;
-    zone.grid.forEach(row => {
-        if (row) row.forEach(cell => { if (cell) count++; });
-    });
-    return count;
+    if (!zone.plants) return 0;
+    return Object.values(zone.plants).filter(p => p && p.name).length;
 }
 
-function updateStats() {
-    let totalPlants = 0;
-    state.zones.forEach(z => { totalPlants += countPlants(z); });
-    document.getElementById('totalPlants').textContent = totalPlants;
-    document.getElementById('totalZones').textContent = state.zones.length;
-}
-
-// ===== SELECT ZONE =====
 function selectZone(id) {
     state.currentZoneId = id;
     const zone = getZone(id);
-    if (!zone) return;
+    if (zone) renderZone(zone);
+    renderZonesList();
+}
 
-    // Update sidebar
-    renderSidebar();
-
-    // Show zone header
+function renderZone(zone) {
     document.getElementById('welcomeMsg').style.display = 'none';
     document.getElementById('zoneHeader').style.display = 'flex';
     document.getElementById('legend').style.display = 'flex';
 
-    // Fill header
     document.getElementById('zoneName').textContent = zone.name;
     document.getElementById('zoneColorDot').style.background = zone.color;
     document.getElementById('gridCols').value = zone.cols || 5;
     document.getElementById('gridRows').value = zone.rows || 5;
 
-    // Render grid
     renderGrid(zone);
     renderLegend(zone);
 }
 
-function showWelcome() {
-    document.getElementById('welcomeMsg').style.display = 'flex';
-    document.getElementById('zoneHeader').style.display = 'none';
-    document.getElementById('gridContainer').innerHTML = '';
-    document.getElementById('legend').style.display = 'none';
-}
-
-// ===== GRID =====
 function renderGrid(zone) {
     const container = document.getElementById('gridContainer');
+    container.innerHTML = '';
+
     const cols = zone.cols || 5;
     const rows = zone.rows || 5;
-    const grid = zone.grid || [];
 
     container.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-    container.innerHTML = '';
 
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
             const cell = document.createElement('div');
             cell.className = 'grid-cell';
+            cell.dataset.row = r;
+            cell.dataset.col = c;
 
-            const plant = grid[r] && grid[r][c] ? grid[r][c] : null;
+            const key = `${r}_${c}`;
+            const plant = zone.plants && zone.plants[key];
 
-            if (plant) {
-                cell.classList.add('occupied');
-                cell.style.borderColor = getTypeColor(plant.type);
-                cell.style.background = getTypeColor(plant.type) + '22';
+            if (plant && plant.name) {
+                cell.classList.add('has-plant');
+                cell.style.borderColor = zone.color;
                 cell.innerHTML = `
                     <div class="cell-emoji">${getTypeEmoji(plant.type)}</div>
                     <div class="cell-name">${plant.name}</div>
+                    ${plant.variety ? `<div class="cell-variety">${plant.variety}</div>` : ''}
                 `;
             } else {
-                cell.innerHTML = `<div class="cell-empty">+</div>`;
+                cell.innerHTML = '<div class="cell-empty">+</div>';
             }
 
             cell.addEventListener('click', () => openPlantModal(r, c));
@@ -197,101 +164,58 @@ function renderGrid(zone) {
     }
 }
 
-function getTypeColor(type) {
-    const colors = {
-        legume: '#4CAF50',
-        fruit: '#E91E63',
-        herbe: '#00BCD4',
-        fleur: '#FF9800',
-        arbre: '#795548',
-        autre: '#9E9E9E'
-    };
-    return colors[type] || '#9E9E9E';
-}
-
 function getTypeEmoji(type) {
     const emojis = {
-        legume: '🥬',
-        fruit: '🍓',
-        herbe: '🌿',
-        fleur: '🌸',
-        arbre: '🌳',
-        autre: '🌱'
+        legume: '🥬', fruit: '🍓', herbe: '🌿',
+        fleur: '🌸', arbre: '🌳', autre: '🌱'
     };
     return emojis[type] || '🌱';
 }
 
-// ===== LEGEND =====
 function renderLegend(zone) {
     const items = document.getElementById('legendItems');
     items.innerHTML = '';
 
-    if (!zone.grid) return;
+    if (!zone.plants) return;
 
-    const seen = {};
-    zone.grid.forEach(row => {
-        if (!row) return;
-        row.forEach(cell => {
-            if (cell && !seen[cell.type]) {
-                seen[cell.type] = true;
-                const div = document.createElement('div');
-                div.className = 'legend-item';
-                div.innerHTML = `
-                    <span class="legend-dot" style="background:${getTypeColor(cell.type)}"></span>
-                    <span>${getTypeEmoji(cell.type)} ${capitalize(cell.type)}</span>
-                `;
-                items.appendChild(div);
-            }
-        });
+    const types = {};
+    Object.values(zone.plants).forEach(p => {
+        if (p && p.name) {
+            types[p.type] = (types[p.type] || 0) + 1;
+        }
+    });
+
+    Object.entries(types).forEach(([type, count]) => {
+        const div = document.createElement('div');
+        div.className = 'legend-item';
+        div.innerHTML = `${getTypeEmoji(type)} ${type} <strong>(${count})</strong>`;
+        items.appendChild(div);
     });
 }
 
-function capitalize(str) {
-    return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
-}
-
-// ===== APPLY GRID SIZE =====
-function applyGrid() {
-    const zone = getCurrentZone();
-    if (!zone) return;
-
-    const newCols = parseInt(document.getElementById('gridCols').value) || 5;
-    const newRows = parseInt(document.getElementById('gridRows').value) || 5;
-
-    const oldGrid = zone.grid || [];
-    const newGrid = [];
-
-    for (let r = 0; r < newRows; r++) {
-        newGrid[r] = [];
-        for (let c = 0; c < newCols; c++) {
-            newGrid[r][c] = (oldGrid[r] && oldGrid[r][c]) ? oldGrid[r][c] : null;
-        }
-    }
-
-    zone.cols = newCols;
-    zone.rows = newRows;
-    zone.grid = newGrid;
-
-    saveZoneToDb(zone);
-    renderGrid(zone);
-    showToast('Grille mise à jour ✅');
+function updateStats() {
+    let total = 0;
+    state.zones.forEach(z => { total += countPlants(z); });
+    document.getElementById('totalPlants').textContent = total;
+    document.getElementById('totalZones').textContent = state.zones.length;
 }
 
 // ===== PLANT MODAL =====
 function openPlantModal(row, col) {
-    const zone = getCurrentZone();
-    if (!zone) return;
-
     state.selectedCell = { row, col };
-    const plant = zone.grid && zone.grid[row] && zone.grid[row][col] ? zone.grid[row][col] : null;
+    const zone = getZone(state.currentZoneId);
+    const key = `${row}_${col}`;
+    const plant = zone.plants && zone.plants[key];
 
-    // Reset form
-    document.getElementById('plantName').value = plant ? plant.name : '';
-    document.getElementById('plantVariety').value = plant ? (plant.variety || '') : '';
-    document.getElementById('plantDate').value = plant ? (plant.date || '') : '';
-    document.getElementById('plantType').value = plant ? (plant.type || 'legume') : 'legume';
-    document.getElementById('plantWater').value = plant ? (plant.water || 'semaine') : 'semaine';
-    document.getElementById('plantNotes').value = plant ? (plant.notes || '') : '';
+    state.editingPlantId = plant ? key : null;
+
+    document.getElementById('plantModalTitle').textContent = plant ? 'Modifier la plante' : 'Ajouter une plante';
+    document.getElementById('plantName').value = plant ? plant.name || '' : '';
+    document.getElementById('plantVariety').value = plant ? plant.variety || '' : '';
+    document.getElementById('plantDate').value = plant ? plant.date || '' : '';
+    document.getElementById('plantType').value = plant ? plant.type || 'legume' : 'legume';
+    document.getElementById('plantWater').value = plant ? plant.water || 'semaine' : 'semaine';
+    document.getElementById('plantNotes').value = plant ? plant.notes || '' : '';
 
     // Photo
     const preview = document.getElementById('photoPreview');
@@ -309,111 +233,64 @@ function openPlantModal(row, col) {
     // Reminder
     document.getElementById('reminderEnabled').checked = plant ? !!plant.reminder : false;
     document.getElementById('reminderDetail').style.display = (plant && plant.reminder) ? 'flex' : 'none';
-    document.getElementById('reminderDate').value = plant ? (plant.reminderDate || '') : '';
-    document.getElementById('reminderText').value = plant ? (plant.reminderText || '') : '';
+    document.getElementById('reminderDate').value = plant && plant.reminder ? plant.reminder.date || '' : '';
+    document.getElementById('reminderText').value = plant && plant.reminder ? plant.reminder.text || '' : '';
 
-    // Title & delete btn
-    document.getElementById('plantModalTitle').textContent = plant ? '✏️ Modifier la plante' : '🌱 Ajouter une plante';
-    document.getElementById('deletePlantBtn').style.display = plant ? 'inline-flex' : 'none';
-    document.getElementById('saveZone').textContent = plant ? 'Modifier' : 'Créer'; // bouton zone modal, pas celui-ci
-    document.getElementById('savePlant').innerHTML = plant
-        ? '<i class="fas fa-save"></i> Modifier'
-        : '<i class="fas fa-save"></i> Sauvegarder';
+    // Delete btn
+    document.getElementById('deletePlantBtn').style.display = plant ? 'block' : 'none';
 
     openModal('plantModal');
 }
 
 function savePlant() {
     const name = document.getElementById('plantName').value.trim();
-    if (!name) {
-        showToast('Veuillez entrer un nom de plante ⚠️', 'warning');
-        return;
-    }
+    if (!name) { showToast('Le nom est obligatoire', 'error'); return; }
 
-    const zone = getCurrentZone();
-    if (!zone || !state.selectedCell) return;
+    const zone = getZone(state.currentZoneId);
+    const key = `${state.selectedCell.row}_${state.selectedCell.col}`;
 
-    const { row, col } = state.selectedCell;
-
-    // Init grid if needed
-    if (!zone.grid) zone.grid = [];
-    for (let r = 0; r <= row; r++) {
-        if (!zone.grid[r]) zone.grid[r] = [];
-    }
-
-    const reminder = document.getElementById('reminderEnabled').checked;
-
-    zone.grid[row][col] = {
+    const reminderEnabled = document.getElementById('reminderEnabled').checked;
+    const plant = {
         name,
         variety: document.getElementById('plantVariety').value.trim(),
         date: document.getElementById('plantDate').value,
         type: document.getElementById('plantType').value,
         water: document.getElementById('plantWater').value,
         notes: document.getElementById('plantNotes').value.trim(),
-        photo: document.getElementById('photoPreview').src || null,
-        reminder,
-        reminderDate: reminder ? document.getElementById('reminderDate').value : null,
-        reminderText: reminder ? document.getElementById('reminderText').value.trim() : null,
+        photo: document.getElementById('photoPreview').src || '',
+        reminder: reminderEnabled ? {
+            date: document.getElementById('reminderDate').value,
+            text: document.getElementById('reminderText').value.trim()
+        } : null
     };
 
-    saveZoneToDb(zone);
-    closeModal('plantModal');
-    renderGrid(zone);
-    renderLegend(zone);
-    updateStats();
-    showToast('Plante sauvegardée 🌱');
+    dbRef().child(`zones/${state.currentZoneId}/plants/${key}`).set(plant)
+        .then(() => {
+            showToast('Plante sauvegardée ! 🌱', 'success');
+            closeModal('plantModal');
+        })
+        .catch(err => showToast('Erreur: ' + err.message, 'error'));
 }
 
 function deletePlant() {
-    const zone = getCurrentZone();
-    if (!zone || !state.selectedCell) return;
-
-    const { row, col } = state.selectedCell;
-    if (zone.grid && zone.grid[row]) {
-        zone.grid[row][col] = null;
-    }
-
-    saveZoneToDb(zone);
-    closeModal('plantModal');
-    renderGrid(zone);
-    renderLegend(zone);
-    updateStats();
-    showToast('Plante supprimée 🗑️');
+    if (!confirm('Supprimer cette plante ?')) return;
+    const key = `${state.selectedCell.row}_${state.selectedCell.col}`;
+    dbRef().child(`zones/${state.currentZoneId}/plants/${key}`).remove()
+        .then(() => {
+            showToast('Plante supprimée', 'info');
+            closeModal('plantModal');
+        });
 }
 
 // ===== ZONE MODAL =====
-let editingZoneId = null;
-let selectedColor = '#4CAF50';
+function openZoneModal(zone = null) {
+    document.getElementById('zoneModalTitle').textContent = zone ? 'Modifier la zone' : 'Nouvelle zone';
+    document.getElementById('zoneNameInput').value = zone ? zone.name : '';
+    document.getElementById('zoneColsInput').value = zone ? zone.cols : 5;
+    document.getElementById('zoneRowsInput').value = zone ? zone.rows : 5;
+    document.getElementById('saveZone').textContent = zone ? 'Modifier' : 'Créer';
 
-function openAddZoneModal() {
-    editingZoneId = null;
-    selectedColor = '#4CAF50';
-    document.getElementById('zoneModalTitle').textContent = 'Nouvelle zone';
-    document.getElementById('zoneNameInput').value = '';
-    document.getElementById('zoneColsInput').value = 5;
-    document.getElementById('zoneRowsInput').value = 5;
-    document.getElementById('saveZone').innerHTML = '<i class="fas fa-save"></i> Créer';
-
-    // Reset color selection
-    document.querySelectorAll('.color-option').forEach(opt => {
-        opt.classList.toggle('selected', opt.dataset.color === selectedColor);
-    });
-
-    openModal('zoneModal');
-}
-
-function openEditZoneModal() {
-    const zone = getCurrentZone();
-    if (!zone) return;
-
-    editingZoneId = zone.id;
-    selectedColor = zone.color;
-    document.getElementById('zoneModalTitle').textContent = 'Modifier la zone';
-    document.getElementById('zoneNameInput').value = zone.name;
-    document.getElementById('zoneColsInput').value = zone.cols || 5;
-    document.getElementById('zoneRowsInput').value = zone.rows || 5;
-    document.getElementById('saveZone').innerHTML = '<i class="fas fa-save"></i> Modifier';
-
+    selectedColor = zone ? zone.color : '#4CAF50';
     document.querySelectorAll('.color-option').forEach(opt => {
         opt.classList.toggle('selected', opt.dataset.color === selectedColor);
     });
@@ -423,187 +300,186 @@ function openEditZoneModal() {
 
 function saveZoneModal() {
     const name = document.getElementById('zoneNameInput').value.trim();
-    if (!name) {
-        showToast('Veuillez entrer un nom ⚠️', 'warning');
-        return;
-    }
+    if (!name) { showToast('Nom obligatoire', 'error'); return; }
 
     const cols = parseInt(document.getElementById('zoneColsInput').value) || 5;
     const rows = parseInt(document.getElementById('zoneRowsInput').value) || 5;
 
-    if (editingZoneId) {
-        // Edit existing
-        const zone = getZone(editingZoneId);
-        zone.name = name;
-        zone.color = selectedColor;
-        zone.cols = cols;
-        zone.rows = rows;
-        saveZoneToDb(zone);
-        showToast('Zone modifiée ✅');
+    const editing = state.currentZoneId && document.getElementById('zoneModalTitle').textContent === 'Modifier la zone';
+
+    if (editing) {
+        dbRef().child(`zones/${state.currentZoneId}`).update({ name, color: selectedColor, cols, rows })
+            .then(() => {
+                showToast('Zone modifiée !', 'success');
+                closeModal('zoneModal');
+            });
     } else {
-        // Create new
-        const id = 'zone_' + Date.now();
-        const zone = {
-            id,
-            name,
-            color: selectedColor,
-            cols,
-            rows,
-            grid: []
-        };
-        dbRef().child('zones/' + id).set(zone);
-        state.currentZoneId = id;
-        showToast('Zone créée 🎉');
+        const newRef = dbRef().child('zones').push();
+        newRef.set({ name, color: selectedColor, cols, rows, plants: {} })
+            .then(() => {
+                state.currentZoneId = newRef.key;
+                showToast('Zone créée ! 🎉', 'success');
+                closeModal('zoneModal');
+            });
     }
-
-    closeModal('zoneModal');
 }
 
-function deleteCurrentZone() {
-    const zone = getCurrentZone();
-    if (!zone) return;
-
-    if (!confirm(`Supprimer la zone "${zone.name}" et toutes ses plantes ?`)) return;
-
-    dbRef().child('zones/' + zone.id).remove();
-    state.currentZoneId = null;
-    showToast('Zone supprimée 🗑️');
+function deleteZone() {
+    if (!confirm('Supprimer cette zone et toutes ses plantes ?')) return;
+    dbRef().child(`zones/${state.currentZoneId}`).remove()
+        .then(() => {
+            state.currentZoneId = null;
+            document.getElementById('zoneHeader').style.display = 'none';
+            document.getElementById('welcomeMsg').style.display = 'flex';
+            document.getElementById('gridContainer').innerHTML = '';
+            document.getElementById('legend').style.display = 'none';
+            showToast('Zone supprimée', 'info');
+        });
 }
 
-function saveZoneToDb(zone) {
-    dbRef().child('zones/' + zone.id).set(zone);
+function applyGrid() {
+    const cols = parseInt(document.getElementById('gridCols').value) || 5;
+    const rows = parseInt(document.getElementById('gridRows').value) || 5;
+    dbRef().child(`zones/${state.currentZoneId}`).update({ cols, rows })
+        .then(() => showToast('Grille mise à jour !', 'success'));
 }
 
 // ===== CALENDAR =====
-function openCalendar() {
-    calendarDate = new Date();
-    renderCalendar();
-    openModal('calendarModal');
-}
-
 function renderCalendar() {
     const year = calendarDate.getFullYear();
     const month = calendarDate.getMonth();
 
-    const months = ['Janvier','Février','Mars','Avril','Mai','Juin',
-                    'Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-    document.getElementById('calendarMonthYear').textContent = `${months[month]} ${year}`;
+    const monthNames = ['Janvier','Février','Mars','Avril','Mai','Juin',
+                        'Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+    document.getElementById('calendarMonthYear').textContent = `${monthNames[month]} ${year}`;
 
     const grid = document.getElementById('calendarGrid');
     grid.innerHTML = '';
 
-    // Headers
-    ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(d => {
+    const days = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+    days.forEach(d => {
         const h = document.createElement('div');
         h.className = 'cal-header';
         h.textContent = d;
         grid.appendChild(h);
     });
 
-    const firstDay = new Date(year, month, 1).getDay();
-    const offset = firstDay === 0 ? 6 : firstDay - 1;
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDay = new Date(year, month, 1);
+    let startDay = firstDay.getDay() - 1;
+    if (startDay < 0) startDay = 6;
 
-    // Collect all plant dates
+    for (let i = 0; i < startDay; i++) {
+        const empty = document.createElement('div');
+        grid.appendChild(empty);
+    }
+
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const today = new Date();
+
+    // Collect plant dates
     const plantDates = {};
     state.zones.forEach(zone => {
-        if (!zone.grid) return;
-        zone.grid.forEach(row => {
-            if (!row) return;
-            row.forEach(cell => {
-                if (cell && cell.date) {
-                    const d = cell.date.split('T')[0];
-                    if (!plantDates[d]) plantDates[d] = [];
-                    plantDates[d].push(cell.name);
+        if (!zone.plants) return;
+        Object.values(zone.plants).forEach(p => {
+            if (p && p.date) {
+                const d = new Date(p.date);
+                if (d.getFullYear() === year && d.getMonth() === month) {
+                    const day = d.getDate();
+                    plantDates[day] = plantDates[day] || [];
+                    plantDates[day].push(p.name);
                 }
-                if (cell && cell.reminderDate) {
-                    const d = cell.reminderDate.split('T')[0];
-                    if (!plantDates[d]) plantDates[d] = [];
-                    plantDates[d].push('🔔 ' + (cell.reminderText || cell.name));
+            }
+            if (p && p.reminder && p.reminder.date) {
+                const d = new Date(p.reminder.date);
+                if (d.getFullYear() === year && d.getMonth() === month) {
+                    const day = d.getDate();
+                    plantDates[day] = plantDates[day] || [];
+                    plantDates[day].push('🔔 ' + (p.reminder.text || p.name));
                 }
-            });
+            }
         });
     });
 
-    for (let i = 0; i < offset; i++) {
-        const blank = document.createElement('div');
-        blank.className = 'cal-day empty';
-        grid.appendChild(blank);
-    }
-
-    const today = new Date();
     for (let d = 1; d <= daysInMonth; d++) {
-        const div = document.createElement('div');
-        div.className = 'cal-day';
-
-        const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-        if (plantDates[dateStr]) div.classList.add('has-event');
+        const cell = document.createElement('div');
+        cell.className = 'cal-day';
         if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-            div.classList.add('today');
+            cell.classList.add('today');
         }
-
-        div.innerHTML = `<span>${d}</span>`;
-        if (plantDates[dateStr]) {
-            div.title = plantDates[dateStr].join(', ');
+        if (plantDates[d]) cell.classList.add('has-event');
+        cell.innerHTML = `<span>${d}</span>`;
+        if (plantDates[d]) {
+            const dot = document.createElement('div');
+            dot.className = 'cal-dot';
+            cell.appendChild(dot);
         }
-        grid.appendChild(div);
+        grid.appendChild(cell);
     }
 
     // Events list
-    const eventsList = document.getElementById('eventsList');
-    eventsList.innerHTML = '';
-    const monthEvents = Object.entries(plantDates).filter(([d]) => {
-        const [y, m] = d.split('-');
-        return parseInt(y) === year && parseInt(m) === month + 1;
-    });
-
-    if (monthEvents.length === 0) {
-        eventsList.innerHTML = '<li class="empty-msg">Aucun événement ce mois</li>';
-    } else {
-        monthEvents.sort(([a],[b]) => a.localeCompare(b)).forEach(([date, events]) => {
-            const li = document.createElement('li');
-            li.innerHTML = `<strong>${date}</strong> — ${events.join(', ')}`;
-            eventsList.appendChild(li);
-        });
+    const list = document.getElementById('eventsList');
+    list.innerHTML = '';
+    let hasEvents = false;
+    for (let d = 1; d <= daysInMonth; d++) {
+        if (plantDates[d]) {
+            hasEvents = true;
+            plantDates[d].forEach(name => {
+                const li = document.createElement('li');
+                li.textContent = `${d} - ${name}`;
+                list.appendChild(li);
+            });
+        }
+    }
+    if (!hasEvents) {
+        list.innerHTML = '<li>Aucun événement ce mois</li>';
     }
 }
 
 // ===== REMINDERS =====
-function openReminders() {
-    const list = document.getElementById('remindersList');
-    list.innerHTML = '';
+function renderReminders() {
+    const container = document.getElementById('remindersList');
+    container.innerHTML = '';
 
     const reminders = [];
     state.zones.forEach(zone => {
-        if (!zone.grid) return;
-        zone.grid.forEach(row => {
-            if (!row) return;
-            row.forEach(cell => {
-                if (cell && cell.reminder && cell.reminderDate) {
-                    reminders.push({ zone: zone.name, plant: cell.name, date: cell.reminderDate, text: cell.reminderText });
-                }
-            });
+        if (!zone.plants) return;
+        Object.values(zone.plants).forEach(p => {
+            if (p && p.reminder && p.reminder.date) {
+                reminders.push({
+                    plant: p.name,
+                    zone: zone.name,
+                    date: p.reminder.date,
+                    text: p.reminder.text
+                });
+            }
         });
     });
 
     if (reminders.length === 0) {
-        list.innerHTML = '<p class="empty-msg">Aucun rappel pour le moment</p>';
-    } else {
-        reminders.sort((a,b) => a.date.localeCompare(b.date)).forEach(r => {
-            const div = document.createElement('div');
-            div.className = 'reminder-item';
-            div.innerHTML = `
-                <div class="reminder-icon">🔔</div>
-                <div>
-                    <strong>${r.plant}</strong> — ${r.zone}<br>
-                    <small>${r.date}${r.text ? ' · ' + r.text : ''}</small>
-                </div>
-            `;
-            list.appendChild(div);
-        });
+        container.innerHTML = '<p class="empty-msg">Aucun rappel pour le moment</p>';
+        return;
     }
 
-    openModal('remindersModal');
+    reminders.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    reminders.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'reminder-item';
+        div.innerHTML = `
+            <div class="reminder-date">${formatDate(r.date)}</div>
+            <div class="reminder-info">
+                <strong>${r.plant}</strong> - ${r.zone}
+                ${r.text ? `<p>${r.text}</p>` : ''}
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 // ===== PHOTO UPLOAD =====
@@ -618,6 +494,7 @@ function initPhotoUpload() {
     input.addEventListener('change', e => {
         const file = e.target.files[0];
         if (!file) return;
+
         const reader = new FileReader();
         reader.onload = ev => {
             preview.src = ev.target.result;
@@ -638,7 +515,7 @@ function closeModal(id) {
 }
 
 // ===== TOAST =====
-function showToast(message, type = 'success') {
+function showToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
@@ -657,7 +534,8 @@ function bindEvents() {
     // Auth
     document.getElementById('loginBtn').addEventListener('click', () => {
         const provider = new firebase.auth.GoogleAuthProvider();
-        firebase.auth().signInWithPopup(provider).catch(err => showToast(err.message, 'error'));
+        firebase.auth().signInWithPopup(provider)
+            .catch(err => showToast('Erreur connexion: ' + err.message, 'error'));
     });
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
@@ -665,22 +543,32 @@ function bindEvents() {
     });
 
     // Header buttons
-    document.getElementById('calendarBtn').addEventListener('click', openCalendar);
-    document.getElementById('reminderBtn').addEventListener('click', openReminders);
+    document.getElementById('calendarBtn').addEventListener('click', () => {
+        renderCalendar();
+        openModal('calendarModal');
+    });
 
-    // Sidebar
-    document.getElementById('addZoneBtn').addEventListener('click', openAddZoneModal);
+    document.getElementById('reminderBtn').addEventListener('click', () => {
+        renderReminders();
+        openModal('remindersModal');
+    });
 
-    // Zone header
+    // Zone buttons
+    document.getElementById('addZoneBtn').addEventListener('click', () => openZoneModal());
+    document.getElementById('editZoneBtn').addEventListener('click', () => {
+        const zone = getZone(state.currentZoneId);
+        if (zone) openZoneModal(zone);
+    });
+    document.getElementById('deleteZoneBtn').addEventListener('click', deleteZone);
     document.getElementById('applyGridBtn').addEventListener('click', applyGrid);
-    document.getElementById('editZoneBtn').addEventListener('click', openEditZoneModal);
-    document.getElementById('deleteZoneBtn').addEventListener('click', deleteCurrentZone);
 
     // Plant modal
     document.getElementById('savePlant').addEventListener('click', savePlant);
+    document.getElementById('deletePlantBtn').addEventListener('click', deletePlant);
     document.getElementById('cancelModal').addEventListener('click', () => closeModal('plantModal'));
     document.getElementById('closeModal').addEventListener('click', () => closeModal('plantModal'));
-    document.getElementById('deletePlantBtn').addEventListener('click', deletePlant);
+
+    // Reminder toggle
     document.getElementById('reminderEnabled').addEventListener('change', e => {
         document.getElementById('reminderDetail').style.display = e.target.checked ? 'flex' : 'none';
     });
@@ -713,7 +601,7 @@ function bindEvents() {
     // Reminders modal
     document.getElementById('closeRemindersModal').addEventListener('click', () => closeModal('remindersModal'));
 
-    // Close modals on overlay click
+    // Close on overlay click
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', e => {
             if (e.target === overlay) closeModal(overlay.id);
