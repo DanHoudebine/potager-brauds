@@ -340,14 +340,18 @@ function savePlant() {
 }
 
 function deletePlant() {
+    const zone = getZone(state.currentZoneId);
+    if (!zone || !state.editingPlantId) return;
+
     if (!confirm('Supprimer cette plante ?')) return;
-    const key = `${state.selectedCell.row}_${state.selectedCell.col}`;
-    dbRef().child(`zones/${state.currentZoneId}/plants/${key}`).remove()
-        .then(() => {
-            showToast('Plante supprimée', 'info');
-            closeModal('plantModal');
-        });
+
+    delete zone.plants[state.editingPlantId];
+    saveZoneToDb(zone);
+    closeModal('plantModal');
+    renderGrid(zone);
+    showToast('Plante supprimée 🗑️', 'success');
 }
+
 
 // ===== ZONE MODAL =====
 function openZoneModal(zone = null) {
