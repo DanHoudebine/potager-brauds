@@ -193,7 +193,7 @@ function renderGrid(zone) {
                 cell.classList.add('has-plant');
                 cell.style.borderColor = zone.color;
                 cell.innerHTML = `
-                    <div class="cell-emoji">${getTypeEmoji(plant.type)}</div>
+                    <div class="cell-emoji">${plant.emoji || getTypeEmoji(plant.type)}</div>
                     <div class="cell-name">${plant.name}</div>
                     ${plant.variety ? `<div class="cell-variety">${plant.variety}</div>` : ''}
                 `;
@@ -203,26 +203,26 @@ function renderGrid(zone) {
 
             cell.addEventListener('click', () => openPlantModal(r, c));
 
-cell.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    cell.style.background = '#d8f3dc';
-});
-cell.addEventListener('dragleave', () => {
-    cell.style.background = '';
-});
-cell.addEventListener('drop', (e) => {
-    e.preventDefault();
-    cell.style.background = '';
-    const plant = JSON.parse(e.dataTransfer.getData('plant'));
-    dropPlantOnCell(plant, r, c);
-});
+            cell.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                cell.style.background = '#d8f3dc';
+            });
+            cell.addEventListener('dragleave', () => {
+                cell.style.background = '';
+            });
+            cell.addEventListener('drop', (e) => {
+                e.preventDefault();
+                cell.style.background = '';
+                const plant = JSON.parse(e.dataTransfer.getData('plant'));
+                dropPlantOnCell(plant, r, c);
+            });
 
-cell.addEventListener('contextmenu', (e) => handleCellRightClick(e, r, c));
-container.appendChild(cell);
-
+            cell.addEventListener('contextmenu', (e) => handleCellRightClick(e, r, c));
+            container.appendChild(cell);
         }
     }
 }
+
 
 function dropPlantOnCell(plant, row, col) {
     const zone = getZone(state.currentZoneId);
