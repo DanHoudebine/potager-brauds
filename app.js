@@ -127,6 +127,49 @@ function renderZone(zone) {
     renderLegend(zone);
 }
 
+const PLANT_LIBRARY = [
+    // Légumes
+    { name: 'Tomate',      emoji: '🍅', type: 'legume' },
+    { name: 'Courgette',   emoji: '🥒', type: 'legume' },
+    { name: 'Carotte',     emoji: '🥕', type: 'legume' },
+    { name: 'Salade',      emoji: '🥬', type: 'legume' },
+    { name: 'Poivron',     emoji: '🫑', type: 'legume' },
+    { name: 'Maïs',        emoji: '🌽', type: 'legume' },
+    { name: 'Aubergine',   emoji: '🍆', type: 'legume' },
+    { name: 'Oignon',      emoji: '🧅', type: 'legume' },
+    { name: 'Ail',         emoji: '🧄', type: 'legume' },
+    { name: 'Brocoli',     emoji: '🥦', type: 'legume' },
+    { name: 'Concombre',   emoji: '🥒', type: 'legume' },
+    { name: 'Piment',      emoji: '🌶️', type: 'legume' },
+    { name: 'Patate',      emoji: '🥔', type: 'legume' },
+    { name: 'Haricot',     emoji: '🫘', type: 'legume' },
+    { name: 'Petit pois',  emoji: '🟢', type: 'legume' },
+    { name: 'Navet',       emoji: '🫒', type: 'legume' },
+    // Fruits
+    { name: 'Fraise',      emoji: '🍓', type: 'fruit' },
+    { name: 'Pastèque',    emoji: '🍉', type: 'fruit' },
+    { name: 'Melon',       emoji: '🍈', type: 'fruit' },
+    { name: 'Framboise',   emoji: '🫐', type: 'fruit' },
+    { name: 'Tomate cerise',emoji: '🍒', type: 'fruit' },
+    // Herbes
+    { name: 'Basilic',     emoji: '🌿', type: 'herbe' },
+    { name: 'Persil',      emoji: '🌱', type: 'herbe' },
+    { name: 'Menthe',      emoji: '🍃', type: 'herbe' },
+    { name: 'Thym',        emoji: '🌾', type: 'herbe' },
+    { name: 'Romarin',     emoji: '🪴', type: 'herbe' },
+    { name: 'Ciboulette',  emoji: '🎋', type: 'herbe' },
+    // Fleurs
+    { name: 'Tournesol',   emoji: '🌻', type: 'fleur' },
+    { name: 'Rose',        emoji: '🌹', type: 'fleur' },
+    { name: 'Lavande',     emoji: '💜', type: 'fleur' },
+    { name: 'Capucine',    emoji: '🌸', type: 'fleur' },
+    // Arbres
+    { name: 'Pommier',     emoji: '🍎', type: 'arbre' },
+    { name: 'Poirier',     emoji: '🍐', type: 'arbre' },
+    { name: 'Cerisier',    emoji: '🍒', type: 'arbre' },
+    { name: 'Figuier',     emoji: '🌳', type: 'arbre' },
+];
+
 function renderGrid(zone) {
     const container = document.getElementById('gridContainer');
     container.innerHTML = '';
@@ -188,9 +231,9 @@ function dropPlantOnCell(plant, row, col) {
     if (!zone.plants) zone.plants = {};
     const key = `${row}_${col}`;
 
-    // Copie la plante (sans écraser les champs spéciaux)
     zone.plants[key] = {
         name: plant.name,
+        emoji: plant.emoji || '',       // ← AJOUT
         variety: plant.variety || '',
         type: plant.type || 'autre',
         water: plant.water || 'semaine',
@@ -203,9 +246,10 @@ function dropPlantOnCell(plant, row, col) {
         .then(() => {
             renderGrid(zone);
             renderLegend(zone);
-            showToast(`🌱 ${plant.name} placé !`, 'success');
+            showToast(`${plant.emoji || '🌱'} ${plant.name} placé !`, 'success');
         });
 }
+
 
 function getTypeEmoji(type) {
     const emojis = {
@@ -219,15 +263,46 @@ function renderLegend(zone) {
     const items = document.getElementById('legendItems');
     items.innerHTML = '';
 
+    // ===== PALETTE BIBLIOTHÈQUE =====
+    const paletteSection = document.createElement('div');
+    paletteSection.innerHTML = `
+        <div style="font-weight:bold; color:#2d6a4f; margin-bottom:8px; font-size:13px;">
+            🌿 Bibliothèque de plantes
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px;">
+            <button class="filter-btn active" data-filter="all" onclick="filterLibrary('all', this)">Tout</button>
+            <button class="filter-btn" data-filter="legume" onclick="filterLibrary('legume', this)">🥬 Légumes</button>
+            <button class="filter-btn" data-filter="fruit" onclick="filterLibrary('fruit', this)">🍓 Fruits</button>
+            <button class="filter-btn" data-filter="herbe" onclick="filterLibrary('herbe', this)">🌿 Herbes</button>
+            <button class="filter-btn" data-filter="fleur" onclick="filterLibrary('fleur', this)">🌸 Fleurs</button>
+            <button class="filter-btn" data-filter="arbre" onclick="filterLibrary('arbre', this)">🌳 Arbres</button>
+        </div>
+        <div id="plantPalette" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px;"></div>
+    `;
+    items.appendChild(paletteSection);
+    renderPalette('all');
+
+    // ===== SÉPARATEUR =====
+    const sep = document.createElement('div');
+    sep.style.cssText = 'border-top:2px dashed #ccc; margin:10px 0; padding-top:10px;';
+    sep.innerHTML = '<div style="font-weight:bold; color:#2d6a4f; font-size:13px; margin-bottom:8px;">📍 Plantes dans cette zone</div>';
+    items.appendChild(sep);
+
+    // ===== PLANTES EXISTANTES DANS LA ZONE =====
     if (!zone.plants) return;
 
-    // Collecter les plantes uniques (par nom)
     const unique = {};
     Object.values(zone.plants).forEach(p => {
-        if (p && p.name && !unique[p.name]) {
-            unique[p.name] = p;
-        }
+        if (p && p.name && !unique[p.name]) unique[p.name] = p;
     });
+
+    if (Object.keys(unique).length === 0) {
+        const empty = document.createElement('div');
+        empty.style.cssText = 'color:#aaa; font-size:12px; font-style:italic;';
+        empty.textContent = 'Aucune plante placée pour l\'instant';
+        items.appendChild(empty);
+        return;
+    }
 
     Object.values(unique).forEach(plant => {
         const div = document.createElement('div');
@@ -243,22 +318,103 @@ function renderLegend(zone) {
             align-items: center;
             gap: 6px;
             font-size: 13px;
-            transition: border-color 0.2s;
         `;
-        div.innerHTML = `${getTypeEmoji(plant.type)} <strong>${plant.name}</strong>${plant.variety ? ` <span style="color:#888;font-size:11px;">${plant.variety}</span>` : ''}`;
+
+        const emoji = getPlantEmoji(plant);
+        div.innerHTML = `${emoji} <strong>${plant.name}</strong>${plant.variety ? ` <span style="color:#888;font-size:11px;">${plant.variety}</span>` : ''}`;
 
         div.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('plant', JSON.stringify(plant));
             div.style.opacity = '0.5';
         });
-        div.addEventListener('dragend', () => {
-            div.style.opacity = '1';
-        });
+        div.addEventListener('dragend', () => { div.style.opacity = '1'; });
 
         items.appendChild(div);
     });
 }
 
+// ===== PALETTE =====
+function renderPalette(filter) {
+    const palette = document.getElementById('plantPalette');
+    if (!palette) return;
+    palette.innerHTML = '';
+
+    const list = filter === 'all' ? PLANT_LIBRARY : PLANT_LIBRARY.filter(p => p.type === filter);
+
+    list.forEach(plant => {
+        const btn = document.createElement('div');
+        btn.draggable = true;
+        btn.title = plant.name;
+        btn.style.cssText = `
+            width: 44px;
+            height: 44px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            border-radius: 10px;
+            border: 2px solid #eee;
+            background: white;
+            cursor: grab;
+            transition: all 0.2s;
+            position: relative;
+        `;
+        btn.innerHTML = `
+            <span>${plant.emoji}</span>
+            <span style="font-size:7px; color:#666; margin-top:1px; text-align:center; line-height:1;">${plant.name}</span>
+        `;
+
+        btn.addEventListener('mouseenter', () => {
+            btn.style.border = '2px solid #2d6a4f';
+            btn.style.background = '#f0faf4';
+            btn.style.transform = 'scale(1.15)';
+        });
+        btn.addEventListener('mouseleave', () => {
+            btn.style.border = '2px solid #eee';
+            btn.style.background = 'white';
+            btn.style.transform = 'scale(1)';
+        });
+
+        // Drag & drop
+        btn.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('plant', JSON.stringify({
+                name: plant.name,
+                emoji: plant.emoji,
+                type: plant.type,
+                variety: '',
+                water: 'semaine',
+                notes: '',
+                photo: '',
+                date: ''
+            }));
+            btn.style.opacity = '0.5';
+        });
+        btn.addEventListener('dragend', () => { btn.style.opacity = '1'; });
+
+        // Clic = place directement si cellule sélectionnée
+        btn.addEventListener('click', () => {
+            showToast(`${plant.emoji} ${plant.name} sélectionné — cliquez sur une cellule`, 'info');
+            state.selectedPlantFromLibrary = { ...plant };
+        });
+
+        palette.appendChild(btn);
+    });
+}
+
+function filterLibrary(filter, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderPalette(filter);
+}
+
+// Récupère l'emoji d'une plante (depuis la bibliothèque ou fallback)
+function getPlantEmoji(plant) {
+    if (plant.emoji) return plant.emoji;
+    const found = PLANT_LIBRARY.find(p => p.name.toLowerCase() === plant.name.toLowerCase());
+    if (found) return found.emoji;
+    return getTypeEmoji(plant.type);
+}
 
 function updateStats() {
     let total = 0;
@@ -933,6 +1089,18 @@ function stampLine(row, col) {
     saveData();
     renderGrid(getCurrentZone());
     showToast(`✅ ${count} cellules remplies sur la ligne !`, 'success');
+}
+
+if (plant) {
+    const emoji = getPlantEmoji(plant);
+    cell.innerHTML = `
+        <div style="font-size:20px;">${emoji}</div>
+        <div style="font-size:9px; color:#333; text-align:center; line-height:1.2; margin-top:2px;">
+            ${plant.name}
+        </div>
+    `;
+    cell.style.background = '#f0faf4';
+    cell.style.border = `2px solid ${zone.color || '#2d6a4f'}`;
 }
 
 function stampColumn(row, col) {
