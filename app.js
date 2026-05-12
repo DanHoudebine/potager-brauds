@@ -823,7 +823,8 @@ let copiedPlant = null;
 
 function handleCellRightClick(e, row, col) {
     e.preventDefault();
-    const zone = getCurrentZone();
+    const zone = getZone(state.currentZoneId);
+if (!zone) { showToast('Sélectionnez une zone', 'error'); return; }
     const key = `${row}_${col}`;
     const plant = zone.plants && zone.plants[key];
     
