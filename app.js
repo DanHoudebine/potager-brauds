@@ -428,12 +428,18 @@ document.getElementById('savePlant').addEventListener('click', async () => {
 });
 
 // Delete plant
+// Delete plant (suite)
 document.getElementById('deletePlantBtn').addEventListener('click', () => {
     if (!editingPlantId) return;
     const plant = plants[editingPlantId];
     if (confirm(`Supprimer "${plant?.name}" ?`)) {
         deletePlantFromDB(editingPlantId).then(() => {
-            showToast('Plante supprimée
+            showToast('Plante supprimée 🗑️', 'success');
+            closeAllModals();
+        });
+    }
+});
+
 // ============================================
 // SUITE ET FIN DE app.js
 // ============================================
