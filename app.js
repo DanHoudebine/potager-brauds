@@ -428,23 +428,6 @@ document.getElementById('savePlant').addEventListener('click', async () => {
 });
 
 // Delete plant
-// Delete plant (suite)
-document.getElementById('deletePlantBtn').addEventListener('click', () => {
-    if (!editingPlantId) return;
-    const plant = plants[editingPlantId];
-    if (confirm(`Supprimer "${plant?.name}" ?`)) {
-        deletePlantFromDB(editingPlantId).then(() => {
-            showToast('Plante supprimée 🗑️', 'success');
-            closeAllModals();
-        });
-    }
-});
-
-// ============================================
-// SUITE ET FIN DE app.js
-// ============================================
-
-// Delete plant (suite)
 document.getElementById('deletePlantBtn').addEventListener('click', () => {
     if (!editingPlantId) return;
     const plant = plants[editingPlantId];
@@ -460,49 +443,26 @@ document.getElementById('deletePlantBtn').addEventListener('click', () => {
 // FIREBASE FUNCTIONS
 // ============================================
 
-async function savePlant(plantData) {
-    try {
-        await db.ref(`zones/${plantData.zoneId}/plants/${plantData.id}`).set(plantData);
-    } catch(e) {
-        console.error(e);
-        showToast('Erreur de sauvegarde', 'error');
-    }
+function savePlant(plantData) {
+    return firebase.database().ref('plants/' + plantData.id).set(plantData);
 }
 
-async function deletePlantFromDB(plantId) {
-    const plant = plants[plantId];
-    if (!plant) return;
-    try {
-        await db.ref(`zones/${plant.zoneId}/plants/${plantId}`).remove();
-    } catch(e) {
-        console.error(e);
-        showToast('Erreur de suppression', 'error');
-    }
+function deletePlantFromDB(plantId) {
+    return firebase.database().ref('plants/' + plantId).remove();
 }
 
-async function saveZone(zoneData) {
-    try {
-        await db.ref(`zones/${zoneData.id}`).update({
-            id: zoneData.id,
-            name: zoneData.name,
-            rows: zoneData.rows,
-            cols: zoneData.cols,
-            color: zoneData.color,
-            updatedAt: Date.now()
-        });
-    } catch(e) {
-        console.error(e);
-        showToast('Erreur de sauvegarde zone', 'error');
-    }
+function saveZone(zoneData) {
+    return firebase.database().ref('zones/' + zoneData.id).set(zoneData);
 }
 
-async function deleteZoneFromDB(zoneId) {
-    try {
-        await db.ref(`zones/${zoneId}`).remove();
-    } catch(e) {
-        console.error(e);
-        showToast('Erreur de suppression zone', 'error');
-    }
+function deleteZoneFromDB(zoneId) {
+    const db = firebase.database();
+    const updates = {};
+    updates['zones/' + zoneId] = null;
+    Object.keys(plants).forEach(pid => {
+        if (plants[pid].zoneId === zoneId) updates['plants/' + pid] = null;
+    });
+    return db.ref().update(updates);
 }
 
 // ============================================
