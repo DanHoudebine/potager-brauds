@@ -233,7 +233,7 @@ function dropPlantOnCell(plant, row, col) {
 
     zone.plants[key] = {
         name: plant.name,
-        emoji: plant.emoji || '',       // ← AJOUT
+        emoji: plant.emoji || '',
         variety: plant.variety || '',
         type: plant.type || 'autre',
         water: plant.water || 'semaine',
@@ -242,6 +242,10 @@ function dropPlantOnCell(plant, row, col) {
         date: plant.date || ''
     };
 
+    // Mettre à jour dans state.zones
+    const idx = state.zones.findIndex(z => z.id === state.currentZoneId);
+    if (idx !== -1) state.zones[idx] = zone;
+
     dbRef().child(`zones/${state.currentZoneId}/plants/${key}`).set(zone.plants[key])
         .then(() => {
             renderGrid(zone);
@@ -249,7 +253,6 @@ function dropPlantOnCell(plant, row, col) {
             showToast(`${plant.emoji || '🌱'} ${plant.name} placé !`, 'success');
         });
 }
-
 
 function getTypeEmoji(type) {
     const emojis = {
