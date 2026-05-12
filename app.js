@@ -159,11 +159,52 @@ function renderGrid(zone) {
             }
 
             cell.addEventListener('click', () => openPlantModal(r, c));
+
+cell.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    cell.style.background = '#d8f3dc';
+});
+cell.addEventListener('dragleave', () => {
+    cell.style.background = '';
+});
+cell.addEventListener('drop', (e) => {
+    e.preventDefault();
+    cell.style.background = '';
+    const plant = JSON.parse(e.dataTransfer.getData('plant'));
+    dropPlantOnCell(plant, r, c);
+});
+
 cell.addEventListener('contextmenu', (e) => handleCellRightClick(e, r, c));
 container.appendChild(cell);
 
         }
     }
+}
+
+function dropPlantOnCell(plant, row, col) {
+    const zone = getZone(state.currentZoneId);
+    if (!zone) return;
+
+    if (!zone.plants) zone.plants = {};
+    const key = `${row}_${col}`;
+
+    // Copie la plante (sans écraser les champs spéciaux)
+    zone.plants[key] = {
+        name: plant.name,
+        variety: plant.variety || '',
+        type: plant.type || 'autre',
+        water: plant.water || 'semaine',
+        notes: plant.notes || '',
+        photo: plant.photo || '',
+        date: plant.date || ''
+    };
+
+    dbRef().child(`zones/${state.currentZoneId}/plants/${key}`).set(zone.plants[key])
+        .then(() => {
+            renderGrid(zone);
+            renderLegend(zone);
+            showToast(`🌱 ${plant.name} placé !`, 'success');
+        });
 }
 
 function getTypeEmoji(type) {
@@ -180,20 +221,44 @@ function renderLegend(zone) {
 
     if (!zone.plants) return;
 
-    const types = {};
+    // Collecter les plantes uniques (par nom)
+    const unique = {};
     Object.values(zone.plants).forEach(p => {
-        if (p && p.name) {
-            types[p.type] = (types[p.type] || 0) + 1;
+        if (p && p.name && !unique[p.name]) {
+            unique[p.name] = p;
         }
     });
 
-    Object.entries(types).forEach(([type, count]) => {
+    Object.values(unique).forEach(plant => {
         const div = document.createElement('div');
         div.className = 'legend-item';
-        div.innerHTML = `${getTypeEmoji(type)} ${type} <strong>(${count})</strong>`;
+        div.draggable = true;
+        div.style.cssText = `
+            cursor: grab;
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            transition: border-color 0.2s;
+        `;
+        div.innerHTML = `${getTypeEmoji(plant.type)} <strong>${plant.name}</strong>${plant.variety ? ` <span style="color:#888;font-size:11px;">${plant.variety}</span>` : ''}`;
+
+        div.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('plant', JSON.stringify(plant));
+            div.style.opacity = '0.5';
+        });
+        div.addEventListener('dragend', () => {
+            div.style.opacity = '1';
+        });
+
         items.appendChild(div);
     });
 }
+
 
 function updateStats() {
     let total = 0;
