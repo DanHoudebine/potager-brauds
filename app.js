@@ -789,3 +789,39 @@ document.getElementById('logoutBtn') && document.getElementById('logoutBtn').add
         firebase.auth().signOut();
     }
 });
+
+document.getElementById('saveZone') && document.getElementById('saveZone').addEventListener('click', () => {
+    const nameInput = document.getElementById('zoneNameInput');
+    const name = nameInput?.value.trim();
+    if (!name) { showToast('Veuillez entrer un nom de zone', 'error'); return; }
+
+    const cols = parseInt(document.getElementById('zoneColsInput')?.value) || 5;
+    const rows = parseInt(document.getElementById('zoneRowsInput')?.value) || 5;
+
+    if (editingZoneId) {
+        // Modification
+        const zone = zones[editingZoneId];
+        zone.name = name;
+        zone.color = selectedColor;
+        zone.cols = cols;
+        zone.rows = rows;
+        saveZone(zone).then(() => {
+            showToast('Zone modifiée ✅', 'success');
+            document.getElementById('zoneModal').style.display = 'none';
+            selectZone(editingZoneId);
+        });
+    } else {
+        // Création
+        const id = 'zone_' + Date.now();
+        const newZone = { id, name, color: selectedColor, cols, rows };
+        saveZone(newZone).then(() => {
+            showToast('Zone créée 🎉', 'success');
+            document.getElementById('zoneModal').style.display = 'none';
+            selectZone(id);
+        });
+    }
+});
+
+document.getElementById('cancelZoneModal') && document.getElementById('cancelZoneModal').addEventListener('click', () => {
+    document.getElementById('zoneModal').style.display = 'none';
+});
