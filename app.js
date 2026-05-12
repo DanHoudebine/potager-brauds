@@ -342,16 +342,26 @@ function savePlant() {
 function deletePlant() {
     const zone = getZone(state.currentZoneId);
     if (!zone || !state.editingPlantId) return;
-
     if (!confirm('Supprimer cette plante ?')) return;
 
-    delete zone.plants[state.editingPlantId];
-    saveZoneToDb(zone);
-    closeModal('plantModal');
-    renderGrid(zone);
-    showToast('Plante supprimée 🗑️', 'success');
+    dbRef().child(`zones/${state.currentZoneId}/plants/${state.editingPlantId}`).remove()
+        .then(() => {
+            closeModal('plantModal');
+            showToast('Plante supprimée 🗑️', 'success');
+        });
 }
 
+function deletePlantFromMenu(r, c) {
+    const old = document.getElementById('contextMenu');
+    if (old) old.remove();
+
+    const zone = getZone(state.currentZoneId);
+    if (!zone) return;
+
+    const key = `${r}_${c}`;
+    dbRef().child(`zones/${state.currentZoneId}/plants/${key}`).remove()
+        .then(() => showToast('Plante supprimée 🗑️', 'success'));
+}
 
 // ===== ZONE MODAL =====
 function openZoneModal(zone = null) {
@@ -820,18 +830,6 @@ function exportPDF() {
 }
 // ===== SYSTÈME TAMPON =====
 let copiedPlant = null;
-
-function handleCellRightClick(e, row, col) {
-    e.preventDefault();
-    const zone = getZone(state.currentZoneId);
-if (!zone) { showToast('Sélectionnez une zone', 'error'); return; }
-    const key = `${row}_${col}`;
-    const plant = zone.plants && zone.plants[key];
-    
-    if (!plant) {
-        showToast('Aucune plante dans cette cellule', 'error');
-        return;
-    }
 
     // Supprimer ancien menu si existant
     const oldMenu = document.getElementById('context-menu');
