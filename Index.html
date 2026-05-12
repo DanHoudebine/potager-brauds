@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌿 Le Potager des Brauds</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">🌿</span>
+                <div>
+                    <h1>Le Potager des Brauds</h1>
+                    <p class="subtitle">Votre jardin connecté</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-icon" id="calendarBtn" title="Calendrier">
+                    <i class="fas fa-calendar-alt"></i>
+                </button>
+                <button class="btn btn-icon" id="reminderBtn" title="Rappels">
+                    <i class="fas fa-bell"></i>
+                </button>
+                <div class="user-info" id="userInfo">
+                    <img src="" alt="Avatar" class="user-avatar" id="userAvatar">
+                    <span id="userName">Connexion...</span>
+                </div>
+                <button class="btn btn-logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <div class="login-logo">🌿</div>
+            <h2>Le Potager des Brauds</h2>
+            <p>Connectez-vous pour accéder à votre jardin</p>
+            <button class="btn btn-google" id="loginBtn">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                Continuer avec Google
+            </button>
+        </div>
+    </div>
+
+    <!-- APP MAIN -->
+    <main class="app-main" id="appMain" style="display:none">
+
+        <!-- ZONES SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-map"></i> Mes Zones</h3>
+                <button class="btn btn-add-zone" id="addZoneBtn">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+            <ul class="zones-list" id="zonesList">
+                <!-- Zones générées dynamiquement -->
+            </ul>
+            <div class="sidebar-stats">
+                <h4>📊 Stats</h4>
+                <div class="stat-item">
+                    <span>Total plantes</span>
+                    <strong id="totalPlants">0</strong>
+                </div>
+                <div class="stat-item">
+                    <span>Zones actives</span>
+                    <strong id="totalZones">0</strong>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+
+            <!-- ZONE HEADER -->
+            <div class="zone-header" id="zoneHeader" style="display:none">
+                <div class="zone-title-area">
+                    <span class="zone-color-dot" id="zoneColorDot"></span>
+                    <h2 id="zoneName">Sélectionnez une zone</h2>
+                    <button class="btn btn-icon-sm" id="editZoneBtn" title="Modifier la zone">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                    <button class="btn btn-icon-sm btn-danger" id="deleteZoneBtn" title="Supprimer la zone">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="zone-controls">
+                    <label>Colonnes: <input type="number" id="gridCols" min="1" max="20" value="5" class="grid-input"></label>
+                    <label>Rangées: <input type="number" id="gridRows" min="1" max="20" value="5" class="grid-input"></label>
+                    <button class="btn btn-primary" id="applyGridBtn">
+                        <i class="fas fa-th"></i> Appliquer
+                    </button>
+                </div>
+            </div>
+
+            <!-- WELCOME MESSAGE -->
+            <div class="welcome-msg" id="welcomeMsg">
+                <div class="welcome-icon">🌱</div>
+                <h3>Bienvenue dans votre potager !</h3>
+                <p>Créez votre première zone en cliquant sur <strong>+</strong> dans le panneau de gauche</p>
+            </div>
+
+            <!-- GRID CONTAINER -->
+            <div class="grid-container" id="gridContainer">
+                <!-- Grille générée dynamiquement -->
+            </div>
+
+            <!-- LEGEND -->
+            <div class="legend" id="legend" style="display:none">
+                <h4>🎨 Légende</h4>
+                <div class="legend-items" id="legendItems"></div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- MODAL PLANTE -->
+    <div class="modal-overlay" id="plantModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Ajouter une plante</h3>
+                <button class="btn-close" id="closeModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>🌿 Nom de la plante *</label>
+                    <input type="text" id="plantName" placeholder="Ex: Tomate cerise" class="form-control">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>🏷️ Variété</label>
+                        <input type="text" id="plantVariety" placeholder="Ex: Cherry Roma" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>📅 Date de plantation</label>
+                        <input type="date" id="plantDate" class="form-control">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>🏷️ Type</label>
+                        <select id="plantType" class="form-control">
+                            <option value="legume">🥬 Légume</option>
+                            <option value="fruit">🍓 Fruit</option>
+                            <option value="herbe">🌿 Herbe aromatique</option>
+                            <option value="fleur">🌸 Fleur</option>
+                            <option value="arbre">🌳 Arbre/Arbuste</option>
+                            <option value="autre">🌱 Autre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>💧 Arrosage</label>
+                        <select id="plantWater" class="form-control">
+                            <option value="quotidien">Quotidien</option>
+                            <option value="2jours">Tous les 2 jours</option>
+                            <option value="semaine">1x par semaine</option>
+                            <option value="rarement">Rarement</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>📝 Notes</label>
+                    <textarea id="plantNotes" placeholder="Notes, observations..." class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>📸 Photo</label>
+                    <div class="photo-upload-area" id="photoUploadArea">
+                        <input type="file" id="plantPhoto" accept="image/*" capture="environment" style="display:none">
+                        <img id="photoPreview" src="" alt="" style="display:none">
+                        <div class="photo-placeholder" id="photoPlaceholder">
+                            <i class="fas fa-camera"></i>
+                            <span>Ajouter une photo</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group reminder-group">
+                    <label>🔔 Rappel</label>
+                    <div class="reminder-options">
+                        <input type="checkbox" id="reminderEnabled" class="checkbox">
+                        <label for="reminderEnabled">Activer un rappel</label>
+                    </div>
+                    <div class="reminder-detail" id="reminderDetail" style="display:none">
+                        <input type="date" id="reminderDate" class="form-control">
+                        <input type="text" id="reminderText" placeholder="Ex: Récolter les tomates" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="deletePlantBtn" style="display:none">
+                    <i class="fas fa-trash"></i> Supprimer
+                </button>
+                <button class="btn btn-secondary" id="cancelModal">Annuler</button>
+                <button class="btn btn-primary" id="savePlant">
+                    <i class="fas fa-save"></i> Sauvegarder
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ZONE -->
+    <div class="modal-overlay" id="zoneModal">
+        <div class="modal modal-sm">
+            <div class="modal-header">
+                <h3 id="zoneModalTitle">Nouvelle zone</h3>
+                <button class="btn-close" id="closeZoneModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>📍 Nom de la zone</label>
+                    <input type="text" id="zoneNameInput" placeholder="Ex: Potager principal" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>🎨 Couleur</label>
+                    <div class="color-picker" id="colorPicker">
+                        <div class="color-option selected" data-color="#4CAF50" style="background:#4CAF50"></div>
+                        <div class="color-option" data-color="#FF9800" style="background:#FF9800"></div>
+                        <div class="color-option" data-color="#2196F3" style="background:#2196F3"></div>
+                        <div class="color-option" data-color="#E91E63" style="background:#E91E63"></div>
+                        <div class="color-option" data-color="#9C27B0" style="background:#9C27B0"></div>
+                        <div class="color-option" data-color="#FF5722" style="background:#FF5722"></div>
+                        <div class="color-option" data-color="#795548" style="background:#795548"></div>
+                        <div class="color-option" data-color="#607D8B" style="background:#607D8B"></div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Colonnes</label>
+                        <input type="number" id="zoneColsInput" min="1" max="20" value="5" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Rangées</label>
+                        <input type="number" id="zoneRowsInput" min="1" max="20" value="5" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelZoneModal">Annuler</button>
+                <button class="btn btn-primary" id="saveZone">
+                    <i class="fas fa-save"></i> Créer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CALENDRIER -->
+    <div class="modal-overlay" id="calendarModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3>📅 Calendrier du potager</h3>
+                <button class="btn-close" id="closeCalendarModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="calendar-nav">
+                    <button class="btn btn-icon" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                    <h4 id="calendarMonthYear"></h4>
+                    <button class="btn btn-icon" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="calendar-grid" id="calendarGrid"></div>
+                <div class="calendar-events" id="calendarEvents">
+                    <h4>📌 Événements du mois</h4>
+                    <ul id="eventsList"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL RAPPELS -->
+    <div class="modal-overlay" id="remindersModal">
+        <div class="modal modal-md">
+            <div class="modal-header">
+                <h3>🔔 Mes Rappels</h3>
+                <button class="btn-close" id="closeRemindersModal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="remindersList" class="reminders-list">
+                    <p class="empty-msg">Aucun rappel pour le moment</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- SCRIPTS -->
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
