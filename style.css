@@ -98,7 +98,8 @@ body {
     border: 2px solid var(--primary-light);
     object-fit: cover;
     display: block;
-    background: #ccc;
+    background: var(--primary-light);
+    flex-shrink: 0;
 }
 
 /* ===== BUTTONS ===== */
@@ -214,7 +215,7 @@ body {
     border-radius: var(--radius-sm);
     transition: var(--transition);
 }
-.btn-close:hover { background: var(--bg); color: var(--text); }
+.btn-close:hover { background: #fee2e2; color: #e63946; }
 
 .btn-google {
     background: white;
@@ -325,6 +326,14 @@ body {
     height: 10px;
     border-radius: 50%;
     flex-shrink: 0;
+}
+
+.zone-plant-count {
+    margin-left: auto;
+    background: rgba(255,255,255,0.15);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.75rem;
 }
 
 .sidebar-stats {
@@ -536,12 +545,12 @@ body {
 
 .grid-cell:hover .cell-add-icon { color: var(--primary-light); }
 
-/* ===== LEGEND PANEL ===== */
+/* ===== LEGEND PANEL (panneau plantes) ===== */
 #legendPanel {
     position: fixed;
-    right: 0;
     top: var(--header-height);
-    width: 280px;
+    right: 0;
+    width: 300px;
     max-height: calc(100vh - var(--header-height));
     overflow-y: auto;
     background: white;
@@ -550,7 +559,10 @@ body {
     z-index: 200;
     transform: translateX(100%);
     transition: transform 0.3s ease;
-    box-shadow: -4px 0 20px rgba(0,0,0,0.1);
+    box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 #legendPanel.open {
@@ -569,9 +581,9 @@ body {
     border-radius: 50px;
     padding: 12px 20px;
     font-size: 15px;
-    font-weight: bold;
+    font-weight: 800;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.35);
     font-family: 'Nunito', sans-serif;
     display: flex;
     align-items: center;
@@ -580,14 +592,14 @@ body {
 }
 #legendToggleBtn:hover { background: var(--primary); transform: translateY(-2px); }
 
-/* ===== LEGEND CONTENT ===== */
+/* ===== LEGEND PANEL HEADER ===== */
 .legend-panel-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
     padding-bottom: 10px;
     border-bottom: 2px solid var(--border);
+    flex-shrink: 0;
 }
 
 .legend-panel-header h4 {
@@ -596,24 +608,34 @@ body {
     font-weight: 800;
 }
 
+/* ===== FILTER BUTTONS ===== */
 .legend-filters {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-    margin-bottom: 12px;
+    flex-shrink: 0;
 }
 
 .filter-btn {
-    padding: 4px 10px;
+    padding: 5px 12px;
     border-radius: 20px;
     border: 2px solid var(--border);
     background: white;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 12px;
     font-family: 'Nunito', sans-serif;
     font-weight: 700;
     transition: var(--transition);
     color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.filter-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: #f0f7f0;
 }
 
 .filter-btn.active {
@@ -622,19 +644,17 @@ body {
     border-color: var(--primary);
 }
 
-.filter-btn:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-}
-
 .filter-btn.active:hover {
+    background: var(--primary-dark);
     color: white;
 }
 
+/* ===== PLANT LIBRARY GRID ===== */
 .plant-library-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
+    overflow-y: auto;
 }
 
 .plant-library-item {
@@ -653,6 +673,7 @@ body {
     border-color: var(--primary-light);
     background: #e8f5e2;
     transform: scale(1.03);
+    box-shadow: var(--shadow);
 }
 
 .plant-library-item:active { cursor: grabbing; }
@@ -660,10 +681,18 @@ body {
 .plant-lib-emoji { font-size: 1.6rem; display: block; margin-bottom: 4px; }
 .plant-lib-name { font-size: 0.72rem; font-weight: 800; color: var(--text); display: block; line-height: 1.2; }
 
-/* ===== LEGEND (in grid view) ===== */
-.legend { background: var(--bg-card); border-radius: var(--radius); padding: 20px 24px; box-shadow: var(--shadow); }
+/* ===== LEGEND (résumé sous la grille) ===== */
+.legend {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    box-shadow: var(--shadow);
+}
+
 .legend h4 { margin-bottom: 16px; color: var(--primary-dark); }
+
 .legend-items { display: flex; flex-wrap: wrap; gap: 12px; }
+
 .legend-item {
     display: flex;
     align-items: center;
@@ -675,6 +704,7 @@ body {
     font-weight: 700;
     cursor: grab;
 }
+
 .legend-color { width: 12px; height: 12px; border-radius: 50%; }
 
 /* ===== CONTEXT MENU ===== */
@@ -761,6 +791,7 @@ body {
 
 /* ===== FORM ===== */
 .form-group { margin-bottom: 16px; }
+
 .form-group label {
     display: block;
     font-weight: 700;
@@ -819,6 +850,14 @@ body {
     object-fit: cover;
 }
 
+.photo-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-light);
+}
+
 /* ===== COLOR PICKER ===== */
 .color-picker {
     display: flex;
@@ -846,7 +885,7 @@ body {
     margin-bottom: 16px;
 }
 
-.calendar-nav h4 { font-size: 1.1rem; color: var(--primary-dark); }
+.calendar-nav h4 { font-size: 1.1rem; color: var(--primary-dark); text-transform: capitalize; }
 
 .calendar-grid {
     display: grid;
@@ -855,7 +894,7 @@ body {
     margin-bottom: 20px;
 }
 
-.cal-header {
+.cal-header, .cal-day-header {
     text-align: center;
     font-size: 0.75rem;
     font-weight: 800;
@@ -875,9 +914,11 @@ body {
     cursor: pointer;
     transition: var(--transition);
     position: relative;
+    min-height: 36px;
 }
 
-.cal-day.empty { cursor: default; }
+.cal-day.empty { cursor: default; background: transparent; }
+.cal-day:not(.empty):not(.today) { background: var(--bg); }
 .cal-day:not(.empty):hover { background: var(--primary-light); color: white; }
 .cal-day.today { background: var(--primary); color: white; }
 .cal-day.has-event { background: #fff3cd; color: var(--text); }
@@ -885,14 +926,13 @@ body {
     content: '';
     position: absolute;
     bottom: 4px;
-    width: 6px;
-    height: 6px;
+    width: 6px; height: 6px;
     background: var(--accent);
     border-radius: 50%;
 }
-.cal-day:not(.empty):not(.today) { background: var(--bg); }
 
 .calendar-events h4 { margin-bottom: 12px; color: var(--primary-dark); }
+
 #eventsList { list-style: none; }
 #eventsList li {
     padding: 10px 14px;
@@ -920,6 +960,19 @@ body {
 .reminder-info h5 { font-size: 0.95rem; color: var(--text); margin-bottom: 4px; }
 .reminder-info p { font-size: 0.8rem; color: var(--text-light); }
 
+.reminder-options {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.reminder-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .empty-msg {
     text-align: center;
     color: var(--text-light);
@@ -938,6 +991,7 @@ body {
     flex-direction: column;
     gap: 10px;
     align-items: center;
+    pointer-events: none;
 }
 
 .toast {
@@ -984,20 +1038,21 @@ body {
     .cell-emoji { font-size: 1.5rem; }
     .cell-name { font-size: 0.55rem; }
     .form-row { grid-template-columns: 1fr; }
-
     #userName { display: none; }
 
-    /* Legend panel en bas sur tablette/mobile */
+    /* Panel plantes → tiroir bas sur mobile */
     #legendPanel {
         width: 100%;
-        height: 55vh;
+        height: 60vh;
         top: auto;
         bottom: 0;
         right: 0;
+        left: 0;
         border-left: none;
         border-top: 2px solid var(--border);
-        transform: translateY(100%);
         border-radius: var(--radius) var(--radius) 0 0;
+        transform: translateY(100%);
+        transition: transform 0.3s ease;
     }
 
     #legendPanel.open {
@@ -1058,5 +1113,9 @@ body {
 
     .plant-library-grid {
         grid-template-columns: repeat(3, 1fr);
+    }
+
+    #legendPanel {
+        height: 65vh;
     }
 }
