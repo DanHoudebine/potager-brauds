@@ -14,6 +14,23 @@ let currentUser = null;
 let calendarDate = new Date();
 let selectedColor = '#4CAF50';
 
+function deleteZone() {
+    if (!state.currentZoneId) return;
+    const zone = getZone(state.currentZoneId);
+    if (!zone) return;
+    if (!confirm(`Supprimer la zone "${zone.name}" et toutes ses plantes ?`)) return;
+    
+    dbRef().child(`zones/${state.currentZoneId}`).remove()
+        .then(() => {
+            state.currentZoneId = null;
+            document.getElementById('zoneHeader').style.display = 'none';
+            document.getElementById('welcomeMsg').style.display = 'flex';
+            document.getElementById('gridContainer').innerHTML = '';
+            showToast('Zone supprimée 🗑️', 'info');
+        })
+        .catch(err => showToast('Erreur: ' + err.message, 'error'));
+}
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', () => {
     bindEvents();
@@ -31,22 +48,6 @@ function initAuth() {
             showLogin();
         }
     });
-}
-function deleteZone() {
-    if (!state.currentZoneId) return;
-    const zone = getZone(state.currentZoneId);
-    if (!zone) return;
-    if (!confirm(`Supprimer la zone "${zone.name}" et toutes ses plantes ?`)) return;
-    
-    dbRef().child(`zones/${state.currentZoneId}`).remove()
-        .then(() => {
-            state.currentZoneId = null;
-            document.getElementById('zoneHeader').style.display = 'none';
-            document.getElementById('welcomeMsg').style.display = 'flex';
-            document.getElementById('gridContainer').innerHTML = '';
-            showToast('Zone supprimée 🗑️', 'info');
-        })
-        .catch(err => showToast('Erreur: ' + err.message, 'error'));
 }
 
 function showLogin() {
@@ -812,7 +813,7 @@ function bindEvents() {
         const zone = getZone(state.currentZoneId);
         if (zone) openZoneModal(zone);
     });
-    document.getElementById('deleteZoneBtn').addEventListener('click', deleteZone);
+    document.getElementById('deleteZoneBtn').addEventListener('click', () => deleteZone());
     document.getElementById('applyGridBtn').addEventListener('click', applyGrid);
 
     // Plant modal
