@@ -1225,18 +1225,6 @@ function applyRectStamp(startRow, startCol) {
     showToast(`✅ ${count} cellules remplies dans la zone !`, 'success');
 }
 
-if (plant) {
-    const emoji = getPlantEmoji(plant);
-    cell.innerHTML = `
-        <div style="font-size:20px;">${emoji}</div>
-        <div style="font-size:9px; color:#333; text-align:center; line-height:1.2; margin-top:2px;">
-            ${plant.name}
-        </div>
-    `;
-    cell.style.background = '#f0faf4';
-    cell.style.border = `2px solid ${zone.color || '#2d6a4f'}`;
-}
-
 function stampColumn(row, col) {
     closeContextMenu();
     const zone = getCurrentZone();
