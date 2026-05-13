@@ -301,8 +301,14 @@ function renderLegend(zone) {
 
 function toggleLegend() {
     const panel = document.getElementById('legendPanel');
-    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    if (panel.style.display === 'none' || panel.style.display === '') {
+        panel.style.display = 'block';
+        renderLegend(getZone(state.currentZoneId));
+    } else {
+        panel.style.display = 'none';
+    }
 }
+
 
 // ===== PLANT MODAL =====
 function openPlantModal(row, col) {
