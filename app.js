@@ -936,56 +936,7 @@ function exportPDF() {
     }
     content.appendChild(gridDiv);
 
-    // Légende
-    const plants = {};
-    if (zone.plants) {
-        Object.values(zone.plants).forEach(p => {
-            if (p && p.name) {
-                const key = p.name;
-                if (!plants[key]) plants[key] = { ...p, count: 0 };
-                plants[key].count++;
-            }
-        });
-    }
-
-    if (Object.keys(plants).length > 0) {
-        const legend = document.createElement('div');
-        legend.innerHTML = `<h3 style="color:#2d6a4f; border-bottom: 2px solid #2d6a4f; padding-bottom:5px;">📋 Légende des plantes</h3>`;
-        
-        const table = document.createElement('table');
-        table.style.width = '100%';
-        table.style.borderCollapse = 'collapse';
-        table.style.fontSize = '12px';
-
-        table.innerHTML = `
-            <thead>
-                <tr style="background:#2d6a4f; color:white;">
-                    <th style="padding:8px; text-align:left;">Plante</th>
-                    <th style="padding:8px; text-align:left;">Variété</th>
-                    <th style="padding:8px; text-align:left;">Type</th>
-                    <th style="padding:8px; text-align:center;">Quantité</th>
-                </tr>
-            </thead>
-        `;
-
-        const tbody = document.createElement('tbody');
-        Object.values(plants).forEach((p, i) => {
-            const tr = document.createElement('tr');
-            tr.style.backgroundColor = i % 2 === 0 ? '#f9f9f9' : 'white';
-            tr.innerHTML = `
-                <td style="padding:6px 8px;">${getPlantEmoji(p)} ${p.name}</td>
-                <td style="padding:6px 8px; color:#666;">${p.variety || '—'}</td>
-                <td style="padding:6px 8px; color:#666;">${p.type || '—'}</td>
-                <td style="padding:6px 8px; text-align:center; font-weight:bold;">${p.count}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-
-        table.appendChild(tbody);
-        legend.appendChild(table);
-        content.appendChild(legend);
-    }
-
+  
     // Options PDF
     const options = {
         margin: 10,
