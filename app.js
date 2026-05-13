@@ -116,7 +116,6 @@ function selectZone(id) {
 function renderZone(zone) {
     document.getElementById('welcomeMsg').style.display = 'none';
     document.getElementById('zoneHeader').style.display = 'flex';
-    document.getElementById('legend').style.display = 'flex';
 
     document.getElementById('zoneName').textContent = zone.name;
     document.getElementById('zoneColorDot').style.background = zone.color;
