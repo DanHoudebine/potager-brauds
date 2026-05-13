@@ -316,40 +316,48 @@ function renderLegend(zone) {
         if (p && p.name && !unique[p.name]) unique[p.name] = p;
     });
 
-    if (Object.keys(unique).length === 0) {
-        const empty = document.createElement('div');
-        empty.style.cssText = 'color:#aaa; font-size:12px; font-style:italic;';
-        empty.textContent = 'Aucune plante placée pour l\'instant';
-        items.appendChild(empty);
-        return;
-    }
+       // Grouper par type
+    const byType = {};
+    Object.values(unique).forEach(p => {
+        const t = p.type || 'autre';
+        if (!byType[t]) byType[t] = [];
+        byType[t].push(p);
+    });
 
-    Object.values(unique).forEach(plant => {
-        const div = document.createElement('div');
-        div.className = 'legend-item';
-        div.draggable = true;
-        div.style.cssText = `
-            cursor: grab;
-            padding: 6px 10px;
-            border-radius: 8px;
-            border: 2px solid #ddd;
-            background: white;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-        `;
+    const typeLabels = {
+        legume: '🥬 Légumes', fruit: '🍓 Fruits', herbe: '🌿 Herbes',
+        fleur: '🌸 Fleurs', arbre: '🌳 Arbres', autre: '🌱 Autres'
+    };
 
-        const emoji = getPlantEmoji(plant);
-        div.innerHTML = `${emoji} <strong>${plant.name}</strong>${plant.variety ? ` <span style="color:#888;font-size:11px;">${plant.variety}</span>` : ''}`;
+    Object.entries(byType).forEach(([type, plants]) => {
+        // Titre de catégorie
+        const catTitle = document.createElement('div');
+        catTitle.style.cssText = 'font-size:12px; font-weight:bold; color:#52b788; margin:8px 0 4px;';
+        catTitle.textContent = typeLabels[type] || type;
+        items.appendChild(catTitle);
 
-        div.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('plant', JSON.stringify(plant));
-            div.style.opacity = '0.5';
+        // Plantes de cette catégorie
+        plants.forEach(plant => {
+            const div = document.createElement('div');
+            div.className = 'legend-item';
+            div.draggable = true;
+            div.style.cssText = `
+                cursor: grab; padding: 6px 10px; border-radius: 8px;
+                border: 2px solid #ddd; background: white;
+                display: flex; align-items: center; gap: 6px; font-size: 13px;
+            `;
+
+            const emoji = getPlantEmoji(plant);
+            div.innerHTML = `${emoji} <strong>${plant.name}</strong>${plant.variety ? ` <span style="color:#888;font-size:11px;">${plant.variety}</span>` : ''}`;
+
+            div.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('plant', JSON.stringify(plant));
+                div.style.opacity = '0.5';
+            });
+            div.addEventListener('dragend', () => { div.style.opacity = '1'; });
+
+            items.appendChild(div);
         });
-        div.addEventListener('dragend', () => { div.style.opacity = '1'; });
-
-        items.appendChild(div);
     });
 }
 
