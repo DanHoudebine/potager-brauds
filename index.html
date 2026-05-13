@@ -344,7 +344,24 @@
     </div>
     <div class="plant-library-grid" id="plantPalette"></div>
 </div>
-
+<div id="legendPanel" style="
+    position: fixed;
+    right: 20px;
+    bottom: 80px;
+    z-index: 250;
+    background: white;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    max-height: 60vh;
+    overflow-y: auto;
+    width: 320px;
+    max-width: calc(100vw - 40px);
+    display: none;
+">
+    <h4 style="margin:0 0 12px; color:#2d6a4f;">🌿 Bibliothèque de plantes</h4>
+    <div id="legendItems"></div>
+</div>
 <!-- LEGEND BUTTON -->
 <button id="legendToggleBtn" onclick="toggleLegend()">🌿 Plantes</button>
 
