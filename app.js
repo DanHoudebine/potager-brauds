@@ -862,6 +862,18 @@ function bindEvents() {
     // Photo upload
     initPhotoUpload();
 }
+function saveData() {
+    const zone = getCurrentZone();
+    if (!zone) return;
+    
+    dbRef().child(`zones/${state.currentZoneId}`).set(zone)
+        .then(() => {
+            renderZone(zone);
+            updateStats();
+        })
+        .catch(err => showToast('Erreur sauvegarde: ' + err.message, 'error'));
+}
+
 function exportPDF() {
     const zone = getCurrentZone();
     if (!zone) return;
@@ -880,17 +892,6 @@ function exportPDF() {
             Grille ${zone.cols} × ${zone.rows} — Imprimé le ${new Date().toLocaleDateString('fr-FR')}
         </p>
     `;
-function saveData() {
-    const zone = getCurrentZone();
-    if (!zone) return;
-    
-    dbRef().child(`zones/${state.currentZoneId}`).set(zone)
-        .then(() => {
-            renderZone(zone);
-            updateStats();
-        })
-        .catch(err => showToast('Erreur sauvegarde: ' + err.message, 'error'));
-}
 
     // Grille
     const gridDiv = document.createElement('div');
