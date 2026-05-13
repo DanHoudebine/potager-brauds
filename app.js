@@ -14,6 +14,7 @@ let currentUser = null;
 let calendarDate = new Date();
 let selectedColor = '#4CAF50';
 
+// ===== ZONE DELETE =====
 function deleteZone() {
     if (!state.currentZoneId) return;
     const zone = getZone(state.currentZoneId);
