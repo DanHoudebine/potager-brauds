@@ -7,9 +7,22 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
+
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="loginScreen" style="display:none">
+        <div class="login-card">
+            <div class="login-logo">🌿</div>
+            <h2>Le Potager des Brauds</h2>
+            <p>Connectez-vous pour accéder à votre jardin</p>
+            <button class="btn btn-google" id="loginBtn">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                Continuer avec Google
+            </button>
+        </div>
+    </div>
 
     <!-- HEADER -->
     <header class="header">
@@ -36,43 +49,8 @@
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
             </div>
-<!-- LEGEND PANEL - HORS DE TOUT AUTRE DIV -->
-<div id="legendPanel">
-    <div id="legendItems"></div>
-</div>
-
-<button onclick="toggleLegend()" style="
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    z-index: 300;
-    background: #2d6a4f;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 16px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: bold;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-">🌿 Plantes</button>
-</body>
-
         </div>
     </header>
-
-    <!-- LOGIN SCREEN -->
-    <div class="login-screen" id="loginScreen">
-        <div class="login-card">
-            <div class="login-logo">🌿</div>
-            <h2>Le Potager des Brauds</h2>
-            <p>Connectez-vous pour accéder à votre jardin</p>
-            <button class="btn btn-google" id="loginBtn">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
-                Continuer avec Google
-            </button>
-        </div>
-    </div>
 
     <!-- APP MAIN -->
     <main class="app-main" id="appMain" style="display:none">
@@ -85,9 +63,7 @@
                     <i class="fas fa-plus"></i>
                 </button>
             </div>
-            <ul class="zones-list" id="zonesList">
-                <!-- Zones générées dynamiquement -->
-            </ul>
+            <ul class="zones-list" id="zonesList"></ul>
             <div class="sidebar-stats">
                 <h4>📊 Stats</h4>
                 <div class="stat-item">
@@ -104,47 +80,48 @@
         <!-- MAIN CONTENT -->
         <div class="main-content">
 
-  <!-- ZONE HEADER - CORRIGÉ -->
-<div class="zone-header" id="zoneHeader" style="display:none">
-    <div class="zone-title-area">
-        <span class="zone-color-dot" id="zoneColorDot"></span>
-        <h2 id="zoneName">Sélectionnez une zone</h2>
-        <button class="btn btn-icon-sm" id="editZoneBtn" title="Modifier la zone">
-            <i class="fas fa-pen"></i>
-        </button>
-        <button onclick="exportPDF()" class="btn-pdf">📄 Exporter PDF</button>
-        <button class="btn btn-icon-sm btn-danger" id="deleteZoneBtn" title="Supprimer">
-            <i class="fas fa-trash"></i>
-        </button>
-    </div>
-    <div class="zone-controls">
-        <label>Colonnes: <input type="number" id="gridCols" min="1" max="20" value="5" class="grid-input"></label>
-        <label>Rangées: <input type="number" id="gridRows" min="1" max="20" value="5" class="grid-input"></label>
-        <button class="btn btn-primary" id="applyGridBtn">
-            <i class="fas fa-th"></i> Appliquer
-        </button>
-    </div>
-</div>
+            <!-- ZONE HEADER -->
+            <div class="zone-header" id="zoneHeader" style="display:none">
+                <div class="zone-title-area">
+                    <span class="zone-color-dot" id="zoneColorDot"></span>
+                    <h2 id="zoneName">Sélectionnez une zone</h2>
+                    <button class="btn btn-icon-sm" id="editZoneBtn" title="Modifier la zone">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                    <button onclick="exportPDF()" class="btn-pdf">
+                        <i class="fas fa-file-pdf"></i> Exporter PDF
+                    </button>
+                    <button class="btn btn-icon-sm btn-danger" id="deleteZoneBtn" title="Supprimer">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                <div class="zone-controls">
+                    <label>Colonnes: <input type="number" id="gridCols" min="1" max="20" value="5" class="grid-input"></label>
+                    <label>Rangées: <input type="number" id="gridRows" min="1" max="20" value="5" class="grid-input"></label>
+                    <button class="btn btn-primary" id="applyGridBtn">
+                        <i class="fas fa-th"></i> Appliquer
+                    </button>
+                </div>
+            </div>
 
-<!-- WELCOME -->
-<div class="welcome-msg" id="welcomeMsg">
-    <div class="welcome-icon">🌱</div>
-    <h3>Bienvenue dans votre potager !</h3>
-    <p>Créez votre première zone en cliquant sur <strong>+</strong> dans le panneau de gauche</p>
-</div>
+            <!-- WELCOME MESSAGE -->
+            <div class="welcome-msg" id="welcomeMsg">
+                <div class="welcome-icon">🌱</div>
+                <h3>Bienvenue dans votre potager !</h3>
+                <p>Créez votre première zone en cliquant sur <strong>+</strong> dans le panneau de gauche</p>
+            </div>
 
-<!-- GRID -->
-<div class="grid-container" id="gridContainer"></div>
+            <!-- GRID CONTAINER -->
+            <div class="grid-container" id="gridContainer"></div>
 
+        </div>
+    </main>
 
     <!-- MODAL PLANTE -->
     <div class="modal-overlay" id="plantModal">
         <div class="modal">
             <div class="modal-header">
                 <h3 id="plantModalTitle">Ajouter une plante</h3>
-<button id="deletePlantBtn" onclick="deletePlant()" style="display:none" class="btn btn-danger">
-    🗑️ Supprimer
-</button>
                 <button class="btn-close" id="closeModal"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
@@ -222,36 +199,6 @@
             </div>
         </div>
     </div>
-<button onclick="toggleLegend()" style="
-    position: fixed;
-    right: 20px;
-    top: 70px;
-    z-index: 300;
-    background: #2d6a4f;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 12px;
-    cursor: pointer;
-">🌿</button>
-
-<button id="legendToggleBtn" onclick="toggleLegend()" style="
-    display: none;
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 200;
-    background: #2d6a4f;
-    color: white;
-    border: none;
-    border-radius: 50px;
-    padding: 12px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-">
-    🌿 Plantes
-</button>
 
     <!-- MODAL ZONE -->
     <div class="modal-overlay" id="zoneModal">
@@ -335,15 +282,36 @@
         </div>
     </div>
 
+    <!-- LEGEND PANEL -->
+    <div id="legendPanel" style="display:none; position:fixed; right:20px; bottom:80px; z-index:250; background:white; border-radius:16px; padding:16px; box-shadow:0 8px 30px rgba(0,0,0,0.2); max-height:60vh; overflow-y:auto; min-width:200px;">
+        <div id="legendItems"></div>
+    </div>
+
+    <!-- LEGEND BUTTON -->
+    <button onclick="toggleLegend()" style="
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        z-index: 300;
+        background: #2d6a4f;
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 12px 20px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    ">🌿 Plantes</button>
+
     <!-- TOAST NOTIFICATIONS -->
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- SCRIPTS -->
-<!-- APRÈS -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-<script src="firebase-config.js"></script>
-<script src="app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
