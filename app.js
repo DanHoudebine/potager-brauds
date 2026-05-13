@@ -33,15 +33,20 @@ function initAuth() {
     });
 }
 function deleteZone() {
-    if (!confirm('Supprimer cette zone et toutes ses plantes ?')) return;
+    if (!state.currentZoneId) return;
+    const zone = getZone(state.currentZoneId);
+    if (!zone) return;
+    if (!confirm(`Supprimer la zone "${zone.name}" et toutes ses plantes ?`)) return;
+    
     dbRef().child(`zones/${state.currentZoneId}`).remove()
         .then(() => {
             state.currentZoneId = null;
             document.getElementById('zoneHeader').style.display = 'none';
             document.getElementById('welcomeMsg').style.display = 'flex';
             document.getElementById('gridContainer').innerHTML = '';
-            showToast('Zone supprimée', 'info');
-        });
+            showToast('Zone supprimée 🗑️', 'info');
+        })
+        .catch(err => showToast('Erreur: ' + err.message, 'error'));
 }
 
 function showLogin() {
