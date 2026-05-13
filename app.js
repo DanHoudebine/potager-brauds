@@ -564,19 +564,6 @@ function saveZoneModal() {
     }
 }
 
-function deleteZone() {
-    if (!confirm('Supprimer cette zone et toutes ses plantes ?')) return;
-    dbRef().child(`zones/${state.currentZoneId}`).remove()
-        .then(() => {
-            state.currentZoneId = null;
-            document.getElementById('zoneHeader').style.display = 'none';
-            document.getElementById('welcomeMsg').style.display = 'flex';
-            document.getElementById('gridContainer').innerHTML = '';
-            document.getElementById('legend').style.display = 'none';
-            showToast('Zone supprimée', 'info');
-        });
-}
-
 function applyGrid() {
     const zone = getCurrentZone();
     if (!zone) return;
