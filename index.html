@@ -41,11 +41,11 @@
                 <button class="btn btn-icon" id="reminderBtn" title="Rappels">
                     <i class="fas fa-bell"></i>
                 </button>
-                <div class="user-info" id="userInfo">
+                <div class="user-info" id="userInfo" style="display:none">
                     <img src="" alt="Avatar" class="user-avatar" id="userAvatar">
                     <span id="userName">Connexion...</span>
                 </div>
-                <button class="btn btn-logout" id="logoutBtn">
+                <button class="btn btn-logout" id="logoutBtn" style="display:none">
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
             </div>
@@ -59,7 +59,7 @@
         <aside class="sidebar">
             <div class="sidebar-header">
                 <h3><i class="fas fa-map"></i> Mes Zones</h3>
-                <button class="btn btn-add-zone" id="addZoneBtn">
+                <button class="btn btn-add-zone" id="addZoneBtn" title="Ajouter une zone">
                     <i class="fas fa-plus"></i>
                 </button>
             </div>
@@ -75,6 +75,22 @@
                     <strong id="totalZones">0</strong>
                 </div>
             </div>
+
+            <!-- PALETTE BIBLIOTHÈQUE -->
+            <div class="library-section">
+                <div class="library-header">
+                    <h4><i class="fas fa-seedling"></i> Bibliothèque</h4>
+                </div>
+                <div class="filter-btns">
+                    <button class="filter-btn active" onclick="filterLibrary('all', this)">Tous</button>
+                    <button class="filter-btn" onclick="filterLibrary('legume', this)">🥬</button>
+                    <button class="filter-btn" onclick="filterLibrary('fruit', this)">🍓</button>
+                    <button class="filter-btn" onclick="filterLibrary('herbe', this)">🌿</button>
+                    <button class="filter-btn" onclick="filterLibrary('fleur', this)">🌸</button>
+                    <button class="filter-btn" onclick="filterLibrary('arbre', this)">🌳</button>
+                </div>
+                <div class="plant-palette" id="plantPalette"></div>
+            </div>
         </aside>
 
         <!-- MAIN CONTENT -->
@@ -85,19 +101,24 @@
                 <div class="zone-title-area">
                     <span class="zone-color-dot" id="zoneColorDot"></span>
                     <h2 id="zoneName">Sélectionnez une zone</h2>
+                    <span class="zone-size-badge" id="zoneSize"></span>
                     <button class="btn btn-icon-sm" id="editZoneBtn" title="Modifier la zone">
                         <i class="fas fa-pen"></i>
                     </button>
-                    <button onclick="exportPDF()" class="btn-pdf">
-                        <i class="fas fa-file-pdf"></i> Exporter PDF
+                    <button onclick="exportPDF()" class="btn btn-pdf" title="Exporter en PDF">
+                        <i class="fas fa-file-pdf"></i> PDF
                     </button>
-                    <button class="btn btn-icon-sm btn-danger" id="deleteZoneBtn" title="Supprimer">
+                    <button class="btn btn-icon-sm btn-danger" id="deleteZoneBtn" title="Supprimer la zone">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
                 <div class="zone-controls">
-                    <label>Colonnes: <input type="number" id="gridCols" min="1" max="20" value="5" class="grid-input"></label>
-                    <label>Rangées: <input type="number" id="gridRows" min="1" max="20" value="5" class="grid-input"></label>
+                    <label>Colonnes:
+                        <input type="number" id="gridCols" min="1" max="20" value="5" class="grid-input">
+                    </label>
+                    <label>Rangées:
+                        <input type="number" id="gridRows" min="1" max="20" value="5" class="grid-input">
+                    </label>
                     <button class="btn btn-primary" id="applyGridBtn">
                         <i class="fas fa-th"></i> Appliquer
                     </button>
@@ -168,9 +189,9 @@
                 <div class="form-group">
                     <label>📸 Photo</label>
                     <div class="photo-upload-area" id="photoUploadArea">
-                        <input type="file" id="plantPhoto" accept="image/*" capture="environment" style="display:none">
-                        <img id="photoPreview" src="" alt="" style="display:none">
-                        <div class="photo-placeholder" id="photoPlaceholder">
+                        <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none">
+                        <img id="photoPreview" src="" alt="Photo plante" style="display:none; width:100%; border-radius:8px; cursor:pointer;">
+                        <div class="photo-placeholder" id="photoPlaceholder" style="cursor:pointer;">
                             <i class="fas fa-camera"></i>
                             <span>Ajouter une photo</span>
                         </div>
@@ -210,7 +231,8 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label>📍 Nom de la zone</label>
-                    <input type="text" id="zoneNameInput" placeholder="Ex: Potager principal" class="form-control">
+                    <!-- ID corrigé : zoneName_input dans app.js -->
+                    <input type="text" id="zoneName_input" placeholder="Ex: Potager principal" class="form-control">
                 </div>
                 <div class="form-group">
                     <label>🎨 Couleur</label>
@@ -228,11 +250,13 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>Colonnes</label>
-                        <input type="number" id="zoneColsInput" min="1" max="20" value="5" class="form-control">
+                        <!-- ID corrigé : zoneCols dans app.js -->
+                        <input type="number" id="zoneCols" min="1" max="20" value="5" class="form-control">
                     </div>
                     <div class="form-group">
                         <label>Rangées</label>
-                        <input type="number" id="zoneRowsInput" min="1" max="20" value="5" class="form-control">
+                        <!-- ID corrigé : zoneRows dans app.js -->
+                        <input type="number" id="zoneRows" min="1" max="20" value="5" class="form-control">
                     </div>
                 </div>
             </div>
@@ -255,7 +279,8 @@
             <div class="modal-body">
                 <div class="calendar-nav">
                     <button class="btn btn-icon" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
-                    <h4 id="calendarMonthYear"></h4>
+                    <!-- ID corrigé : calendarTitle dans app.js -->
+                    <h4 id="calendarTitle"></h4>
                     <button class="btn btn-icon" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
                 </div>
                 <div class="calendar-grid" id="calendarGrid"></div>
@@ -283,35 +308,53 @@
     </div>
 
     <!-- LEGEND PANEL -->
-    <div id="legendPanel" style="display:none; position:fixed; right:20px; bottom:80px; z-index:250; background:white; border-radius:16px; padding:16px; box-shadow:0 8px 30px rgba(0,0,0,0.2); max-height:60vh; overflow-y:auto; min-width:200px;">
+    <div id="legendPanel" style="
+        display:none;
+        position:fixed;
+        right:20px;
+        bottom:80px;
+        z-index:250;
+        background:white;
+        border-radius:16px;
+        padding:16px;
+        box-shadow:0 8px 30px rgba(0,0,0,0.2);
+        max-height:60vh;
+        overflow-y:auto;
+        min-width:200px;
+    ">
+        <!-- ID corrigé : legendPanel est le container direct dans app.js -->
+        <h4 style="margin:0 0 12px; color:#2d6a4f;">🌿 Légende</h4>
         <div id="legendItems"></div>
     </div>
 
     <!-- LEGEND BUTTON -->
     <button onclick="toggleLegend()" style="
-        position: fixed;
-        right: 20px;
-        bottom: 20px;
-        z-index: 300;
-        background: #2d6a4f;
-        color: white;
-        border: none;
-        border-radius: 50px;
-        padding: 12px 20px;
-        font-size: 15px;
-        font-weight: bold;
-        cursor: pointer;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        position:fixed;
+        right:20px;
+        bottom:20px;
+        z-index:300;
+        background:#2d6a4f;
+        color:white;
+        border:none;
+        border-radius:50px;
+        padding:12px 20px;
+        font-size:15px;
+        font-weight:bold;
+        cursor:pointer;
+        box-shadow:0 4px 12px rgba(0,0,0,0.3);
     ">🌿 Plantes</button>
 
     <!-- TOAST NOTIFICATIONS -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- SCRIPTS -->
+    <!-- FIREBASE -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script src="firebase-config.js"></script>
+    <!-- PLANT LIBRARY doit être chargée avant app.js -->
+    <script src="plants.js"></script>
     <script src="app.js"></script>
+
 </body>
 </html>
