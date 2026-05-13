@@ -36,10 +36,26 @@
                     <i class="fas fa-sign-out-alt"></i>
                 </button>
             </div>
-    <div id="legendPanel">
-        <div id="legendItems"></div>
-    </div>
-    <button onclick="toggleLegend()" ...>🌿</button>
+<!-- LEGEND PANEL - HORS DE TOUT AUTRE DIV -->
+<div id="legendPanel">
+    <div id="legendItems"></div>
+</div>
+
+<button onclick="toggleLegend()" style="
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 300;
+    background: #2d6a4f;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+">🌿 Plantes</button>
 </body>
 
         </div>
@@ -88,44 +104,38 @@
         <!-- MAIN CONTENT -->
         <div class="main-content">
 
-            <!-- ZONE HEADER -->
-            <div class="zone-header" id="zoneHeader" style="display:none">
-                <div class="zone-title-area">
-                    <span class="zone-color-dot" id="zoneColorDot"></span>
-                    <h2 id="zoneName">Sélectionnez une zone</h2>
-                    <button class="btn btn-icon-sm" id="editZoneBtn" title="Modifier la zone">
-                        <i class="fas fa-pen"></i>
-                    </button>
-<button onclick="exportPDF()" class="btn-pdf">📄 Exporter PDF</button>
-                    <button class="btn btn-icon-sm btn-danger" id="deleteZoneBtn" title="Supprimer la zone">
-                        <i class="fas fa-trash"></i>
-                    </button>
-    <div id="legendItems"></div>
+  <!-- ZONE HEADER - CORRIGÉ -->
+<div class="zone-header" id="zoneHeader" style="display:none">
+    <div class="zone-title-area">
+        <span class="zone-color-dot" id="zoneColorDot"></span>
+        <h2 id="zoneName">Sélectionnez une zone</h2>
+        <button class="btn btn-icon-sm" id="editZoneBtn" title="Modifier la zone">
+            <i class="fas fa-pen"></i>
+        </button>
+        <button onclick="exportPDF()" class="btn-pdf">📄 Exporter PDF</button>
+        <button class="btn btn-icon-sm btn-danger" id="deleteZoneBtn" title="Supprimer">
+            <i class="fas fa-trash"></i>
+        </button>
+    </div>
+    <div class="zone-controls">
+        <label>Colonnes: <input type="number" id="gridCols" min="1" max="20" value="5" class="grid-input"></label>
+        <label>Rangées: <input type="number" id="gridRows" min="1" max="20" value="5" class="grid-input"></label>
+        <button class="btn btn-primary" id="applyGridBtn">
+            <i class="fas fa-th"></i> Appliquer
+        </button>
+    </div>
 </div>
 
-                </div>
-                <div class="zone-controls">
-                    <label>Colonnes: <input type="number" id="gridCols" min="1" max="20" value="5" class="grid-input"></label>
-                    <label>Rangées: <input type="number" id="gridRows" min="1" max="20" value="5" class="grid-input"></label>
-                    <button class="btn btn-primary" id="applyGridBtn">
-                        <i class="fas fa-th"></i> Appliquer
-                    </button>
-                </div>
-            </div>
+<!-- WELCOME -->
+<div class="welcome-msg" id="welcomeMsg">
+    <div class="welcome-icon">🌱</div>
+    <h3>Bienvenue dans votre potager !</h3>
+    <p>Créez votre première zone en cliquant sur <strong>+</strong> dans le panneau de gauche</p>
+</div>
 
-            <!-- WELCOME MESSAGE -->
-            <div class="welcome-msg" id="welcomeMsg">
-                <div class="welcome-icon">🌱</div>
-                <h3>Bienvenue dans votre potager !</h3>
-                <p>Créez votre première zone en cliquant sur <strong>+</strong> dans le panneau de gauche</p>
-            </div>
+<!-- GRID -->
+<div class="grid-container" id="gridContainer"></div>
 
-            <!-- GRID CONTAINER -->
-            <div class="grid-container" id="gridContainer">
-                <!-- Grille générée dynamiquement -->
-            </div>
-        </div>
-    </main>
 
     <!-- MODAL PLANTE -->
     <div class="modal-overlay" id="plantModal">
