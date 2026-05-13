@@ -32,6 +32,17 @@ function initAuth() {
         }
     });
 }
+function deleteZone() {
+    if (!confirm('Supprimer cette zone et toutes ses plantes ?')) return;
+    dbRef().child(`zones/${state.currentZoneId}`).remove()
+        .then(() => {
+            state.currentZoneId = null;
+            document.getElementById('zoneHeader').style.display = 'none';
+            document.getElementById('welcomeMsg').style.display = 'flex';
+            document.getElementById('gridContainer').innerHTML = '';
+            showToast('Zone supprimée', 'info');
+        });
+}
 
 function showLogin() {
     document.getElementById('loginScreen').style.display = 'flex';
