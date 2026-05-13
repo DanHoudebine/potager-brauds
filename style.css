@@ -1114,8 +1114,10 @@ body {
     .plant-library-grid {
         grid-template-columns: repeat(3, 1fr);
     }
+/* ===== LEGEND PANEL ===== */
+#legendPanel {
+    /* tout géré en inline dans le HTML */
+}
 
-    #legendPanel {
-        height: 65vh;
     }
 }
