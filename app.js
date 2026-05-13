@@ -305,7 +305,7 @@ function renderLegend(zone) {
     const items = document.getElementById('legendItems');
     items.innerHTML = '';
 
-    // ===== PALETTE BIBLIOTHÈQUE =====
+   // ===== PALETTE BIBLIOTHÈQUE =====
     const paletteSection = document.createElement('div');
     paletteSection.innerHTML = `
         <div style="font-weight:bold; color:#2d6a4f; margin-bottom:8px; font-size:13px;">
@@ -338,7 +338,7 @@ function renderLegend(zone) {
         if (p && p.name && !unique[p.name]) unique[p.name] = p;
     });
 
-       // Grouper par type
+    // Grouper par type
     const byType = {};
     Object.values(unique).forEach(p => {
         const t = p.type || 'autre';
@@ -352,13 +352,11 @@ function renderLegend(zone) {
     };
 
     Object.entries(byType).forEach(([type, plants]) => {
-        // Titre de catégorie
         const catTitle = document.createElement('div');
         catTitle.style.cssText = 'font-size:12px; font-weight:bold; color:#52b788; margin:8px 0 4px;';
         catTitle.textContent = typeLabels[type] || type;
         items.appendChild(catTitle);
 
-        // Plantes de cette catégorie
         plants.forEach(plant => {
             const div = document.createElement('div');
             div.className = 'legend-item';
@@ -378,6 +376,15 @@ function renderLegend(zone) {
             });
             div.addEventListener('dragend', () => { div.style.opacity = '1'; });
 
+            // Touch mobile légende
+            div.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                state.touchDragPlant = plant;
+                div.style.opacity = '0.5';
+                showToast(`${plant.emoji || ''} ${plant.name} sélectionné — touchez une case`, 'info');
+            }, { passive: false });
+            div.addEventListener('touchend', () => { div.style.opacity = '1'; });
+
             items.appendChild(div);
         });
     });
@@ -396,19 +403,12 @@ function renderPalette(filter) {
         btn.draggable = true;
         btn.title = plant.name;
         btn.style.cssText = `
-            width: 44px;
-            height: 44px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            border-radius: 10px;
-            border: 2px solid #eee;
-            background: white;
-            cursor: grab;
-            transition: all 0.2s;
-            position: relative;
+            width: 44px; height: 44px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            font-size: 22px; border-radius: 10px;
+            border: 2px solid #eee; background: white;
+            cursor: grab; transition: all 0.2s; position: relative;
         `;
         btn.innerHTML = `
             <span>${plant.emoji}</span>
@@ -425,41 +425,30 @@ function renderPalette(filter) {
             btn.style.background = 'white';
             btn.style.transform = 'scale(1)';
         });
-plantEl.setAttribute('draggable', true);
-plantEl.addEventListener('dragstart', (e) => {
-    e.dataTransfer.setData('plant', JSON.stringify(plant));
-});
 
-// Touch mobile
-plantEl.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    state.touchDragPlant = plant;
-    plantEl.style.opacity = '0.5';
-    showToast(`${plant.emoji} ${plant.name} sélectionné - touchez une case`, 'info');
-}, { passive: false });
-
-plantEl.addEventListener('touchend', () => {
-    plantEl.style.opacity = '1';
-});
-
-
-        // Drag & drop
+        // Drag desktop
         btn.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('plant', JSON.stringify({
-                name: plant.name,
-                emoji: plant.emoji,
-                type: plant.type,
-                variety: '',
-                water: 'semaine',
-                notes: '',
-                photo: '',
-                date: ''
+                name: plant.name, emoji: plant.emoji, type: plant.type,
+                variety: '', water: 'semaine', notes: '', photo: '', date: ''
             }));
             btn.style.opacity = '0.5';
         });
         btn.addEventListener('dragend', () => { btn.style.opacity = '1'; });
 
-        // Clic = place directement si cellule sélectionnée
+        // Touch mobile
+        btn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            state.touchDragPlant = {
+                name: plant.name, emoji: plant.emoji, type: plant.type,
+                variety: '', water: 'semaine', notes: '', photo: '', date: ''
+            };
+            btn.style.opacity = '0.5';
+            showToast(`${plant.emoji} ${plant.name} sélectionné — touchez une case`, 'info');
+        }, { passive: false });
+        btn.addEventListener('touchend', () => { btn.style.opacity = '1'; });
+
+        // Clic
         btn.addEventListener('click', () => {
             showToast(`${plant.emoji} ${plant.name} sélectionné — cliquez sur une cellule`, 'info');
             state.selectedPlantFromLibrary = { ...plant };
