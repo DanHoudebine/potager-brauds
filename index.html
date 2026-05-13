@@ -307,46 +307,10 @@
         </div>
     </div>
 
-    <!-- LEGEND PANEL -->
-    <div id="legendPanel" style="
-        display:none;
-        position:fixed;
-        right:350px;
-        bottom:80px;
-        z-index:250;
-        background:white;
-        border-radius:16px;
-        padding:16px;
-        box-shadow:0 8px 30px rgba(0,0,0,0.2);
-        max-height:60vh;
-        overflow-y:auto;
-        min-width:200px;
-    ">
-        <!-- ID corrigé : legendPanel est le container direct dans app.js -->
-        <h4 style="margin:0 0 12px; color:#2d6a4f;">🌿 Légende</h4>
-        <div id="legendItems"></div>
-    </div>
-
-
-<!-- LEGEND PANEL -->
-<div id="legendPanel">
-    <div class="legend-panel-header">
-        <h4>🌿 Bibliothèque de plantes</h4>
-        <button class="btn-close" onclick="toggleLegend()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="legend-filters" id="legendFilters">
-        <button class="filter-btn active" onclick="filterLibrary('all', this)">Tout</button>
-        <button class="filter-btn" onclick="filterLibrary('legume', this)">🥕 Légumes</button>
-        <button class="filter-btn" onclick="filterLibrary('fruit', this)">🍓 Fruits</button>
-        <button class="filter-btn" onclick="filterLibrary('herbe', this)">🌿 Herbes</button>
-        <button class="filter-btn" onclick="filterLibrary('fleur', this)">🌸 Fleurs</button>
-        <button class="filter-btn" onclick="filterLibrary('arbre', this)">🌳 Arbres</button>
-    </div>
-    <div class="plant-library-grid" id="plantPalette"></div>
-</div>
+  <!-- LEGEND PANEL -->
 <div id="legendPanel" style="
     position: fixed;
-    right: 350px;
+    left: 20px;
     bottom: 80px;
     z-index: 250;
     background: white;
@@ -356,13 +320,24 @@
     max-height: 60vh;
     overflow-y: auto;
     width: 320px;
-margin-right: 10px;
     max-width: calc(100vw - 40px);
     display: none;
 ">
-    <h4 style="margin:0 0 12px; color:#2d6a4f;">🌿 Bibliothèque de plantes</h4>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h4 style="margin:0; color:#2d6a4f;">🌿 Bibliothèque de plantes</h4>
+        <button onclick="toggleLegend()" style="background:none; border:none; cursor:pointer; font-size:18px;">✕</button>
+    </div>
+    <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;">
+        <button class="filter-btn active" onclick="filterLibrary('all', this)">Tout</button>
+        <button class="filter-btn" onclick="filterLibrary('legume', this)">🥕 Légumes</button>
+        <button class="filter-btn" onclick="filterLibrary('fruit', this)">🍓 Fruits</button>
+        <button class="filter-btn" onclick="filterLibrary('herbe', this)">🌿 Herbes</button>
+        <button class="filter-btn" onclick="filterLibrary('fleur', this)">🌸 Fleurs</button>
+        <button class="filter-btn" onclick="filterLibrary('arbre', this)">🌳 Arbres</button>
+    </div>
     <div id="legendItems"></div>
 </div>
+
 <!-- LEGEND BUTTON -->
 <button id="legendToggleBtn" onclick="toggleLegend()">🌿 Plantes</button>
 
