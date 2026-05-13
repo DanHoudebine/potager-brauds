@@ -278,24 +278,25 @@ function applyGrid() {
 
 // ===== LEGEND =====
 function renderLegend(zone) {
-    const panel = document.getElementById('legendPanel');
-    if (!panel) return;
-    panel.innerHTML = '';
+    const items = document.getElementById('legendItems');
+    if (!items) return;
+    items.innerHTML = '';
 
-    if (!zone.plants) return;
+    if (!zone || !zone.plants) {
+        items.innerHTML = '<p style="color:#999; text-align:center;">Aucune plante dans cette zone</p>';
+        return;
+    }
 
     const seen = {};
     Object.values(zone.plants).forEach(p => {
-        if (p && p.name && !seen[p.name]) {
-            seen[p.name] = p;
-        }
+        if (p && p.name && !seen[p.name]) seen[p.name] = p;
     });
 
     Object.values(seen).forEach(p => {
         const item = document.createElement('div');
-        item.className = 'legend-item';
-        item.innerHTML = `<span>${getPlantEmoji(p)}</span> <span>${p.name}</span>`;
-        panel.appendChild(item);
+        item.style.cssText = 'display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid #f0f0f0;';
+        item.innerHTML = `<span style="font-size:24px;">${getPlantEmoji(p)}</span><span style="font-size:14px;">${p.name}</span>`;
+        items.appendChild(item);
     });
 }
 
