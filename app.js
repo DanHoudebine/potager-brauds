@@ -239,6 +239,28 @@ function renderGrid(zone) {
         }
     }
 }
+// Touch support mobile
+cell.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    if (state.touchDragPlant) {
+        dropPlantOnCell(state.touchDragPlant, r, c);
+        state.touchDragPlant = null;
+        // Enlever highlight de toutes les cellules
+        document.querySelectorAll('.grid-cell').forEach(c => c.style.background = '');
+    } else {
+        openPlantModal(r, c);
+    }
+});
+
+cell.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    document.querySelectorAll('.grid-cell').forEach(c => c.style.background = '');
+    if (el && el.closest('.grid-cell')) {
+        el.closest('.grid-cell').style.background = '#d8f3dc';
+    }
+}, { passive: false });
 
 
 function dropPlantOnCell(plant, row, col) {
@@ -403,6 +425,23 @@ function renderPalette(filter) {
             btn.style.background = 'white';
             btn.style.transform = 'scale(1)';
         });
+plantEl.setAttribute('draggable', true);
+plantEl.addEventListener('dragstart', (e) => {
+    e.dataTransfer.setData('plant', JSON.stringify(plant));
+});
+
+// Touch mobile
+plantEl.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    state.touchDragPlant = plant;
+    plantEl.style.opacity = '0.5';
+    showToast(`${plant.emoji} ${plant.name} sélectionné - touchez une case`, 'info');
+}, { passive: false });
+
+plantEl.addEventListener('touchend', () => {
+    plantEl.style.opacity = '1';
+});
+
 
         // Drag & drop
         btn.addEventListener('dragstart', (e) => {
@@ -1290,6 +1329,25 @@ function editPlantFromMenu(r, c) {
     const old = document.getElementById('contextMenu');
     if (old) old.remove();
     openPlantModal(r, c);
+}
+// Touch support pour mobile
+function addTouchDragSupport() {
+    document.querySelectorAll('.legend-item').forEach(item => {
+        item.addEventListener('touchstart', (e) => {
+            state.draggedPlant = item.dataset.plantId;
+        });
+    });
+
+    document.querySelectorAll('.grid-cell').forEach(cell => {
+        cell.addEventListener('touchend', (e) => {
+            if (state.draggedPlant) {
+                const row = cell.dataset.row;
+                const col = cell.dataset.col;
+                placePlantInCell(row, col, state.draggedPlant);
+                state.draggedPlant = null;
+            }
+        });
+    });
 }
 
 function deletePlantFromMenu(r, c) {
