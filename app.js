@@ -1308,4 +1308,7 @@ function deletePlantFromMenu(r, c) {
     renderLegend(zone);
     updateStats();
 }
+function toggleLegend() {
+    document.getElementById('legendPanel').classList.toggle('open');
+}
 
