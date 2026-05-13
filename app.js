@@ -277,34 +277,60 @@ function applyGrid() {
 }
 
 // ===== LEGEND =====
-function renderLegend(zone) {
+function renderLegend(filter = 'all') {
     const items = document.getElementById('legendItems');
     if (!items) return;
     items.innerHTML = '';
 
-    if (!zone || !zone.plants) {
-        items.innerHTML = '<p style="color:#999; text-align:center;">Aucune plante dans cette zone</p>';
+    const list = filter === 'all' ? PLANT_LIBRARY : PLANT_LIBRARY.filter(p => p.type === filter);
+
+    if (!list || list.length === 0) {
+        items.innerHTML = '<p style="color:#999; text-align:center;">Aucune plante trouvée</p>';
         return;
     }
 
-    const seen = {};
-    Object.values(zone.plants).forEach(p => {
-        if (p && p.name && !seen[p.name]) seen[p.name] = p;
-    });
+    items.style.cssText = 'display:grid; grid-template-columns:1fr 1fr; gap:8px;';
 
-    Object.values(seen).forEach(p => {
+    list.forEach(plant => {
         const item = document.createElement('div');
-        item.style.cssText = 'display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid #f0f0f0;';
-        item.innerHTML = `<span style="font-size:24px;">${getPlantEmoji(p)}</span><span style="font-size:14px;">${p.name}</span>`;
+        item.style.cssText = `
+            display:flex; flex-direction:column; align-items:center;
+            border:2px solid #eee; border-radius:10px; padding:8px 6px;
+            cursor:pointer; background:white; transition:all 0.2s;
+        `;
+        item.innerHTML = `
+            <span style="font-size:28px;">${plant.emoji}</span>
+            <span style="font-size:11px; margin-top:4px; text-align:center; font-weight:700;">${plant.name}</span>
+        `;
+        item.addEventListener('mouseenter', () => {
+            item.style.border = '2px solid #2d6a4f';
+            item.style.background = '#f0faf4';
+        });
+        item.addEventListener('mouseleave', () => {
+            item.style.border = '2px solid #eee';
+            item.style.background = 'white';
+        });
+        item.addEventListener('click', () => {
+            state.selectedPlantFromLibrary = plant;
+            showToast(`${plant.emoji} ${plant.name} sélectionné — cliquez sur une case`, 'info');
+            toggleLegend();
+        });
         items.appendChild(item);
     });
+}
+
+function filterLibrary(type, btn) {
+    // Met à jour les boutons actifs
+    document.querySelectorAll('#legendPanel .filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderLegend(type);
 }
 
 function toggleLegend() {
     const panel = document.getElementById('legendPanel');
     if (panel.style.display === 'none' || panel.style.display === '') {
         panel.style.display = 'block';
-        renderLegend(getZone(state.currentZoneId));
+        renderLegend('all');
     } else {
         panel.style.display = 'none';
     }
