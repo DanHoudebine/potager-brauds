@@ -54,7 +54,7 @@ const PLANT_LIBRARY = [
     { id: 'origan', name: 'Origan', type: 'herbe', emoji: '🌿', water: 'rarement', notes: 'Vivace, plein soleil' },
     { id: 'estragon', name: 'Estragon', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Vivace, sol bien drainé' },
     { id: 'laurier', name: 'Laurier', type: 'herbe', emoji: '🌿', water: 'rarement', notes: 'Arbuste, résistant' },
-    { id: 'aneth', name: 'Aneth', type: 'herbe', emoji: '🌿', water: 'semaine', notes: "Semis direct, ne transplante pas bien" },
+    { id: 'aneth', name: 'Aneth', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Semis direct, ne transplante pas bien' },
     { id: 'coriandre', name: 'Coriandre', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Monte vite en graine' },
     { id: 'lavande', name: 'Lavande', type: 'herbe', emoji: '💜', water: 'rarement', notes: 'Sol calcaire, plein soleil' },
     { id: 'citronnelle', name: 'Citronnelle', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Repousse les moustiques' },
@@ -136,11 +136,22 @@ function showApp(user) {
     document.getElementById('appMain').style.display = 'flex';
     document.getElementById('userInfo').style.display = 'flex';
     document.getElementById('logoutBtn').style.display = 'flex';
+
+    const avatar = document.getElementById('userAvatar');
+    const userName = document.getElementById('userName');
+    if (user.photoURL) {
+        avatar.src = user.photoURL;
+        avatar.style.display = 'block';
+    } else {
+        avatar.style.display = 'none';
+    }
+    if (userName) userName.textContent = user.displayName || user.email || '';
 }
 
 // ===== FIREBASE REF =====
+// Données partagées : tous les utilisateurs connectés voient le même jardin
 function dbRef() {
-    return firebase.database().ref(`users/${currentUser.uid}`);
+    return firebase.database().ref('jardin');
 }
 
 // ===== ZONES =====
@@ -309,17 +320,6 @@ function renderGrid(zone) {
             // Clic droit
             cell.addEventListener('contextmenu', (e) => handleCellRightClick(e, r, c));
 
-            // Long press mobile = menu contextuel
-            let pressTimer = null;
-            cell.addEventListener('touchstart', (e) => {
-                pressTimer = setTimeout(() => {
-                    pressTimer = null;
-                    handleCellRightClick(e, r, c);
-                }, 600);
-            }, { passive: true });
-            cell.addEventListener('touchend', () => { clearTimeout(pressTimer); });
-            cell.addEventListener('touchmove', () => { clearTimeout(pressTimer); });
-
             // Drag & drop desktop
             cell.addEventListener('dragover', (e) => e.preventDefault());
             cell.addEventListener('drop', (e) => {
@@ -442,20 +442,11 @@ function filterLibrary(type, btn) {
 
 function toggleLegend() {
     const panel = document.getElementById('legendPanel');
-    const isMobile = window.innerWidth <= 480;
-    const isHidden = panel.style.display === 'none' || panel.style.display === '';
-    if (isHidden) {
+    if (panel.style.display === 'none' || panel.style.display === '') {
         panel.style.display = 'block';
-        // petit délai pour que la transition CSS fonctionne sur mobile
-        requestAnimationFrame(() => panel.style.transform = 'translateY(0)');
         renderLegend('all');
     } else {
-        if (isMobile) {
-            panel.style.transform = 'translateY(100%)';
-            setTimeout(() => { panel.style.display = 'none'; }, 300);
-        } else {
-            panel.style.display = 'none';
-        }
+        panel.style.display = 'none';
     }
 }
 
