@@ -1,3 +1,90 @@
+// ===== PLANT LIBRARY =====
+// Base de données des plantes du potager
+
+const PLANT_LIBRARY = [
+    // LÉGUMES
+    { id: 'tomate', name: 'Tomate', type: 'legume', emoji: '🍅', water: 'semaine', notes: 'Plein soleil, tuteurer' },
+    { id: 'tomate_cerise', name: 'Tomate cerise', type: 'legume', emoji: '🍅', water: 'semaine', notes: 'Très productive, plein soleil' },
+    { id: 'courgette', name: 'Courgette', type: 'legume', emoji: '🥒', water: 'semaine', notes: 'Beaucoup de place, arrosage régulier' },
+    { id: 'carotte', name: 'Carotte', type: 'legume', emoji: '🥕', water: 'semaine', notes: 'Sol meuble et profond' },
+    { id: 'salade', name: 'Salade', type: 'legume', emoji: '🥬', water: '2jours', notes: 'Mi-ombre accepté' },
+    { id: 'laitue', name: 'Laitue', type: 'legume', emoji: '🥬', water: '2jours', notes: 'Arrosage régulier' },
+    { id: 'epinard', name: 'Épinard', type: 'legume', emoji: '🥬', water: 'semaine', notes: 'Pousse rapide, tolère le froid' },
+    { id: 'radis', name: 'Radis', type: 'legume', emoji: '🌱', water: '2jours', notes: 'Récolte en 3-4 semaines' },
+    { id: 'haricot', name: 'Haricot vert', type: 'legume', emoji: '🫘', water: 'semaine', notes: 'Plein soleil, semis direct' },
+    { id: 'petit_pois', name: 'Petit pois', type: 'legume', emoji: '🫛', water: 'semaine', notes: 'Tuteurer, semis tôt' },
+    { id: 'poivron', name: 'Poivron', type: 'legume', emoji: '🫑', water: 'semaine', notes: 'Chaleur nécessaire' },
+    { id: 'aubergine', name: 'Aubergine', type: 'legume', emoji: '🍆', water: 'semaine', notes: 'Plein soleil, chaleur' },
+    { id: 'concombre', name: 'Concombre', type: 'legume', emoji: '🥒', water: '2jours', notes: 'Tuteurer, arrosage régulier' },
+    { id: 'poireau', name: 'Poireau', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Long à cultiver, résistant' },
+    { id: 'oignon', name: 'Oignon', type: 'legume', emoji: '🧅', water: 'semaine', notes: 'Sol bien drainé' },
+    { id: 'ail', name: 'Ail', type: 'legume', emoji: '🧄', water: 'rarement', notes: 'Plantation automne ou printemps' },
+    { id: 'brocoli', name: 'Brocoli', type: 'legume', emoji: '🥦', water: 'semaine', notes: 'Résistant au froid' },
+    { id: 'chou', name: 'Chou', type: 'legume', emoji: '🥬', water: 'semaine', notes: 'Beaucoup de place' },
+    { id: 'chou_fleur', name: 'Chou-fleur', type: 'legume', emoji: '🥦', water: 'semaine', notes: 'Sol riche' },
+    { id: 'betterave', name: 'Betterave', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Sol profond' },
+    { id: 'panais', name: 'Panais', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Semis direct, sol profond' },
+    { id: 'navet', name: 'Navet', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Croissance rapide' },
+    { id: 'celeri', name: 'Céleri', type: 'legume', emoji: '🌱', water: '2jours', notes: 'Beaucoup d'eau' },
+    { id: 'fenouil', name: 'Fenouil', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Isoler des autres légumes' },
+    { id: 'artichaut', name: 'Artichaut', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Vivace, grande place' },
+    { id: 'patate_douce', name: 'Patate douce', type: 'legume', emoji: '🍠', water: 'semaine', notes: 'Sol léger, chaleur' },
+    { id: 'mais', name: 'Maïs', type: 'legume', emoji: '🌽', water: 'semaine', notes: 'Planter en groupe' },
+    { id: 'potiron', name: 'Potiron', type: 'legume', emoji: '🎃', water: 'semaine', notes: 'Beaucoup de place' },
+    { id: 'courgette_ronde', name: 'Courge', type: 'legume', emoji: '🥒', water: 'semaine', notes: 'Sol riche, soleil' },
+
+    // FRUITS
+    { id: 'fraise', name: 'Fraise', type: 'fruit', emoji: '🍓', water: '2jours', notes: 'Plein soleil, stolons à couper' },
+    { id: 'framboise', name: 'Framboise', type: 'fruit', emoji: '🫐', water: 'semaine', notes: 'Tuteurage, mi-ombre ok' },
+    { id: 'myrtille', name: 'Myrtille', type: 'fruit', emoji: '🫐', water: 'semaine', notes: 'Sol acide obligatoire' },
+    { id: 'groseille', name: 'Groseille', type: 'fruit', emoji: '🍇', water: 'semaine', notes: 'Résistant, peu d'entretien' },
+    { id: 'cassis', name: 'Cassis', type: 'fruit', emoji: '🍇', water: 'semaine', notes: 'Mi-ombre accepté' },
+    { id: 'melon', name: 'Melon', type: 'fruit', emoji: '🍈', water: 'semaine', notes: 'Chaleur et soleil indispensables' },
+    { id: 'pastèque', name: 'Pastèque', type: 'fruit', emoji: '🍉', water: 'semaine', notes: 'Très grande place, chaleur' },
+    { id: 'raisin', name: 'Vigne', type: 'fruit', emoji: '🍇', water: 'rarement', notes: 'Taille annuelle nécessaire' },
+
+    // HERBES AROMATIQUES
+    { id: 'basilic', name: 'Basilic', type: 'herbe', emoji: '🌿', water: '2jours', notes: 'Chaud, pas de courant d'air' },
+    { id: 'persil', name: 'Persil', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Mi-ombre accepté' },
+    { id: 'ciboulette', name: 'Ciboulette', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Vivace, facile' },
+    { id: 'thym', name: 'Thym', type: 'herbe', emoji: '🌿', water: 'rarement', notes: 'Sol sec, plein soleil' },
+    { id: 'romarin', name: 'Romarin', type: 'herbe', emoji: '🌿', water: 'rarement', notes: 'Sol drainant, résistant' },
+    { id: 'menthe', name: 'Menthe', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Envahissante, isoler en pot' },
+    { id: 'sauge', name: 'Sauge', type: 'herbe', emoji: '🌿', water: 'rarement', notes: 'Sol sec, plein soleil' },
+    { id: 'origan', name: 'Origan', type: 'herbe', emoji: '🌿', water: 'rarement', notes: 'Vivace, plein soleil' },
+    { id: 'estragon', name: 'Estragon', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Vivace, sol bien drainé' },
+    { id: 'laurier', name: 'Laurier', type: 'herbe', emoji: '🌿', water: 'rarement', notes: 'Arbuste, résistant' },
+    { id: 'aneth', name: 'Aneth', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Semis direct, ne transplante pas bien' },
+    { id: 'coriandre', name: 'Coriandre', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Monte vite en graine' },
+    { id: 'lavande', name: 'Lavande', type: 'herbe', emoji: '💜', water: 'rarement', notes: 'Sol calcaire, plein soleil' },
+    { id: 'citronnelle', name: 'Citronnelle', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Repousse les moustiques' },
+
+    // FLEURS
+    { id: 'tournesol', name: 'Tournesol', type: 'fleur', emoji: '🌻', water: 'semaine', notes: 'Plein soleil, grand' },
+    { id: 'rose', name: 'Rose', type: 'fleur', emoji: '🌹', water: 'semaine', notes: 'Tailler chaque année' },
+    { id: 'capucine', name: 'Capucine', type: 'fleur', emoji: '🌸', water: 'semaine', notes: 'Comestible, repousse pucerons' },
+    { id: 'souci', name: 'Souci', type: 'fleur', emoji: '🌼', water: 'semaine', notes: 'Protège le potager' },
+    { id: 'lavande_fleur', name: 'Lavande', type: 'fleur', emoji: '💜', water: 'rarement', notes: 'Attire les abeilles' },
+    { id: 'cosmos', name: 'Cosmos', type: 'fleur', emoji: '🌸', water: 'semaine', notes: 'Facile, floraison estivale' },
+    { id: 'zinnia', name: 'Zinnia', type: 'fleur', emoji: '🌺', water: 'semaine', notes: 'Chaleur, plein soleil' },
+    { id: 'dahlia', name: 'Dahlia', type: 'fleur', emoji: '🌸', water: 'semaine', notes: 'Tubeuse, rentrer en hiver' },
+    { id: 'coquelicot', name: 'Coquelicot', type: 'fleur', emoji: '🌺', water: 'rarement', notes: 'Semis direct en automne' },
+    { id: 'bleuet', name: 'Bleuet', type: 'fleur', emoji: '💙', water: 'rarement', notes: 'Semis direct, mellifère' },
+    { id: 'bourrache', name: 'Bourrache', type: 'fleur', emoji: '🌸', water: 'semaine', notes: 'Fleurs comestibles, mellifère' },
+    { id: 'pensee', name: 'Pensée', type: 'fleur', emoji: '💜', water: '2jours', notes: 'Floraison printanière' },
+
+    // ARBRES / ARBUSTES
+    { id: 'tomate_arbre', name: 'Tomate en arbre', type: 'arbre', emoji: '🌳', water: 'semaine', notes: 'Variété arbustive' },
+    { id: 'pommier', name: 'Pommier', type: 'arbre', emoji: '🍎', water: 'semaine', notes: 'Taille annuelle' },
+    { id: 'poirier', name: 'Poirier', type: 'arbre', emoji: '🍐', water: 'semaine', notes: 'Plantation en bonne exposition' },
+    { id: 'cerisier', name: 'Cerisier', type: 'arbre', emoji: '🍒', water: 'semaine', notes: 'Grand arbre' },
+    { id: 'prunier', name: 'Prunier', type: 'arbre', emoji: '🍑', water: 'semaine', notes: 'Sol profond' },
+    { id: 'figuier', name: 'Figuier', type: 'arbre', emoji: '🫐', water: 'rarement', notes: 'Résistant, peu d'entretien' },
+    { id: 'olivier', name: 'Olivier', type: 'arbre', emoji: '🫒', water: 'rarement', notes: 'Sol drainant, chaleur' },
+    { id: 'lilas', name: 'Lilas', type: 'arbre', emoji: '💜', water: 'semaine', notes: 'Floraison printanière parfumée' },
+    { id: 'hortensia', name: 'Hortensia', type: 'arbre', emoji: '🌸', water: '2jours', notes: 'Mi-ombre, sol frais' }
+];
+
 // ============================================================
 // APP.JS - Le Potager des Brauds
 // ============================================================
