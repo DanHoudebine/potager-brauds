@@ -2,8 +2,17 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>🌿 Le Potager des Brauds</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2d6a4f">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Potager">
+    <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -76,7 +85,21 @@
                 </div>
             </div>
 
-
+            <!-- PALETTE BIBLIOTHÈQUE -->
+            <div class="library-section">
+                <div class="library-header">
+                    <h4><i class="fas fa-seedling"></i> Bibliothèque</h4>
+                </div>
+                <div class="filter-btns">
+                    <button class="filter-btn active" onclick="filterLibrary('all', this)">Tous</button>
+                    <button class="filter-btn" onclick="filterLibrary('legume', this)">🥬</button>
+                    <button class="filter-btn" onclick="filterLibrary('fruit', this)">🍓</button>
+                    <button class="filter-btn" onclick="filterLibrary('herbe', this)">🌿</button>
+                    <button class="filter-btn" onclick="filterLibrary('fleur', this)">🌸</button>
+                    <button class="filter-btn" onclick="filterLibrary('arbre', this)">🌳</button>
+                </div>
+                <div class="plant-palette" id="plantPalette"></div>
+            </div>
         </aside>
 
         <!-- MAIN CONTENT -->
@@ -337,6 +360,17 @@
     <script src="firebase-config.js"></script>
     <!-- PLANT LIBRARY doit être chargée avant app.js -->
     <script src="app.js"></script>
+
+    <!-- Enregistrement Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(r => console.log('SW enregistré'))
+                    .catch(e => console.log('SW erreur:', e));
+            });
+        }
+    </script>
 
 </body>
 </html>
