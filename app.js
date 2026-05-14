@@ -278,7 +278,7 @@ function applyGrid() {
 
 // ===== LEGEND =====
 const CATEGORY_LABELS = {
-    legume: '\ud83e\udd55 Légumes',
+    legume: '\ud83e\udd55 L\u00e9gumes',
     fruit:  '\ud83c\udf53 Fruits',
     herbe:  '\ud83c\udf3f Herbes aromatiques',
     fleur:  '\ud83c\udf38 Fleurs',
@@ -286,61 +286,58 @@ const CATEGORY_LABELS = {
 };
 
 function renderLegend(filter) {
-    if (filter === undefined || typeof filter === 'object') filter = 'all';
-    const items = document.getElementById('legendItems');
-    if (!items) return;
-    items.innerHTML = '';
-    items.style.cssText = '';
+    if (!filter || typeof filter === 'object') filter = 'all';
 
-    if (typeof PLANT_LIBRARY === 'undefined' || !PLANT_LIBRARY.length) {
-        items.innerHTML = '<p style="color:#999;text-align:center;">Bibliothèque introuvable</p>';
+    const items = document.getElementById('legendItems');
+    if (!items) { console.warn('legendItems introuvable'); return; }
+
+    const lib = window.PLANT_LIBRARY;
+    if (!lib || !lib.length) {
+        items.innerHTML = '<p style="color:red;text-align:center;">PLANT_LIBRARY manquant !</p>';
+        console.error('PLANT_LIBRARY undefined ou vide', typeof lib);
         return;
     }
 
-    const categories = filter === 'all'
+    items.innerHTML = '';
+    items.style.cssText = '';
+
+    const cats = filter === 'all'
         ? ['legume', 'fruit', 'herbe', 'fleur', 'arbre']
         : [filter];
 
-    categories.forEach(function(cat) {
-        const list = PLANT_LIBRARY.filter(function(p) { return p.type === cat; });
+    cats.forEach(function(cat) {
+        var list = lib.filter(function(p) { return p.type === cat; });
         if (!list.length) return;
 
-        const title = document.createElement('div');
-        title.style.cssText = 'font-size:12px;font-weight:800;color:#2d6a4f;text-transform:uppercase;letter-spacing:0.05em;margin:14px 0 6px;padding-bottom:4px;border-bottom:2px solid #e8f5e9;';
+        var title = document.createElement('div');
+        title.style.cssText = 'font-size:12px;font-weight:800;color:#2d6a4f;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px;padding-bottom:4px;border-bottom:2px solid #e8f5e9;';
         title.textContent = CATEGORY_LABELS[cat] || cat;
         items.appendChild(title);
 
-        const grid = document.createElement('div');
+        var grid = document.createElement('div');
         grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;';
 
         list.forEach(function(plant) {
-            const item = document.createElement('div');
-            item.style.cssText = 'display:flex;flex-direction:column;align-items:center;border:2px solid #eee;border-radius:10px;padding:8px 6px;cursor:pointer;background:white;transition:all 0.2s;';
-            item.innerHTML = '<span style="font-size:26px;">' + plant.emoji + '</span><span style="font-size:11px;margin-top:4px;text-align:center;font-weight:700;line-height:1.2;">' + plant.name + '</span>';
+            var item = document.createElement('div');
+            item.style.cssText = 'display:flex;flex-direction:column;align-items:center;border:2px solid #eee;border-radius:10px;padding:8px 6px;cursor:pointer;background:white;transition:all .2s;';
+            item.innerHTML = '<span style="font-size:26px">' + plant.emoji + '</span>'
+                + '<span style="font-size:11px;margin-top:4px;text-align:center;font-weight:700;line-height:1.2">' + plant.name + '</span>';
 
-            item.addEventListener('mouseenter', function() {
-                item.style.border = '2px solid #2d6a4f';
-                item.style.background = '#f0faf4';
-            });
-            item.addEventListener('mouseleave', function() {
-                item.style.border = '2px solid #eee';
-                item.style.background = 'white';
-            });
-            item.addEventListener('click', function() {
+            item.onmouseenter = function() { item.style.border='2px solid #2d6a4f'; item.style.background='#f0faf4'; };
+            item.onmouseleave = function() { item.style.border='2px solid #eee';    item.style.background='white'; };
+            item.onclick = function() {
                 state.selectedPlantFromLibrary = Object.assign({}, plant);
-                showToast(plant.emoji + ' ' + plant.name + ' sélectionné — cliquez sur une case', 'info');
+                showToast(plant.emoji + ' ' + plant.name + ' s\u00e9lectionn\u00e9 \u2014 cliquez sur une case', 'info');
                 toggleLegend();
-            });
+            };
             grid.appendChild(item);
         });
-
         items.appendChild(grid);
     });
 }
 
 function filterLibrary(type, btn) {
-    // Met à jour les boutons actifs
-    document.querySelectorAll('#legendPanel .filter-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('#legendPanel .filter-btn').forEach(function(b) { b.classList.remove('active'); });
     if (btn) btn.classList.add('active');
     renderLegend(type);
 }
