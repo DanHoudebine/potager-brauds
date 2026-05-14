@@ -510,12 +510,6 @@ function renderPalette(filter = 'all') {
     });
 }
 
-function filterLibrary(filter, btn) {
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderPalette(filter);
-}
-
 // ===== HELPERS =====
 function getPlantEmoji(plant) {
     if (plant.emoji) return plant.emoji;
