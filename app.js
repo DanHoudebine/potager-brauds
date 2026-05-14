@@ -285,7 +285,8 @@ const CATEGORY_LABELS = {
     arbre:  '\ud83c\udf33 Arbres & Arbustes',
 };
 
-function renderLegend(filter = 'all') {
+function renderLegend(filter) {
+    if (filter === undefined || typeof filter === 'object') filter = 'all';
     const items = document.getElementById('legendItems');
     if (!items) return;
     items.innerHTML = '';
@@ -300,45 +301,32 @@ function renderLegend(filter = 'all') {
         ? ['legume', 'fruit', 'herbe', 'fleur', 'arbre']
         : [filter];
 
-    categories.forEach(cat => {
-        const list = PLANT_LIBRARY.filter(p => p.type === cat);
+    categories.forEach(function(cat) {
+        const list = PLANT_LIBRARY.filter(function(p) { return p.type === cat; });
         if (!list.length) return;
 
-        // Titre de section
         const title = document.createElement('div');
-        title.style.cssText = [
-            'font-size:12px', 'font-weight:800', 'color:#2d6a4f',
-            'text-transform:uppercase', 'letter-spacing:0.05em',
-            'margin:14px 0 6px', 'padding-bottom:4px',
-            'border-bottom:2px solid #e8f5e9'
-        ].join(';');
+        title.style.cssText = 'font-size:12px;font-weight:800;color:#2d6a4f;text-transform:uppercase;letter-spacing:0.05em;margin:14px 0 6px;padding-bottom:4px;border-bottom:2px solid #e8f5e9;';
         title.textContent = CATEGORY_LABELS[cat] || cat;
         items.appendChild(title);
 
-        // Grille de plantes
         const grid = document.createElement('div');
         grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;';
 
-        list.forEach(plant => {
+        list.forEach(function(plant) {
             const item = document.createElement('div');
-            item.style.cssText = [
-                'display:flex', 'flex-direction:column', 'align-items:center',
-                'border:2px solid #eee', 'border-radius:10px', 'padding:8px 6px',
-                'cursor:pointer', 'background:white', 'transition:all 0.2s'
-            ].join(';');
-            item.innerHTML =
-                '<span style="font-size:26px;">' + plant.emoji + '</span>' +
-                '<span style="font-size:11px;margin-top:4px;text-align:center;font-weight:700;line-height:1.2;">' + plant.name + '</span>';
+            item.style.cssText = 'display:flex;flex-direction:column;align-items:center;border:2px solid #eee;border-radius:10px;padding:8px 6px;cursor:pointer;background:white;transition:all 0.2s;';
+            item.innerHTML = '<span style="font-size:26px;">' + plant.emoji + '</span><span style="font-size:11px;margin-top:4px;text-align:center;font-weight:700;line-height:1.2;">' + plant.name + '</span>';
 
-            item.addEventListener('mouseenter', () => {
+            item.addEventListener('mouseenter', function() {
                 item.style.border = '2px solid #2d6a4f';
                 item.style.background = '#f0faf4';
             });
-            item.addEventListener('mouseleave', () => {
+            item.addEventListener('mouseleave', function() {
                 item.style.border = '2px solid #eee';
                 item.style.background = 'white';
             });
-            item.addEventListener('click', () => {
+            item.addEventListener('click', function() {
                 state.selectedPlantFromLibrary = Object.assign({}, plant);
                 showToast(plant.emoji + ' ' + plant.name + ' sélectionné — cliquez sur une case', 'info');
                 toggleLegend();
