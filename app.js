@@ -54,7 +54,7 @@ const PLANT_LIBRARY = [
     { id: 'origan', name: 'Origan', type: 'herbe', emoji: '🌿', water: 'rarement', notes: 'Vivace, plein soleil' },
     { id: 'estragon', name: 'Estragon', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Vivace, sol bien drainé' },
     { id: 'laurier', name: 'Laurier', type: 'herbe', emoji: '🌿', water: 'rarement', notes: 'Arbuste, résistant' },
-    { id: 'aneth', name: 'Aneth', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Semis direct, ne transplante pas bien' },
+    { id: 'aneth', name: 'Aneth', type: 'herbe', emoji: '🌿', water: 'semaine', notes: "Semis direct, ne transplante pas bien" },
     { id: 'coriandre', name: 'Coriandre', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Monte vite en graine' },
     { id: 'lavande', name: 'Lavande', type: 'herbe', emoji: '💜', water: 'rarement', notes: 'Sol calcaire, plein soleil' },
     { id: 'citronnelle', name: 'Citronnelle', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Repousse les moustiques' },
@@ -309,6 +309,17 @@ function renderGrid(zone) {
             // Clic droit
             cell.addEventListener('contextmenu', (e) => handleCellRightClick(e, r, c));
 
+            // Long press mobile = menu contextuel
+            let pressTimer = null;
+            cell.addEventListener('touchstart', (e) => {
+                pressTimer = setTimeout(() => {
+                    pressTimer = null;
+                    handleCellRightClick(e, r, c);
+                }, 600);
+            }, { passive: true });
+            cell.addEventListener('touchend', () => { clearTimeout(pressTimer); });
+            cell.addEventListener('touchmove', () => { clearTimeout(pressTimer); });
+
             // Drag & drop desktop
             cell.addEventListener('dragover', (e) => e.preventDefault());
             cell.addEventListener('drop', (e) => {
@@ -378,7 +389,7 @@ function renderLegend(filter) {
     const items = document.getElementById('legendItems');
     if (!items) { console.warn('legendItems introuvable'); return; }
 
-    const lib = (typeof PLANT_LIBRARY !== "undefined") ? PLANT_LIBRARY : null;
+    const lib = window.PLANT_LIBRARY;
     if (!lib || !lib.length) {
         items.innerHTML = '<p style="color:red;text-align:center;">PLANT_LIBRARY manquant !</p>';
         console.error('PLANT_LIBRARY undefined ou vide', typeof lib);
@@ -431,11 +442,20 @@ function filterLibrary(type, btn) {
 
 function toggleLegend() {
     const panel = document.getElementById('legendPanel');
-    if (panel.style.display === 'none' || panel.style.display === '') {
+    const isMobile = window.innerWidth <= 480;
+    const isHidden = panel.style.display === 'none' || panel.style.display === '';
+    if (isHidden) {
         panel.style.display = 'block';
+        // petit délai pour que la transition CSS fonctionne sur mobile
+        requestAnimationFrame(() => panel.style.transform = 'translateY(0)');
         renderLegend('all');
     } else {
-        panel.style.display = 'none';
+        if (isMobile) {
+            panel.style.transform = 'translateY(100%)';
+            setTimeout(() => { panel.style.display = 'none'; }, 300);
+        } else {
+            panel.style.display = 'none';
+        }
     }
 }
 
