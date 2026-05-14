@@ -7,7 +7,7 @@ const PLANT_LIBRARY = [
     { id: 'tomate_cerise', name: 'Tomate cerise', type: 'legume', emoji: '🍅', water: 'semaine', notes: 'Très productive, plein soleil' },
     { id: 'courgette', name: 'Courgette', type: 'legume', emoji: '🥒', water: 'semaine', notes: 'Beaucoup de place, arrosage régulier' },
     { id: 'carotte', name: 'Carotte', type: 'legume', emoji: '🥕', water: 'semaine', notes: 'Sol meuble et profond' },
-    { id: 'salade', name: 'Salade', type: 'legume', emoji: '🥬', water: '2jours', notes: 'Mi-ombre accepté' },
+    { id: 'salade', name: 'Salade', type: 'legume', emoji: '🥬', water: '2jours', notes: "Mi-ombre accepté" },
     { id: 'laitue', name: 'Laitue', type: 'legume', emoji: '🥬', water: '2jours', notes: 'Arrosage régulier' },
     { id: 'epinard', name: 'Épinard', type: 'legume', emoji: '🥬', water: 'semaine', notes: 'Pousse rapide, tolère le froid' },
     { id: 'radis', name: 'Radis', type: 'legume', emoji: '🌱', water: '2jours', notes: 'Récolte en 3-4 semaines' },
@@ -25,7 +25,7 @@ const PLANT_LIBRARY = [
     { id: 'betterave', name: 'Betterave', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Sol profond' },
     { id: 'panais', name: 'Panais', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Semis direct, sol profond' },
     { id: 'navet', name: 'Navet', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Croissance rapide' },
-    { id: 'celeri', name: 'Céleri', type: 'legume', emoji: '🌱', water: '2jours', notes: 'Beaucoup d'eau' },
+    { id: 'celeri', name: 'Céleri', type: 'legume', emoji: '🌱', water: '2jours', notes: "Beaucoup d'eau" },
     { id: 'fenouil', name: 'Fenouil', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Isoler des autres légumes' },
     { id: 'artichaut', name: 'Artichaut', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Vivace, grande place' },
     { id: 'patate_douce', name: 'Patate douce', type: 'legume', emoji: '🍠', water: 'semaine', notes: 'Sol léger, chaleur' },
@@ -37,15 +37,15 @@ const PLANT_LIBRARY = [
     { id: 'fraise', name: 'Fraise', type: 'fruit', emoji: '🍓', water: '2jours', notes: 'Plein soleil, stolons à couper' },
     { id: 'framboise', name: 'Framboise', type: 'fruit', emoji: '🫐', water: 'semaine', notes: 'Tuteurage, mi-ombre ok' },
     { id: 'myrtille', name: 'Myrtille', type: 'fruit', emoji: '🫐', water: 'semaine', notes: 'Sol acide obligatoire' },
-    { id: 'groseille', name: 'Groseille', type: 'fruit', emoji: '🍇', water: 'semaine', notes: 'Résistant, peu d'entretien' },
-    { id: 'cassis', name: 'Cassis', type: 'fruit', emoji: '🍇', water: 'semaine', notes: 'Mi-ombre accepté' },
+    { id: 'groseille', name: 'Groseille', type: 'fruit', emoji: '🍇', water: 'semaine', notes: "Résistant, peu d'entretien" },
+    { id: 'cassis', name: 'Cassis', type: 'fruit', emoji: '🍇', water: 'semaine', notes: "Mi-ombre accepté" },
     { id: 'melon', name: 'Melon', type: 'fruit', emoji: '🍈', water: 'semaine', notes: 'Chaleur et soleil indispensables' },
-    { id: 'pastèque', name: 'Pastèque', type: 'fruit', emoji: '🍉', water: 'semaine', notes: 'Très grande place, chaleur' },
+    { id: 'pastèque', name: "Pastèque", type: 'fruit', emoji: '🍉', water: 'semaine', notes: 'Très grande place, chaleur' },
     { id: 'raisin', name: 'Vigne', type: 'fruit', emoji: '🍇', water: 'rarement', notes: 'Taille annuelle nécessaire' },
 
     // HERBES AROMATIQUES
-    { id: 'basilic', name: 'Basilic', type: 'herbe', emoji: '🌿', water: '2jours', notes: 'Chaud, pas de courant d'air' },
-    { id: 'persil', name: 'Persil', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Mi-ombre accepté' },
+    { id: 'basilic', name: 'Basilic', type: 'herbe', emoji: '🌿', water: '2jours', notes: "Chaud, pas de courant d'air" },
+    { id: 'persil', name: 'Persil', type: 'herbe', emoji: '🌿', water: 'semaine', notes: "Mi-ombre accepté" },
     { id: 'ciboulette', name: 'Ciboulette', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Vivace, facile' },
     { id: 'thym', name: 'Thym', type: 'herbe', emoji: '🌿', water: 'rarement', notes: 'Sol sec, plein soleil' },
     { id: 'romarin', name: 'Romarin', type: 'herbe', emoji: '🌿', water: 'rarement', notes: 'Sol drainant, résistant' },
@@ -79,7 +79,7 @@ const PLANT_LIBRARY = [
     { id: 'poirier', name: 'Poirier', type: 'arbre', emoji: '🍐', water: 'semaine', notes: 'Plantation en bonne exposition' },
     { id: 'cerisier', name: 'Cerisier', type: 'arbre', emoji: '🍒', water: 'semaine', notes: 'Grand arbre' },
     { id: 'prunier', name: 'Prunier', type: 'arbre', emoji: '🍑', water: 'semaine', notes: 'Sol profond' },
-    { id: 'figuier', name: 'Figuier', type: 'arbre', emoji: '🫐', water: 'rarement', notes: 'Résistant, peu d'entretien' },
+    { id: 'figuier', name: 'Figuier', type: 'arbre', emoji: '🫐', water: 'rarement', notes: "Résistant, peu d'entretien" },
     { id: 'olivier', name: 'Olivier', type: 'arbre', emoji: '🫒', water: 'rarement', notes: 'Sol drainant, chaleur' },
     { id: 'lilas', name: 'Lilas', type: 'arbre', emoji: '💜', water: 'semaine', notes: 'Floraison printanière parfumée' },
     { id: 'hortensia', name: 'Hortensia', type: 'arbre', emoji: '🌸', water: '2jours', notes: 'Mi-ombre, sol frais' }
@@ -378,7 +378,7 @@ function renderLegend(filter) {
     const items = document.getElementById('legendItems');
     if (!items) { console.warn('legendItems introuvable'); return; }
 
-    const lib = window.PLANT_LIBRARY;
+    const lib = (typeof PLANT_LIBRARY !== "undefined") ? PLANT_LIBRARY : null;
     if (!lib || !lib.length) {
         items.innerHTML = '<p style="color:red;text-align:center;">PLANT_LIBRARY manquant !</p>';
         console.error('PLANT_LIBRARY undefined ou vide', typeof lib);
