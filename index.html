@@ -327,7 +327,7 @@
         <h4 style="margin:0; color:#2d6a4f;">🌿 Bibliothèque de plantes</h4>
         <button onclick="toggleLegend()" style="background:none; border:none; cursor:pointer; font-size:18px;">✕</button>
     </div>
-    <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;">
+    <div id="libraryFilters" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;">
         <button class="filter-btn active" onclick="filterLibrary('all', this)">Tout</button>
         <button class="filter-btn" onclick="filterLibrary('legume', this)">🥕 Légumes</button>
         <button class="filter-btn" onclick="filterLibrary('fruit', this)">🍓 Fruits</button>
@@ -351,6 +351,14 @@
     <script src="firebase-config.js"></script>
     <!-- PLANT LIBRARY doit être chargée avant app.js -->
     <script src="plants.js"></script>
+    <script>
+        // Garde-fou : vérifie que PLANT_LIBRARY est bien chargée
+        if (typeof PLANT_LIBRARY === 'undefined' || !PLANT_LIBRARY.length) {
+            console.error('PLANT_LIBRARY non chargée ! Vérifier plants.js');
+        } else {
+            console.log('PLANT_LIBRARY OK :', PLANT_LIBRARY.length, 'plantes');
+        }
+    </script>
     <script src="app.js"></script>
 
 </body>
