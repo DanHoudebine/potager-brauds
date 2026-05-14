@@ -136,20 +136,13 @@ function showApp(user) {
     document.getElementById('appMain').style.display = 'flex';
     document.getElementById('userInfo').style.display = 'flex';
     document.getElementById('logoutBtn').style.display = 'flex';
-
     const avatar = document.getElementById('userAvatar');
     const userName = document.getElementById('userName');
-    if (user.photoURL) {
-        avatar.src = user.photoURL;
-        avatar.style.display = 'block';
-    } else {
-        avatar.style.display = 'none';
-    }
+    if (avatar) { avatar.src = user.photoURL || ''; avatar.style.display = user.photoURL ? 'block' : 'none'; }
     if (userName) userName.textContent = user.displayName || user.email || '';
 }
 
 // ===== FIREBASE REF =====
-// Données partagées : tous les utilisateurs connectés voient le même jardin
 function dbRef() {
     return firebase.database().ref('jardin');
 }
@@ -389,7 +382,7 @@ function renderLegend(filter) {
     const items = document.getElementById('legendItems');
     if (!items) { console.warn('legendItems introuvable'); return; }
 
-    const lib = window.PLANT_LIBRARY;
+    const lib = typeof PLANT_LIBRARY !== "undefined" ? PLANT_LIBRARY : null;
     if (!lib || !lib.length) {
         items.innerHTML = '<p style="color:red;text-align:center;">PLANT_LIBRARY manquant !</p>';
         console.error('PLANT_LIBRARY undefined ou vide', typeof lib);
