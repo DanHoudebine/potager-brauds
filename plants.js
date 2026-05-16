@@ -25,7 +25,7 @@ const PLANT_LIBRARY = [
     { id: 'betterave', name: 'Betterave', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Sol profond' },
     { id: 'panais', name: 'Panais', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Semis direct, sol profond' },
     { id: 'navet', name: 'Navet', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Croissance rapide' },
-    { id: 'celeri', name: 'Céleri', type: 'legume', emoji: '🌱', water: '2jours', notes: 'Beaucoup d'eau' },
+    { id: 'celeri', name: 'Celeri', type: 'legume', emoji: '🌱', water: '2jours', notes: 'Beaucoup d'eau' },
     { id: 'fenouil', name: 'Fenouil', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Isoler des autres légumes' },
     { id: 'artichaut', name: 'Artichaut', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Vivace, grande place' },
     { id: 'patate_douce', name: 'Patate douce', type: 'legume', emoji: '🍠', water: 'semaine', notes: 'Sol léger, chaleur' },
