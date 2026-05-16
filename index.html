@@ -25,7 +25,8 @@
         <div class="login-card">
             <div class="login-logo">🌿</div>
             <h2>Le Potager des Brauds</h2>
-            <p>Connectez-vous pour accéder à votre jardin</p>
+            <p class="login-sub">Votre jardin connecté, partout avec vous</p>
+            <p class="login-quote">« Le jardinage est l'art de cultiver la patience, la persévérance… et les tomates. »</p>
             <button class="btn btn-google" id="loginBtn">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
                 Continuer avec Google
@@ -90,6 +91,10 @@
                 <div class="library-header">
                     <h4><i class="fas fa-seedling"></i> Bibliothèque</h4>
                 </div>
+                <div class="library-search-wrap sidebar-search">
+                    <i class="fas fa-search library-search-icon"></i>
+                    <input type="text" class="library-search-input" placeholder="Rechercher…" oninput="searchPlantLibrary(this.value)" autocomplete="off">
+                </div>
                 <div class="filter-btns">
                     <button class="filter-btn active" onclick="filterPalette('all', this)">Tous</button>
                     <button class="filter-btn" onclick="filterPalette('legume', this)">🥬</button>
@@ -135,11 +140,19 @@
             </div>
 
             <!-- WELCOME MESSAGE -->
+            <!-- SEASONAL TIP -->
+            <div id="seasonalTip">
+                <span class="seasonal-icon"></span>
+                <span class="seasonal-text"></span>
+                <button class="seasonal-close" onclick="document.getElementById('seasonalTip').style.display='none'" title="Fermer">×</button>
+            </div>
+
             <div class="welcome-msg" id="welcomeMsg">
                 <div class="welcome-icon">🌱</div>
                 <h3>Bienvenue dans votre potager !</h3>
                 <p class="welcome-desktop">Créez votre première zone en cliquant sur <strong>+</strong> dans le panneau de gauche</p>
                 <p class="welcome-mobile">Créez votre première zone avec le bouton <strong>+</strong> en bas à droite</p>
+                <div class="welcome-garden-row">🍅 🥕 🥦 🌿 🌻</div>
             </div>
 
             <!-- GRID CONTAINER -->
@@ -317,25 +330,15 @@
         </div>
     </div>
 
-  <!-- LEGEND PANEL -->
-<div id="legendPanel" style="
-    position: fixed;
-    left: 20px;
-    bottom: 80px;
-    z-index: 250;
-    background: white;
-    border-radius: 16px;
-    padding: 16px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-    max-height: 60vh;
-    overflow-y: auto;
-    width: 320px;
-    max-width: calc(100vw - 40px);
-    display: none;
-">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h4 style="margin:0; color:#2d6a4f;">🌿 Bibliothèque de plantes</h4>
-        <button onclick="toggleLegend()" style="background:none; border:none; cursor:pointer; font-size:18px;">✕</button>
+  <!-- LEGEND PANEL (mobile uniquement) -->
+<div id="legendPanel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h4 style="margin:0; color:#2d6a4f; font-size:1rem;">🌿 Bibliothèque de plantes</h4>
+        <button onclick="toggleLegend()" style="background:rgba(0,0,0,0.06); border:none; cursor:pointer; font-size:16px; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center;">✕</button>
+    </div>
+    <div class="library-search-wrap">
+        <i class="fas fa-search library-search-icon"></i>
+        <input type="text" class="library-search-input" placeholder="Rechercher une plante…" oninput="searchPlantLibrary(this.value)" autocomplete="off">
     </div>
     <div id="libraryFilters" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;">
         <button class="filter-btn active" onclick="filterLibrary('all', this)">Tout</button>
@@ -348,8 +351,18 @@
     <div id="legendItems"></div>
 </div>
 
-<!-- LEGEND BUTTON -->
-<button id="legendToggleBtn" onclick="toggleLegend()">🌿 Plantes</button>
+    <!-- PLANT TOOLTIP (desktop hover) -->
+    <div id="plantTooltip">
+        <div class="tip-header">
+            <span id="tip-emoji"></span>
+            <div>
+                <div id="tip-name"></div>
+            </div>
+        </div>
+        <div id="tip-water"></div>
+        <div id="tip-date"></div>
+        <div id="tip-notes"></div>
+    </div>
 
     <!-- TOAST NOTIFICATIONS -->
     <div class="toast-container" id="toastContainer"></div>
