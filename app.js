@@ -125,6 +125,7 @@ function initAuth() {
 }
 
 function showLogin() {
+    document.body.classList.remove('app-ready');
     document.getElementById('loginScreen').style.display = 'flex';
     document.getElementById('appMain').style.display = 'none';
     document.getElementById('userInfo').style.display = 'none';
@@ -132,6 +133,7 @@ function showLogin() {
 }
 
 function showApp(user) {
+    document.body.classList.add('app-ready');
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appMain').style.display = 'flex';
     document.getElementById('userInfo').style.display = 'flex';
@@ -154,6 +156,7 @@ function loadZones() {
         state.zones = Object.entries(data).map(([id, z]) => ({ ...z, id }));
         renderZonesList();
         updateStats();
+        updateRemindersBadge();
         if (state.currentZoneId) {
             const zone = getZone(state.currentZoneId);
             if (zone) {
@@ -177,12 +180,13 @@ function renderZonesList() {
     if (!list) return;
     list.innerHTML = '';
     state.zones.forEach(zone => {
-        const item = document.createElement('div');
+        const item = document.createElement('li');
         item.className = 'zone-item' + (zone.id === state.currentZoneId ? ' active' : '');
+        const plantCount = zone.plants ? Object.keys(zone.plants).length : 0;
         item.innerHTML = `
-            <span style="color:${zone.color || '#2d6a4f'}">■</span>
+            <span class="zone-dot" style="background:${zone.color || '#2d6a4f'}"></span>
             <span>${zone.name}</span>
-            <small>(${zone.cols}×${zone.rows})</small>
+            ${plantCount > 0 ? `<span class="zone-plant-count">${plantCount}</span>` : ''}
         `;
         item.addEventListener('click', () => selectZone(zone.id));
         list.appendChild(item);
@@ -199,6 +203,12 @@ function selectZone(id) {
 
     document.getElementById('zoneName').textContent = zone.name;
     document.getElementById('zoneSize').textContent = `${zone.cols} × ${zone.rows}`;
+    document.getElementById('zoneColorDot').style.background = zone.color || '#2d6a4f';
+
+    const gridColsEl = document.getElementById('gridCols');
+    const gridRowsEl = document.getElementById('gridRows');
+    if (gridColsEl) gridColsEl.value = zone.cols || 5;
+    if (gridRowsEl) gridRowsEl.value = zone.rows || 5;
 
     renderGrid(zone);
     renderLegend('all');
@@ -231,6 +241,8 @@ function openZoneModal(zone = null) {
     document.getElementById('zoneName_input').value = zone ? zone.name || '' : '';
     document.getElementById('zoneCols').value = zone ? zone.cols || 5 : 5;
     document.getElementById('zoneRows').value = zone ? zone.rows || 5 : 5;
+    const saveZoneText = document.getElementById('saveZoneText');
+    if (saveZoneText) saveZoneText.textContent = zone ? 'Modifier' : 'Créer';
 
     // Couleur
     selectedColor = zone ? (zone.color || '#4CAF50') : '#4CAF50';
@@ -299,8 +311,32 @@ function renderGrid(zone) {
                 `;
             }
 
+            // Appui long (mobile) → menu contextuel
+            let pressTimer = null;
+            let longPressOccurred = false;
+
+            cell.addEventListener('touchstart', (e) => {
+                longPressOccurred = false;
+                pressTimer = setTimeout(() => {
+                    const touch = e.touches[0];
+                    longPressOccurred = true;
+                    handleCellRightClick({
+                        preventDefault: () => {},
+                        clientX: touch.clientX,
+                        clientY: touch.clientY - 10
+                    }, r, c);
+                }, 550);
+            }, { passive: true });
+
+            cell.addEventListener('touchend', () => clearTimeout(pressTimer));
+            cell.addEventListener('touchmove', () => {
+                clearTimeout(pressTimer);
+                longPressOccurred = false;
+            });
+
             // Clic gauche
             cell.addEventListener('click', () => {
+                if (longPressOccurred) { longPressOccurred = false; return; }
                 if (state.selectedPlantFromLibrary) {
                     dropLibraryPlant(r, c);
                 } else if (state.touchDragPlant) {
@@ -433,14 +469,70 @@ function filterLibrary(type, btn) {
     renderLegend(type);
 }
 
+function filterPalette(type, btn) {
+    document.querySelectorAll('.filter-btns .filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderPalette(type);
+}
+
 function toggleLegend() {
     const panel = document.getElementById('legendPanel');
     if (panel.style.display === 'none' || panel.style.display === '') {
         panel.style.display = 'block';
         renderLegend('all');
+        updateMobileNav('library');
     } else {
         panel.style.display = 'none';
+        updateMobileNav('zones');
     }
+}
+
+// ===== MOBILE NAV =====
+function updateMobileNav(tab) {
+    document.querySelectorAll('.mobile-nav-btn').forEach(btn => btn.classList.remove('active'));
+    const el = document.getElementById('nav-' + tab);
+    if (el) el.classList.add('active');
+}
+
+function mobileNavTo(tab) {
+    const panel = document.getElementById('legendPanel');
+
+    if (tab === 'library') {
+        toggleLegend();
+        return;
+    }
+
+    updateMobileNav(tab);
+
+    if (panel && panel.style.display !== 'none') {
+        panel.style.display = 'none';
+    }
+
+    if (tab === 'calendar') {
+        renderCalendar();
+        openModal('calendarModal');
+    } else if (tab === 'reminders') {
+        renderReminders();
+        openModal('remindersModal');
+    }
+}
+
+function updateRemindersBadge() {
+    const badge = document.getElementById('remindersBadge');
+    if (!badge) return;
+    const today = new Date();
+    let count = 0;
+    state.zones.forEach(z => {
+        if (!z.plants) return;
+        Object.values(z.plants).forEach(p => {
+            if (p && p.reminder && p.reminder.date) {
+                const d = new Date(p.reminder.date);
+                if (d <= today) count++;
+            }
+        });
+    });
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'flex' : 'none';
 }
 
 
@@ -673,6 +765,17 @@ function handleCellRightClick(e, row, col) {
     `;
 
     document.body.appendChild(menu);
+
+    // Empêcher le menu de sortir de l'écran
+    const rect = menu.getBoundingClientRect();
+    const navH = window.innerWidth <= 480 ? 68 : 0;
+    if (rect.right > window.innerWidth - 8) {
+        menu.style.left = Math.max(8, e.clientX - rect.width) + 'px';
+    }
+    if (rect.bottom > window.innerHeight - navH - 8) {
+        menu.style.top = Math.max(80, e.clientY - rect.height) + 'px';
+    }
+
     copiedPlant = { ...plant };
     highlightSourceCell(row, col);
 
@@ -899,15 +1002,24 @@ function renderCalendar() {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const offset = (firstDay + 6) % 7;
 
+    ['L', 'M', 'M', 'J', 'V', 'S', 'D'].forEach(d => {
+        const h = document.createElement('div');
+        h.className = 'cal-day-header';
+        h.textContent = d;
+        grid.appendChild(h);
+    });
+
     for (let i = 0; i < offset; i++) {
-        grid.appendChild(document.createElement('div'));
+        const empty = document.createElement('div');
+        empty.className = 'cal-day empty';
+        grid.appendChild(empty);
     }
 
     const today = new Date();
 
     for (let d = 1; d <= daysInMonth; d++) {
         const dayEl = document.createElement('div');
-        dayEl.className = 'calendar-day';
+        dayEl.className = 'cal-day';
         dayEl.textContent = d;
 
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
@@ -957,18 +1069,20 @@ function renderReminders() {
     reminders.sort((a, b) => a.date.localeCompare(b.date));
 
     if (reminders.length === 0) {
-        list.innerHTML = '<p style="text-align:center; color:#999;">Aucun rappel</p>';
+        list.innerHTML = '<li class="empty-msg">Aucun rappel pour le moment</li>';
         return;
     }
 
     reminders.forEach(r => {
         const d = new Date(r.date);
         const isPast = d < today;
-        const item = document.createElement('div');
-        item.className = 'reminder-item' + (isPast ? ' past' : '');
+        const item = document.createElement('li');
+        item.className = 'reminder-card' + (isPast ? ' overdue' : '');
         item.innerHTML = `
-            <div>${r.emoji} <strong>${r.plant}</strong> — ${r.zone}</div>
-            <div style="color:#666; font-size:13px;">${d.toLocaleDateString('fr-FR')} ${r.text ? '— ' + r.text : ''}</div>
+            <div class="reminder-info">
+                <h5>${r.emoji} ${r.plant} <small style="font-weight:400;color:var(--text-light)">— ${r.zone}</small></h5>
+                <p>${d.toLocaleDateString('fr-FR')}${r.text ? ' — ' + r.text : ''}${isPast ? ' ⚠️' : ''}</p>
+            </div>
         `;
         list.appendChild(item);
     });
@@ -1011,13 +1125,13 @@ function closeModal(id) {
 function showToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
+    toast.className = `toast ${type}`;
     toast.textContent = message;
     container.appendChild(toast);
     setTimeout(() => toast.classList.add('show'), 10);
     setTimeout(() => {
         toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
+        setTimeout(() => toast.remove(), 280);
     }, 3000);
 }
 
@@ -1091,4 +1205,5 @@ function bindEvents() {
     });
 
     initPhotoUpload();
+    renderPalette('all');
 }
