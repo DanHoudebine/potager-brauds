@@ -91,6 +91,10 @@
                 <div class="library-header">
                     <h4><i class="fas fa-seedling"></i> Bibliothèque</h4>
                 </div>
+                <div class="library-search-wrap sidebar-search">
+                    <i class="fas fa-search library-search-icon"></i>
+                    <input type="text" class="library-search-input" placeholder="Rechercher…" oninput="searchPlantLibrary(this.value)" autocomplete="off">
+                </div>
                 <div class="filter-btns">
                     <button class="filter-btn active" onclick="filterPalette('all', this)">Tous</button>
                     <button class="filter-btn" onclick="filterPalette('legume', this)">🥬</button>
@@ -326,22 +330,8 @@
         </div>
     </div>
 
-  <!-- LEGEND PANEL -->
-<div id="legendPanel" style="
-    position: fixed;
-    left: 20px;
-    bottom: 80px;
-    z-index: 250;
-    background: white;
-    border-radius: 16px;
-    padding: 16px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-    max-height: 60vh;
-    overflow-y: auto;
-    width: 340px;
-    max-width: calc(100vw - 40px);
-    display: none;
-">
+  <!-- LEGEND PANEL (mobile uniquement) -->
+<div id="legendPanel">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
         <h4 style="margin:0; color:#2d6a4f; font-size:1rem;">🌿 Bibliothèque de plantes</h4>
         <button onclick="toggleLegend()" style="background:rgba(0,0,0,0.06); border:none; cursor:pointer; font-size:16px; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center;">✕</button>
@@ -360,9 +350,6 @@
     </div>
     <div id="legendItems"></div>
 </div>
-
-<!-- LEGEND BUTTON -->
-<button id="legendToggleBtn" onclick="toggleLegend()">🌿 Plantes</button>
 
     <!-- PLANT TOOLTIP (desktop hover) -->
     <div id="plantTooltip">
