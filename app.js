@@ -125,6 +125,7 @@ function initAuth() {
 }
 
 function showLogin() {
+    document.body.classList.remove('app-ready');
     document.getElementById('loginScreen').style.display = 'flex';
     document.getElementById('appMain').style.display = 'none';
     document.getElementById('userInfo').style.display = 'none';
@@ -132,6 +133,7 @@ function showLogin() {
 }
 
 function showApp(user) {
+    document.body.classList.add('app-ready');
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appMain').style.display = 'flex';
     document.getElementById('userInfo').style.display = 'flex';
@@ -154,6 +156,7 @@ function loadZones() {
         state.zones = Object.entries(data).map(([id, z]) => ({ ...z, id }));
         renderZonesList();
         updateStats();
+        updateRemindersBadge();
         if (state.currentZoneId) {
             const zone = getZone(state.currentZoneId);
             if (zone) {
@@ -299,8 +302,32 @@ function renderGrid(zone) {
                 `;
             }
 
+            // Appui long (mobile) → menu contextuel
+            let pressTimer = null;
+            let longPressOccurred = false;
+
+            cell.addEventListener('touchstart', (e) => {
+                longPressOccurred = false;
+                pressTimer = setTimeout(() => {
+                    const touch = e.touches[0];
+                    longPressOccurred = true;
+                    handleCellRightClick({
+                        preventDefault: () => {},
+                        clientX: touch.clientX,
+                        clientY: touch.clientY - 10
+                    }, r, c);
+                }, 550);
+            }, { passive: true });
+
+            cell.addEventListener('touchend', () => clearTimeout(pressTimer));
+            cell.addEventListener('touchmove', () => {
+                clearTimeout(pressTimer);
+                longPressOccurred = false;
+            });
+
             // Clic gauche
             cell.addEventListener('click', () => {
+                if (longPressOccurred) { longPressOccurred = false; return; }
                 if (state.selectedPlantFromLibrary) {
                     dropLibraryPlant(r, c);
                 } else if (state.touchDragPlant) {
@@ -438,9 +465,59 @@ function toggleLegend() {
     if (panel.style.display === 'none' || panel.style.display === '') {
         panel.style.display = 'block';
         renderLegend('all');
+        updateMobileNav('library');
     } else {
         panel.style.display = 'none';
+        updateMobileNav('zones');
     }
+}
+
+// ===== MOBILE NAV =====
+function updateMobileNav(tab) {
+    document.querySelectorAll('.mobile-nav-btn').forEach(btn => btn.classList.remove('active'));
+    const el = document.getElementById('nav-' + tab);
+    if (el) el.classList.add('active');
+}
+
+function mobileNavTo(tab) {
+    const panel = document.getElementById('legendPanel');
+
+    if (tab === 'library') {
+        toggleLegend();
+        return;
+    }
+
+    updateMobileNav(tab);
+
+    if (panel && panel.style.display !== 'none') {
+        panel.style.display = 'none';
+    }
+
+    if (tab === 'calendar') {
+        renderCalendar();
+        openModal('calendarModal');
+    } else if (tab === 'reminders') {
+        renderReminders();
+        openModal('remindersModal');
+    }
+}
+
+function updateRemindersBadge() {
+    const badge = document.getElementById('remindersBadge');
+    if (!badge) return;
+    const today = new Date();
+    let count = 0;
+    state.zones.forEach(z => {
+        if (!z.plants) return;
+        Object.values(z.plants).forEach(p => {
+            if (p && p.reminder && p.reminder.date) {
+                const d = new Date(p.reminder.date);
+                if (d <= today) count++;
+            }
+        });
+    });
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'flex' : 'none';
 }
 
 
