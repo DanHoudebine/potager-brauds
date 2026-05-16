@@ -157,6 +157,7 @@ function loadZones() {
         renderZonesList();
         updateStats();
         updateRemindersBadge();
+        showSeasonalTip();
         if (state.currentZoneId) {
             const zone = getZone(state.currentZoneId);
             if (zone) {
@@ -301,14 +302,22 @@ function renderGrid(zone) {
             cell.className = 'grid-cell' + (plant ? ' has-plant' : '');
             cell.dataset.row = r;
             cell.dataset.col = c;
-            cell.style.borderColor = zone.color || '#2d6a4f';
 
             if (plant && plant.name) {
-                cell.innerHTML = `
-                    <div class="cell-emoji">${getPlantEmoji(plant)}</div>
-                    <div class="cell-name">${plant.name}</div>
-                    ${plant.variety ? `<div class="cell-variety">${plant.variety}</div>` : ''}
-                `;
+                cell.dataset.type = plant.type || 'autre';
+                const wMap = { quotidien: 'water-daily', '2jours': 'water-2days', semaine: 'water-weekly', rarement: 'water-rare' };
+                cell.classList.add(wMap[plant.water] || 'water-weekly');
+                cell.innerHTML = plant.photo
+                    ? `<img src="${plant.photo}" class="cell-photo" alt="${plant.name}"><div class="cell-name">${plant.name}</div><div class="cell-water-dot"></div>`
+                    : `<div class="cell-emoji">${getPlantEmoji(plant)}</div><div class="cell-name">${plant.name}</div><div class="cell-water-dot"></div>`;
+                if (window.innerWidth > 768) {
+                    cell.addEventListener('mouseenter', (e) => showPlantTooltip(e, plant));
+                    cell.addEventListener('mouseleave', hidePlantTooltip);
+                    cell.addEventListener('mousemove', positionTooltip);
+                }
+            } else {
+                cell.style.borderColor = zone.color || '#2d6a4f';
+                cell.innerHTML = '<div class="cell-add-icon"><i class="fas fa-plus"></i></div>';
             }
 
             // Appui long (mobile) → menu contextuel
@@ -659,26 +668,10 @@ function renderPalette(filter = 'all') {
     list.forEach(plant => {
         const btn = document.createElement('div');
         btn.className = 'palette-btn';
-        btn.style.cssText = `
-            display:flex; flex-direction:column; align-items:center; justify-content:center;
-            border:2px solid #eee; border-radius:10px; padding:8px 6px; cursor:pointer;
-            background:white; transition:all 0.2s; min-width:70px;
-        `;
         btn.innerHTML = `
-            <span style="font-size:28px;">${plant.emoji}</span>
-            <span style="font-size:11px; margin-top:4px; text-align:center; line-height:1;">${plant.name}</span>
+            <span class="palette-emoji">${plant.emoji}</span>
+            <span class="palette-name">${plant.name}</span>
         `;
-
-        btn.addEventListener('mouseenter', () => {
-            btn.style.border = '2px solid #2d6a4f';
-            btn.style.background = '#f0faf4';
-            btn.style.transform = 'scale(1.15)';
-        });
-        btn.addEventListener('mouseleave', () => {
-            btn.style.border = '2px solid #eee';
-            btn.style.background = 'white';
-            btn.style.transform = 'scale(1)';
-        });
 
         btn.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('plant', JSON.stringify({
@@ -722,6 +715,84 @@ function getTypeEmoji(type) {
         legume: '🥦', fruit: '🍓', herbe: '🌿', fleur: '🌸', arbre: '🌳'
     };
     return map[type] || '🌱';
+}
+
+function getWaterLabel(water) {
+    const map = { quotidien: '💧 Quotidien', '2jours': '💧 Tous les 2 jours', semaine: '💧 1x / semaine', rarement: '💧 Rarement' };
+    return map[water] || '💧 Arrosage non précisé';
+}
+
+function showPlantTooltip(e, plant) {
+    const tip = document.getElementById('plantTooltip');
+    if (!tip) return;
+    document.getElementById('tip-emoji').textContent = plant.emoji || getTypeEmoji(plant.type);
+    document.getElementById('tip-name').textContent = plant.name + (plant.variety ? ` — ${plant.variety}` : '');
+    document.getElementById('tip-water').textContent = getWaterLabel(plant.water);
+    const dateEl = document.getElementById('tip-date');
+    dateEl.textContent = plant.date ? `📅 Planté le ${plant.date}` : '';
+    dateEl.style.display = plant.date ? '' : 'none';
+    const notesEl = document.getElementById('tip-notes');
+    notesEl.textContent = plant.notes || '';
+    notesEl.style.display = plant.notes ? '' : 'none';
+    tip.style.opacity = '1';
+    tip.style.pointerEvents = 'none';
+    positionTooltip(e);
+}
+
+function hidePlantTooltip() {
+    const tip = document.getElementById('plantTooltip');
+    if (tip) tip.style.opacity = '0';
+}
+
+function positionTooltip(e) {
+    const tip = document.getElementById('plantTooltip');
+    if (!tip || tip.style.opacity === '0') return;
+    const offset = 14;
+    let x = e.clientX + offset;
+    let y = e.clientY + offset;
+    if (x + 240 > window.innerWidth) x = e.clientX - 240 - offset;
+    if (y + 160 > window.innerHeight) y = e.clientY - 160 - offset;
+    tip.style.left = x + 'px';
+    tip.style.top = y + 'px';
+}
+
+const SEASONAL_TIPS = [
+    { months: [3, 4, 5], tip: '🌱 Printemps — Idéal pour semer tomates, courgettes et salades en pleine terre !' },
+    { months: [6, 7, 8], tip: '☀️ Été — Arrosez tôt le matin ou le soir, jamais en plein soleil.' },
+    { months: [9, 10, 11], tip: '🍂 Automne — Plantez ail, oignons et épinards pour l\'hiver.' },
+    { months: [12, 1, 2], tip: '❄️ Hiver — Préparez vos plans de semis pour le printemps prochain !' },
+];
+
+function showSeasonalTip() {
+    const el = document.getElementById('seasonalTip');
+    if (!el) return;
+    const month = new Date().getMonth() + 1;
+    const entry = SEASONAL_TIPS.find(t => t.months.includes(month));
+    if (entry) {
+        el.textContent = entry.tip;
+        el.style.display = '';
+    } else {
+        el.style.display = 'none';
+    }
+}
+
+function searchPlantLibrary(query) {
+    const q = query.trim().toLowerCase();
+    const palette = document.getElementById('plantPalette');
+    if (!palette) return;
+    if (!q) { renderPalette('all'); return; }
+    const matches = PLANT_LIBRARY.filter(p => p.name.toLowerCase().includes(q) || (p.notes && p.notes.toLowerCase().includes(q)));
+    palette.innerHTML = '';
+    matches.forEach(plant => {
+        const btn = document.createElement('div');
+        btn.className = 'palette-btn';
+        btn.innerHTML = `<span style="font-size:28px;">${plant.emoji}</span><span style="font-size:11px; margin-top:4px; text-align:center; line-height:1;">${plant.name}</span>`;
+        btn.addEventListener('click', () => {
+            state.selectedPlantFromLibrary = { ...plant };
+            showToast(`${plant.emoji} ${plant.name} sélectionné — cliquez sur une cellule`, 'info');
+        });
+        palette.appendChild(btn);
+    });
 }
 
 // ===== CONTEXT MENU / TAMPON =====
@@ -1206,4 +1277,9 @@ function bindEvents() {
 
     initPhotoUpload();
     renderPalette('all');
+
+    const librarySearch = document.getElementById('librarySearchInput');
+    if (librarySearch) {
+        librarySearch.addEventListener('input', (e) => searchPlantLibrary(e.target.value));
+    }
 }
