@@ -484,12 +484,15 @@ function filterPalette(type, btn) {
 
 function toggleLegend() {
     const panel = document.getElementById('legendPanel');
-    const isOpen = panel.classList.contains('open-mobile');
+    const isOpen = panel.style.display === 'flex';
     if (isOpen) {
-        panel.classList.remove('open-mobile');
+        panel.style.display = 'none';
         updateMobileNav('zones');
     } else {
-        panel.classList.add('open-mobile');
+        panel.style.display = 'flex';
+        panel.style.flexDirection = 'column';
+        panel.style.gap = '12px';
+        panel.style.transform = 'none';
         renderLegend('all');
         updateMobileNav('library');
     }
@@ -512,7 +515,7 @@ function mobileNavTo(tab) {
 
     updateMobileNav(tab);
 
-    if (panel) panel.classList.remove('open-mobile');
+    if (panel) panel.style.display = 'none';
 
     if (tab === 'calendar') {
         renderCalendar();

@@ -1383,6 +1383,8 @@ body {
         padding: 20px 16px 20px !important;
         overflow-y: auto;
         transform: none !important;
+        background: white !important;
+        z-index: 300 !important;
     }
 
     /* Bouton Plantes — masqué sur mobile (remplacé par la nav) */
@@ -1461,9 +1463,7 @@ body {
         z-index: 250;
     }
 
-    /* Réactiver le legendPanel sur mobile */
-    #legendPanel { display: none; }
-    #legendPanel.open-mobile { display: flex; flex-direction: column; gap: 12px; }
+    /* legendPanel : affiché/masqué par JS (toggleLegend) */
 
     /* Dégradé de fin pour indiquer le scroll horizontal des zones */
     .sidebar { position: relative; }
