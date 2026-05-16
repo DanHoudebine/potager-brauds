@@ -286,8 +286,8 @@ body {
 
 /* ===== SIDEBAR ===== */
 .sidebar {
-    width: 240px;
-    min-width: 240px;
+    width: 280px;
+    min-width: 280px;
     background: var(--bg-sidebar);
     height: calc(100vh - var(--header-height));
     position: sticky;
@@ -321,23 +321,7 @@ body {
     flex: 1;
 }
 
-.zone-item {
-    padding: 10px 14px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    color: rgba(255,255,255,0.75);
-    font-weight: 700;
-    font-size: 0.9rem;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 4px;
-    position: relative;
-}
-
-.zone-item:hover { background: rgba(255,255,255,0.1); color: white; }
-.zone-item.active { background: rgba(255,255,255,0.2); color: white; border-right: 3px solid var(--primary-light); }
+/* zone-item défini plus bas dans la section ZONE ITEMS DESKTOP POLISH */
 
 .zone-dot {
     width: 10px;
@@ -609,14 +593,68 @@ body {
     pointer-events: none;
 }
 
+/* ===== LIBRARY SECTION (sidebar desktop) ===== */
+.library-section {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 4px;
+}
+
+.library-header {
+    padding: 14px 16px 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.library-header h4 {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter-btns {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    padding: 0 8px 10px;
+}
+
+.filter-btns .filter-btn {
+    padding: 4px 10px;
+    border-radius: 16px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    background: transparent;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.78rem;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    transition: var(--transition);
+}
+
+.filter-btns .filter-btn:hover {
+    border-color: var(--primary-light);
+    color: var(--primary-light);
+    background: rgba(82,183,136,0.1);
+}
+
+.filter-btns .filter-btn.active {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border-color: var(--primary-light);
+}
+
 /* ===== PALETTE SIDEBAR ===== */
 #plantPalette {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 5px;
-    padding: 4px 8px 8px;
-    overflow-y: auto;
-    max-height: 260px;
+    padding: 4px 8px 16px;
 }
 
 .palette-btn {
@@ -1186,14 +1224,15 @@ body {
 /* ===== TOAST ===== */
 .toast-container {
     position: fixed;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: calc(var(--header-height) + 12px);
+    right: 24px;
+    left: auto;
+    transform: none;
     z-index: 600;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    align-items: center;
+    align-items: flex-end;
     pointer-events: none;
 }
 
@@ -1224,14 +1263,33 @@ body {
 
 /* ===== MOBILE-ONLY ELEMENTS (hidden on desktop) ===== */
 .mobile-nav, .mobile-fab { display: none; }
+#legendToggleBtn { display: none; }
+#legendPanel { display: none; }
 
 /* Helpers welcome message desktop/mobile */
 .welcome-mobile { display: none; }
 
+/* ===== ZONE SIZE BADGE ===== */
+.zone-size-badge {
+    background: var(--bg);
+    color: var(--text-light);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+/* ===== SIDEBAR SEARCH ===== */
+.sidebar-search {
+    margin: 0 8px 10px;
+}
+
 /* ===== RESPONSIVE 768px ===== */
 /* ===== RESPONSIVE 768px ===== */
 @media (max-width: 768px) {
-    .sidebar { width: 200px; min-width: 200px; }
+    .sidebar { width: 220px; min-width: 220px; }
     .logo h1 { font-size: 1rem; }
     .logo .subtitle { display: none; }
     .zone-header { flex-direction: column; align-items: flex-start; }
@@ -1393,9 +1451,18 @@ body {
     /* Décaler le contenu au-dessus de la nav mobile */
     .main-content { padding-bottom: calc(82px + env(safe-area-inset-bottom)); }
     .toast-container {
+        top: auto;
         bottom: calc(72px + env(safe-area-inset-bottom));
+        right: 50%;
+        left: auto;
+        transform: translateX(50%);
+        align-items: center;
         z-index: 250;
     }
+
+    /* Réactiver le legendPanel sur mobile */
+    #legendPanel { display: none; }
+    #legendPanel.open-mobile { display: block; }
 
     /* Dégradé de fin pour indiquer le scroll horizontal des zones */
     .sidebar { position: relative; }

@@ -162,7 +162,6 @@ function loadZones() {
             const zone = getZone(state.currentZoneId);
             if (zone) {
                 renderGrid(zone);
-                renderLegend('all');
             }
         }
     });
@@ -212,7 +211,6 @@ function selectZone(id) {
     if (gridRowsEl) gridRowsEl.value = zone.rows || 5;
 
     renderGrid(zone);
-    renderLegend('all');
     renderZonesList();
     updateStats();
 }
@@ -486,13 +484,14 @@ function filterPalette(type, btn) {
 
 function toggleLegend() {
     const panel = document.getElementById('legendPanel');
-    if (panel.style.display === 'none' || panel.style.display === '') {
-        panel.style.display = 'block';
+    const isOpen = panel.classList.contains('open-mobile');
+    if (isOpen) {
+        panel.classList.remove('open-mobile');
+        updateMobileNav('zones');
+    } else {
+        panel.classList.add('open-mobile');
         renderLegend('all');
         updateMobileNav('library');
-    } else {
-        panel.style.display = 'none';
-        updateMobileNav('zones');
     }
 }
 
@@ -513,9 +512,7 @@ function mobileNavTo(tab) {
 
     updateMobileNav(tab);
 
-    if (panel && panel.style.display !== 'none') {
-        panel.style.display = 'none';
-    }
+    if (panel) panel.classList.remove('open-mobile');
 
     if (tab === 'calendar') {
         renderCalendar();
