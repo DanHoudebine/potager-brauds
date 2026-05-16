@@ -1,0 +1,27 @@
+# Secrets & credentials
+.env
+.env.local
+.env.*.local
+service-account.json
+*-service-account.json
+firebase-adminsdk*.json
+google-credentials.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
