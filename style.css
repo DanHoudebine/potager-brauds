@@ -1002,18 +1002,28 @@ body {
     box-shadow: var(--shadow);
     font-weight: 700;
     font-size: 0.9rem;
-    animation: slideUp 0.3s ease;
     display: flex;
     align-items: center;
     gap: 10px;
     min-width: 250px;
     max-width: 90vw;
     text-align: center;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
+.toast.show { opacity: 1; transform: translateY(0); }
 .toast.success { background: var(--primary); }
 .toast.error { background: #e63946; }
 .toast.warning { background: var(--accent-dark); }
+.toast.info { background: var(--primary-dark); }
+
+/* ===== MOBILE-ONLY ELEMENTS (hidden on desktop) ===== */
+.mobile-nav, .mobile-fab { display: none; }
+
+/* Helpers welcome message desktop/mobile */
+.welcome-mobile { display: none; }
 
 /* ===== RESPONSIVE 768px ===== */
 /* ===== RESPONSIVE 768px ===== */
@@ -1089,37 +1099,32 @@ body {
     .grid-container {
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
-        padding-bottom: 80px; /* espace pour le bouton Plantes */
+        padding-bottom: 8px;
     }
 
-    /* Cellules */
-    .grid-cell { width: 52px; height: 52px; border-radius: 8px; }
-    .cell-emoji { font-size: 1.3rem; }
+    /* Cellules — cibles tactiles agrandies à 60px (norme 44px min) */
+    .grid-cell { width: 60px; height: 60px; border-radius: 8px; }
+    .cell-emoji { font-size: 1.5rem; }
     .cell-name { display: none; }
 
-    /* Popup bibliothèque → tiroir bas plein écran */
+    /* Popup bibliothèque → tiroir bas, au-dessus de la nav mobile */
     #legendPanel {
         position: fixed !important;
         left: 0 !important;
         right: 0 !important;
-        bottom: 0 !important;
+        bottom: calc(58px + env(safe-area-inset-bottom)) !important;
         top: auto !important;
         width: 100% !important;
         max-width: 100% !important;
-        max-height: 75vh !important;
+        max-height: 70vh !important;
         border-radius: 20px 20px 0 0 !important;
         box-shadow: 0 -4px 30px rgba(0,0,0,0.25) !important;
-        padding: 20px 16px calc(20px + env(safe-area-inset-bottom)) !important;
+        padding: 20px 16px 20px !important;
         overflow-y: auto;
     }
 
-    /* Bouton Plantes fixe en bas */
-    #legendToggleBtn {
-        right: 16px;
-        bottom: calc(16px + env(safe-area-inset-bottom));
-        font-size: 13px;
-        padding: 10px 16px;
-    }
+    /* Bouton Plantes — masqué sur mobile (remplacé par la nav) */
+    #legendToggleBtn { display: none !important; }
 
     /* Modals plein écran depuis le bas */
     .modal-overlay { align-items: flex-end; padding: 0; }
@@ -1135,4 +1140,161 @@ body {
 
     /* Forme du modal petit */
     .modal.modal-sm, .modal.modal-md { width: 100% !important; max-width: 100% !important; }
+
+    /* Zone header — masquer les contrôles de grille et le badge de taille */
+    .zone-controls { display: none; }
+    .zone-size-badge { display: none; }
+    .btn-pdf-text { display: none; }
+    .zone-item small { display: none; }
+    #calendarBtn, #reminderBtn { display: none !important; }
+
+    /* Sidebar header (titre + btn +) remplacé par le FAB */
+    .sidebar-header { display: none !important; }
+
+    /* Bibliothèque sidebar masquée sur mobile (remplacée par legendPanel) */
+    .library-section { display: none !important; }
+
+    /* Message bienvenue adaptatif */
+    .welcome-desktop { display: none; }
+    .welcome-mobile { display: block; }
+
+    /* Handle de swipe sur les modals bottom sheet */
+    .modal::before {
+        content: '';
+        display: block;
+        width: 36px;
+        height: 4px;
+        background: var(--border);
+        border-radius: 2px;
+        margin: 10px auto 0;
+        flex-shrink: 0;
+    }
+
+    /* Zones en chips plus élégants */
+    .zones-list { padding: 6px 10px 8px; gap: 6px; }
+    .zone-item {
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.12);
+        font-size: 0.82rem;
+        padding: 7px 14px;
+        border-radius: 20px;
+        gap: 7px;
+    }
+    .zone-item.active {
+        background: rgba(82,183,136,0.3);
+        border-color: var(--primary-light);
+        border-right: none;
+        color: white;
+    }
+
+    /* Décaler le contenu au-dessus de la nav mobile */
+    .main-content { padding-bottom: calc(82px + env(safe-area-inset-bottom)); }
+    .toast-container {
+        bottom: calc(72px + env(safe-area-inset-bottom));
+        z-index: 250;
+    }
+
+    /* Dégradé de fin pour indiquer le scroll horizontal des zones */
+    .sidebar { position: relative; }
+    .sidebar::after {
+        content: '';
+        position: absolute;
+        right: 0; top: 0; bottom: 0;
+        width: 28px;
+        background: linear-gradient(to right, transparent, var(--bg-sidebar));
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    /* Feedback tactile sur les cellules */
+    .grid-cell:active { transform: scale(0.92) !important; background: #cdefd8; }
+
+    /* ===== BARRE DE NAVIGATION MOBILE ===== */
+    .app-ready .mobile-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        height: calc(58px + env(safe-area-inset-bottom));
+        padding-bottom: env(safe-area-inset-bottom);
+        background: var(--bg-sidebar);
+        border-top: 1px solid rgba(255,255,255,0.1);
+        box-shadow: 0 -4px 24px rgba(0,0,0,0.35);
+        z-index: 200;
+    }
+
+    .mobile-nav-btn {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        padding: 8px 4px;
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.38);
+        cursor: pointer;
+        font-family: 'Nunito', sans-serif;
+        transition: color 0.2s;
+        -webkit-tap-highlight-color: transparent;
+        position: relative;
+    }
+
+    .mobile-nav-btn.active { color: var(--primary-light); }
+
+    .mobile-nav-btn.active::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 22%; right: 22%;
+        height: 2px;
+        background: var(--primary-light);
+        border-radius: 0 0 4px 4px;
+    }
+
+    .mobile-nav-btn i { font-size: 1.25rem; transition: transform 0.2s; }
+    .mobile-nav-btn.active i { transform: scale(1.12); }
+    .mobile-nav-btn span {
+        font-size: 0.6rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* ===== BOUTON FAB (ajout zone) ===== */
+    .app-ready .mobile-fab {
+        display: flex;
+        position: fixed;
+        right: 16px;
+        bottom: calc(68px + env(safe-area-inset-bottom));
+        width: 50px; height: 50px;
+        border-radius: 50%;
+        background: var(--accent);
+        color: white;
+        border: none;
+        font-size: 1.4rem;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 18px rgba(244,162,97,0.6);
+        cursor: pointer;
+        z-index: 190;
+        transition: transform 0.15s, box-shadow 0.15s;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .mobile-fab:active { transform: scale(0.88); box-shadow: 0 2px 8px rgba(244,162,97,0.4); }
+
+    /* Badge rappels sur l'icône de la nav */
+    .nav-badge {
+        position: absolute;
+        top: 6px; right: calc(50% - 18px);
+        background: #e63946;
+        color: white;
+        font-size: 0.5rem;
+        font-weight: 800;
+        width: 14px; height: 14px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 }
