@@ -1,416 +1,530 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>🌿 Le Potager des Brauds</title>
-
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2d6a4f">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Potager">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f9f6f0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Potager">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="manifest" href="manifest.json">
+  <title>Potager des Brauds — votre jardin, organisé</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- LOGIN SCREEN -->
-    <div class="login-screen" id="loginScreen" style="display:none">
-        <div class="login-card">
-            <div class="login-logo">🌿</div>
-            <h2>Le Potager des Brauds</h2>
-            <p class="login-sub">Votre jardin connecté, partout avec vous</p>
-            <p class="login-quote">« Le jardinage est l'art de cultiver la patience, la persévérance… et les tomates. »</p>
-            <button class="btn btn-google" id="loginBtn">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
-                Continuer avec Google
-            </button>
-        </div>
+<!-- ===== AUTH SCREEN ===== -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-modal">
+    <div class="auth-hero">
+      <div class="auth-logo">🌱</div>
+      <h2>Le Potager des Brauds</h2>
+      <p class="auth-sub">Votre jardin, organisé au quotidien</p>
     </div>
-
-    <!-- HEADER -->
-    <header class="header">
-        <div class="header-content">
-            <div class="logo">
-                <span class="logo-icon">🌿</span>
-                <div>
-                    <h1>Le Potager des Brauds</h1>
-                    <p class="subtitle">Votre jardin connecté</p>
-                </div>
-            </div>
-            <div class="header-actions">
-                <button class="btn btn-icon" id="calendarBtn" title="Calendrier">
-                    <i class="fas fa-calendar-alt"></i>
-                </button>
-                <button class="btn btn-icon" id="reminderBtn" title="Rappels">
-                    <i class="fas fa-bell"></i>
-                </button>
-                <div class="user-info" id="userInfo" style="display:none">
-                    <img src="" alt="Avatar" class="user-avatar" id="userAvatar">
-                    <span id="userName">Connexion...</span>
-                </div>
-                <button class="btn btn-logout" id="logoutBtn" style="display:none">
-                    <i class="fas fa-sign-out-alt"></i>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- APP MAIN -->
-    <main class="app-main" id="appMain" style="display:none">
-
-        <!-- ZONES SIDEBAR -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h3><i class="fas fa-map"></i> Mes Zones</h3>
-                <button class="btn btn-add-zone" id="addZoneBtn" title="Ajouter une zone">
-                    <i class="fas fa-plus"></i>
-                </button>
-            </div>
-            <ul class="zones-list" id="zonesList"></ul>
-            <div class="sidebar-stats">
-                <h4>📊 Stats</h4>
-                <div class="stat-item">
-                    <span>Total plantes</span>
-                    <strong id="totalPlants">0</strong>
-                </div>
-                <div class="stat-item">
-                    <span>Zones actives</span>
-                    <strong id="totalZones">0</strong>
-                </div>
-            </div>
-
-            <!-- PALETTE BIBLIOTHÈQUE -->
-            <div class="library-section">
-                <div class="library-header">
-                    <h4><i class="fas fa-seedling"></i> Bibliothèque</h4>
-                </div>
-                <div class="library-search-wrap sidebar-search">
-                    <i class="fas fa-search library-search-icon"></i>
-                    <input type="text" class="library-search-input" placeholder="Rechercher…" oninput="searchPlantLibrary(this.value)" autocomplete="off">
-                </div>
-                <div class="filter-btns">
-                    <button class="filter-btn active" onclick="filterPalette('all', this)">Tous</button>
-                    <button class="filter-btn" onclick="filterPalette('legume', this)">🥬</button>
-                    <button class="filter-btn" onclick="filterPalette('fruit', this)">🍓</button>
-                    <button class="filter-btn" onclick="filterPalette('herbe', this)">🌿</button>
-                    <button class="filter-btn" onclick="filterPalette('fleur', this)">🌸</button>
-                    <button class="filter-btn" onclick="filterPalette('arbre', this)">🌳</button>
-                </div>
-                <div class="plant-palette" id="plantPalette"></div>
-            </div>
-        </aside>
-
-        <!-- MAIN CONTENT -->
-        <div class="main-content">
-
-            <!-- ZONE HEADER -->
-            <div class="zone-header" id="zoneHeader" style="display:none">
-                <div class="zone-title-area">
-                    <span class="zone-color-dot" id="zoneColorDot"></span>
-                    <h2 id="zoneName">Sélectionnez une zone</h2>
-                    <span class="zone-size-badge" id="zoneSize"></span>
-                    <button class="btn btn-icon-sm" id="editZoneBtn" title="Modifier la zone">
-                        <i class="fas fa-pen"></i>
-                    </button>
-                    <button onclick="exportPDF()" class="btn btn-pdf" title="Exporter en PDF">
-                        <i class="fas fa-file-pdf"></i><span class="btn-pdf-text"> PDF</span>
-                    </button>
-                    <button class="btn btn-icon-sm btn-danger" id="deleteZoneBtn" title="Supprimer la zone">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-                <div class="zone-controls">
-                    <label>Colonnes:
-                        <input type="number" id="gridCols" min="1" max="20" value="5" class="grid-input">
-                    </label>
-                    <label>Rangées:
-                        <input type="number" id="gridRows" min="1" max="20" value="5" class="grid-input">
-                    </label>
-                    <button class="btn btn-primary" id="applyGridBtn">
-                        <i class="fas fa-th"></i> Appliquer
-                    </button>
-                </div>
-            </div>
-
-            <!-- WELCOME MESSAGE -->
-            <!-- SEASONAL TIP -->
-            <div id="seasonalTip">
-                <span class="seasonal-icon"></span>
-                <span class="seasonal-text"></span>
-                <button class="seasonal-close" onclick="document.getElementById('seasonalTip').style.display='none'" title="Fermer">×</button>
-            </div>
-
-            <div class="welcome-msg" id="welcomeMsg">
-                <div class="welcome-icon">🌱</div>
-                <h3>Bienvenue dans votre potager !</h3>
-                <p class="welcome-desktop">Créez votre première zone en cliquant sur <strong>+</strong> dans le panneau de gauche</p>
-                <p class="welcome-mobile">Créez votre première zone avec le bouton <strong>+</strong> en bas à droite</p>
-                <div class="welcome-garden-row">🍅 🥕 🥦 🌿 🌻</div>
-            </div>
-
-            <!-- GRID CONTAINER -->
-            <div class="grid-container" id="gridContainer"></div>
-
-        </div>
-    </main>
-
-    <!-- MODAL PLANTE -->
-    <div class="modal-overlay" id="plantModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="plantModalTitle">Ajouter une plante</h3>
-                <button class="btn-close" id="closeModal"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>🌿 Nom de la plante *</label>
-                    <input type="text" id="plantName" placeholder="Ex: Tomate cerise" class="form-control">
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>🏷️ Variété</label>
-                        <input type="text" id="plantVariety" placeholder="Ex: Cherry Roma" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>📅 Date de plantation</label>
-                        <input type="date" id="plantDate" class="form-control">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>🏷️ Type</label>
-                        <select id="plantType" class="form-control">
-                            <option value="legume">🥬 Légume</option>
-                            <option value="fruit">🍓 Fruit</option>
-                            <option value="herbe">🌿 Herbe aromatique</option>
-                            <option value="fleur">🌸 Fleur</option>
-                            <option value="arbre">🌳 Arbre/Arbuste</option>
-                            <option value="autre">🌱 Autre</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>💧 Arrosage</label>
-                        <select id="plantWater" class="form-control">
-                            <option value="quotidien">Quotidien</option>
-                            <option value="2jours">Tous les 2 jours</option>
-                            <option value="semaine">1x par semaine</option>
-                            <option value="rarement">Rarement</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>📝 Notes</label>
-                    <textarea id="plantNotes" placeholder="Notes, observations..." class="form-control" rows="3"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>📸 Photo</label>
-                    <div class="photo-upload-area" id="photoUploadArea">
-                        <input type="file" id="photoInput" accept="image/*" style="display:none">
-                        <img id="photoPreview" src="" alt="Photo plante" style="display:none; width:100%; border-radius:8px; cursor:pointer;">
-                        <div class="photo-placeholder" id="photoPlaceholder" style="cursor:pointer;">
-                            <i class="fas fa-camera"></i>
-                            <span>Ajouter une photo</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group reminder-group">
-                    <label>🔔 Rappel</label>
-                    <div class="reminder-options">
-                        <input type="checkbox" id="reminderEnabled" class="checkbox">
-                        <label for="reminderEnabled">Activer un rappel</label>
-                    </div>
-                    <div class="reminder-detail" id="reminderDetail" style="display:none">
-                        <input type="date" id="reminderDate" class="form-control">
-                        <input type="text" id="reminderText" placeholder="Ex: Récolter les tomates" class="form-control">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-danger" id="deletePlantBtn" style="display:none">
-                    <i class="fas fa-trash"></i> Supprimer
-                </button>
-                <button class="btn btn-secondary" id="cancelModal">Annuler</button>
-                <button class="btn btn-primary" id="savePlant">
-                    <i class="fas fa-save"></i> Sauvegarder
-                </button>
-            </div>
-        </div>
+    <div class="auth-notice" id="localModeNotice" style="display:none">
+      <span>⚠️</span>
+      <div><b>Mode hors-ligne</b> Vos données sont enregistrées sur cet appareil uniquement.</div>
     </div>
-
-    <!-- MODAL ZONE -->
-    <div class="modal-overlay" id="zoneModal">
-        <div class="modal modal-sm">
-            <div class="modal-header">
-                <h3 id="zoneModalTitle">Nouvelle zone</h3>
-                <button class="btn-close" id="closeZoneModal"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>📍 Nom de la zone</label>
-                    <!-- ID corrigé : zoneName_input dans app.js -->
-                    <input type="text" id="zoneName_input" placeholder="Ex: Potager principal" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label>🎨 Couleur</label>
-                    <div class="color-picker" id="colorPicker">
-                        <div class="color-option selected" data-color="#4CAF50" style="background:#4CAF50"></div>
-                        <div class="color-option" data-color="#FF9800" style="background:#FF9800"></div>
-                        <div class="color-option" data-color="#2196F3" style="background:#2196F3"></div>
-                        <div class="color-option" data-color="#E91E63" style="background:#E91E63"></div>
-                        <div class="color-option" data-color="#9C27B0" style="background:#9C27B0"></div>
-                        <div class="color-option" data-color="#FF5722" style="background:#FF5722"></div>
-                        <div class="color-option" data-color="#795548" style="background:#795548"></div>
-                        <div class="color-option" data-color="#607D8B" style="background:#607D8B"></div>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Colonnes</label>
-                        <!-- ID corrigé : zoneCols dans app.js -->
-                        <input type="number" id="zoneCols" min="1" max="20" value="5" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label>Rangées</label>
-                        <!-- ID corrigé : zoneRows dans app.js -->
-                        <input type="number" id="zoneRows" min="1" max="20" value="5" class="form-control">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelZoneModal">Annuler</button>
-                <button class="btn btn-primary" id="saveZone">
-                    <i class="fas fa-save"></i> <span id="saveZoneText">Créer</span>
-                </button>
-            </div>
-        </div>
+    <div class="auth-error" id="authError"></div>
+    <button class="gbtn" id="googleSignIn">
+      <span class="gicon"></span>
+      Continuer avec Google
+    </button>
+    <div class="auth-divider">ou</div>
+    <div class="auth-skip">
+      <button id="localModeBtn">Continuer sans compte →</button>
     </div>
-
-    <!-- MODAL CALENDRIER -->
-    <div class="modal-overlay" id="calendarModal">
-        <div class="modal modal-lg">
-            <div class="modal-header">
-                <h3>📅 Calendrier du potager</h3>
-                <button class="btn-close" id="closeCalendarModal"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="calendar-nav">
-                    <button class="btn btn-icon" id="prevMonth"><i class="fas fa-chevron-left"></i></button>
-                    <!-- ID corrigé : calendarTitle dans app.js -->
-                    <h4 id="calendarTitle"></h4>
-                    <button class="btn btn-icon" id="nextMonth"><i class="fas fa-chevron-right"></i></button>
-                </div>
-                <div class="calendar-grid" id="calendarGrid"></div>
-                <div class="calendar-events" id="calendarEvents">
-                    <h4>📌 Événements du mois</h4>
-                    <ul id="eventsList"></ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL RAPPELS -->
-    <div class="modal-overlay" id="remindersModal">
-        <div class="modal modal-md">
-            <div class="modal-header">
-                <h3>🔔 Mes Rappels</h3>
-                <button class="btn-close" id="closeRemindersModal"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                <ul id="remindersList" class="reminders-list">
-                    <li class="empty-msg">Aucun rappel pour le moment</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-  <!-- LEGEND PANEL (mobile uniquement) -->
-<div id="legendPanel">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-        <h4 style="margin:0; color:#2d6a4f; font-size:1rem;">🌿 Bibliothèque de plantes</h4>
-        <button onclick="toggleLegend()" style="background:rgba(0,0,0,0.06); border:none; cursor:pointer; font-size:16px; width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center;">✕</button>
-    </div>
-    <div class="library-search-wrap">
-        <i class="fas fa-search library-search-icon"></i>
-        <input type="text" class="library-search-input" placeholder="Rechercher une plante…" oninput="searchPlantLibrary(this.value)" autocomplete="off">
-    </div>
-    <div id="libraryFilters" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;">
-        <button class="filter-btn active" onclick="filterLibrary('all', this)">Tout</button>
-        <button class="filter-btn" onclick="filterLibrary('legume', this)">🥕 Légumes</button>
-        <button class="filter-btn" onclick="filterLibrary('fruit', this)">🍓 Fruits</button>
-        <button class="filter-btn" onclick="filterLibrary('herbe', this)">🌿 Herbes</button>
-        <button class="filter-btn" onclick="filterLibrary('fleur', this)">🌸 Fleurs</button>
-        <button class="filter-btn" onclick="filterLibrary('arbre', this)">🌳 Arbres</button>
-    </div>
-    <div id="legendItems"></div>
+  </div>
 </div>
 
-    <!-- PLANT TOOLTIP (desktop hover) -->
-    <div id="plantTooltip">
-        <div class="tip-header">
-            <span id="tip-emoji"></span>
-            <div>
-                <div id="tip-name"></div>
-            </div>
+<!-- ===== APP SHELL ===== -->
+<div class="app" id="appShell" style="display:none">
+
+  <!-- SIDEBAR (desktop ≥900px) -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">🌱</div>
+      <div>
+        <div class="brand-name">Potager</div>
+        <div class="brand-sub">des Brauds</div>
+      </div>
+    </div>
+    <button class="nav-item active" data-nav="dashboard"><span class="nav-icon">🏡</span> Tableau de bord</button>
+    <button class="nav-item" data-nav="garden"><span class="nav-icon">🌿</span> Mon jardin</button>
+    <button class="nav-item" data-nav="catalog"><span class="nav-icon">📖</span> Catalogue</button>
+    <button class="nav-item" data-nav="calendar"><span class="nav-icon">🗓️</span> Calendrier</button>
+    <button class="nav-item" data-nav="journal"><span class="nav-icon">📓</span> Journal</button>
+    <button class="nav-item" data-nav="reminders"><span class="nav-icon">🔔</span> Rappels</button>
+    <div class="nav-foot">
+      <button class="account-chip" id="accountChipDesktop">
+        <span class="ava" id="avaDesktop">?</span>
+        <div class="ac-body">
+          <div class="ac-name" id="accNameDesktop">Non connecté</div>
+          <div class="ac-state" id="accStateDesktop">Mode local</div>
         </div>
-        <div id="tip-water"></div>
-        <div id="tip-date"></div>
-        <div id="tip-notes"></div>
+        <span class="ac-arrow">›</span>
+      </button>
+      <div class="row gap-2 xsmall muted" style="padding:0 4px">
+        <span class="dot healthy"></span> Tout pousse bien
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- Mobile top bar -->
+    <div class="topbar">
+      <div class="row gap-2">
+        <div class="brand-mark" style="width:32px;height:32px;font-size:17px;border-radius:10px">🌱</div>
+        <div>
+          <div class="brand-name" style="font-size:16px;line-height:1">Potager</div>
+          <div class="brand-sub" style="font-size:9px">des Brauds</div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="topbarAccount" aria-label="Mon compte">
+          <span class="ava" style="width:28px;height:28px;font-size:12px;border-radius:50%" id="avaMobile">?</span>
+        </button>
+      </div>
     </div>
 
-    <!-- TOAST NOTIFICATIONS -->
-    <div class="toast-container" id="toastContainer"></div>
+    <!-- ===== VUE 1 : TABLEAU DE BORD ===== -->
+    <section class="view active" data-view="dashboard">
+      <div class="greet">
+        <div class="leaf">🌻</div>
+        <div>
+          <div class="eyebrow muted" id="todayDate">—</div>
+          <h1 id="greeting">Bonjour, jardinier</h1>
+          <div class="sub" id="greetSub">Bienvenue dans votre potager.</div>
+        </div>
+      </div>
 
-    <!-- MOBILE FAB (ajout zone) -->
-    <button class="mobile-fab" id="mobileFab" onclick="openZoneModal()" title="Ajouter une zone" aria-label="Ajouter une zone">
-        <i class="fas fa-plus"></i>
-    </button>
+      <div class="alerts" id="alertsList"></div>
 
-    <!-- MOBILE BOTTOM NAV -->
-    <nav class="mobile-nav" id="mobileNav">
-        <button class="mobile-nav-btn active" id="nav-zones" onclick="mobileNavTo('zones')">
-            <i class="fas fa-seedling"></i>
-            <span>Jardin</span>
-        </button>
-        <button class="mobile-nav-btn" id="nav-library" onclick="mobileNavTo('library')">
-            <i class="fas fa-leaf"></i>
-            <span>Plantes</span>
-        </button>
-        <button class="mobile-nav-btn" id="nav-calendar" onclick="mobileNavTo('calendar')">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Calendrier</span>
-        </button>
-        <button class="mobile-nav-btn" id="nav-reminders" onclick="mobileNavTo('reminders')">
-            <i class="fas fa-bell"></i>
-            <span id="remindersBadge" class="nav-badge" style="display:none">0</span>
-            <span>Rappels</span>
-        </button>
-    </nav>
+      <div class="stats">
+        <div class="stat"><div class="ic">🌱</div><div class="v" id="statPlants">—</div><div class="k">Plantes</div></div>
+        <div class="stat"><div class="ic">💧</div><div class="v" id="statWater">—</div><div class="k">À arroser</div></div>
+        <div class="stat"><div class="ic">✅</div><div class="v" id="statTasks">—</div><div class="k">Tâches du jour</div></div>
+        <div class="stat"><div class="ic">🪴</div><div class="v" id="statBeds">—</div><div class="k">Parcelles</div></div>
+      </div>
 
-    <!-- FIREBASE -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    <script src="firebase-config.js"></script>
-    <!-- PLANT LIBRARY doit être chargée avant app.js -->
-    <script src="app.js"></script>
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="card-title">
+            <h3>Tâches du jour</h3>
+            <span class="meta" id="tasksMeta">0/0</span>
+          </div>
+          <div id="tasksList"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <h3>Météo</h3>
+            <span class="meta">Conditions du jardin</span>
+          </div>
+          <div class="weather-main">
+            <div class="wi">⛅</div>
+            <div>
+              <div class="temp">19°<small>C</small></div>
+              <div class="desc">Partiellement nuageux</div>
+            </div>
+          </div>
+          <div class="forecast">
+            <div class="day"><div class="d">Dim</div><div class="ic">☀️</div><div class="t">22° <small>13°</small></div></div>
+            <div class="day"><div class="d">Lun</div><div class="ic">🌦️</div><div class="t">17° <small>11°</small></div></div>
+            <div class="day"><div class="d">Mar</div><div class="ic">⛅</div><div class="t">20° <small>12°</small></div></div>
+          </div>
+          <div class="mt-3 xsmall muted">Pas de risque de gel cette semaine ✓</div>
+        </div>
+      </div>
 
-    <!-- Enregistrement Service Worker -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(r => console.log('SW enregistré'))
-                    .catch(e => console.log('SW erreur:', e));
-            });
-        }
-    </script>
+      <div class="card mt-4">
+        <div class="card-title">
+          <h3>La semaine en un coup d'œil</h3>
+          <button class="btn ghost sm" onclick="setView('calendar')">Ouvrir le calendrier →</button>
+        </div>
+        <div id="weekGlance" class="row" style="overflow-x:auto;gap:10px;padding-bottom:6px"></div>
+      </div>
+    </section>
 
+    <!-- ===== VUE 2 : MON JARDIN ===== -->
+    <section class="view" data-view="garden">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Mon jardin</div>
+          <h1>Le potager</h1>
+          <div class="sub">Touchez une case pour gérer vos plantes.</div>
+        </div>
+        <button class="btn primary" onclick="openBedModal()">+ Parcelle</button>
+      </div>
+
+      <div class="beds-toolbar" id="bedsToolbar"></div>
+
+      <div class="bed-stage" id="bedStage" style="display:none">
+        <div class="bed-info">
+          <div>
+            <div class="name" id="bedName">—</div>
+            <div class="sub" id="bedSub">—</div>
+          </div>
+          <div class="row gap-2">
+            <button class="btn sm" id="renameBedBtn">✏️ Modifier</button>
+            <button class="btn sm danger" onclick="deleteBed()">🗑️ Supprimer</button>
+          </div>
+        </div>
+        <div class="bed-grid" id="bedGrid"></div>
+      </div>
+
+      <div class="empty" id="gardenEmpty">
+        <div class="ei">🪴</div>
+        <h3>Aucune parcelle</h3>
+        <p>Créez votre première parcelle pour commencer à planter.</p>
+        <button class="btn primary" onclick="openBedModal()">Créer une parcelle</button>
+      </div>
+    </section>
+
+    <!-- ===== VUE 3 : CATALOGUE ===== -->
+    <section class="view" data-view="catalog">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Catalogue de plantes</div>
+          <h1>Parcourir &amp; planter</h1>
+          <div class="sub">Filtrez par catégorie et ajoutez à votre jardin.</div>
+        </div>
+      </div>
+      <div class="catalog-controls">
+        <div class="search"><input class="input" id="catalogSearch" placeholder="Rechercher tomate, basilic…" oninput="renderCatalog()"></div>
+      </div>
+      <div class="filters" id="catalogFilters"></div>
+      <div class="grid grid-3" id="catalogGrid"></div>
+    </section>
+
+    <!-- ===== VUE 4 : CALENDRIER ===== -->
+    <section class="view" data-view="calendar">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Calendrier</div>
+          <h1>À venir</h1>
+          <div class="sub">Les points colorés indiquent arrosages, semis et récoltes.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="cal-head">
+          <div class="row gap-2">
+            <button class="icon-btn" id="calPrev" aria-label="Mois précédent">‹</button>
+            <button class="icon-btn" id="calNext" aria-label="Mois suivant">›</button>
+          </div>
+          <div class="cal-month" id="calMonth">—</div>
+          <button class="btn sm" id="calToday">Aujourd'hui</button>
+        </div>
+        <div class="cal-filters" id="calFilters">
+          <button class="filter-chip active" data-cf="all">Tout</button>
+          <button class="filter-chip" data-cf="water">💧 Arrosage</button>
+          <button class="filter-chip" data-cf="sow">🌱 Semis</button>
+          <button class="filter-chip" data-cf="harvest">🥕 Récolte</button>
+          <button class="filter-chip" data-cf="treat">🛡️ Traitements</button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="cal-legend">
+          <span class="lg"><span class="d-dot" style="background:#4a8fc8"></span> Arrosage</span>
+          <span class="lg"><span class="d-dot" style="background:var(--green)"></span> Semis</span>
+          <span class="lg"><span class="d-dot" style="background:var(--earth)"></span> Récolte</span>
+          <span class="lg"><span class="d-dot" style="background:var(--urgent)"></span> Traitements</span>
+        </div>
+      </div>
+      <div class="card mt-4" id="calDayDetail" style="display:none">
+        <div class="card-title"><h3 id="calDayTitle">Tâches du jour</h3></div>
+        <div id="calDayTasks"></div>
+      </div>
+    </section>
+
+    <!-- ===== VUE 5 : JOURNAL ===== -->
+    <section class="view" data-view="journal">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Journal</div>
+          <h1>Notes du jardin</h1>
+          <div class="sub">Notez vos observations et suivez la croissance.</div>
+        </div>
+        <button class="btn primary" onclick="openQuickAdd('note')">+ Nouvelle note</button>
+      </div>
+      <div class="filters" id="journalFilters">
+        <button class="filter-chip active" data-jf="all">Tout</button>
+        <button class="filter-chip" data-jf="harvest">#récolte</button>
+        <button class="filter-chip" data-jf="pest">#ravageur</button>
+        <button class="filter-chip" data-jf="weather">#météo</button>
+        <button class="filter-chip" data-jf="experiment">#essai</button>
+      </div>
+      <div class="journal-list" id="journalList"></div>
+    </section>
+
+    <!-- ===== VUE 6 : RAPPELS ===== -->
+    <section class="view" data-view="reminders">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Rappels</div>
+          <h1>Notifications</h1>
+          <div class="sub">Réglez une fois. Potager vous prévient au bon moment.</div>
+        </div>
+        <button class="btn primary" onclick="openReminderModal()">+ Nouveau rappel</button>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>Rappels récurrents</h3></div>
+        <div id="remindersList"></div>
+      </div>
+      <div class="card mt-4">
+        <div class="card-title"><h3>Préférences</h3></div>
+        <div class="reminder">
+          <div class="ri">📨</div>
+          <div class="rb"><div class="rt">Résumé du matin</div><div class="rs">Récapitulatif des tâches à 7h00</div></div>
+          <div class="toggle on" data-pref="digest" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <div class="reminder">
+          <div class="ri">🌧️</div>
+          <div class="rb"><div class="rt">Alertes météo</div><div class="rs">Gel, canicules, orages</div></div>
+          <div class="toggle on" data-pref="weather" onclick="this.classList.toggle('on')"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div><!-- /app -->
+
+<!-- ===== BOTTOM NAV (mobile) ===== -->
+<nav class="bottom-nav" id="bottomNav" style="display:none">
+  <button class="tab active" data-nav="dashboard"><span class="ti">🏡</span>Accueil</button>
+  <button class="tab" data-nav="garden"><span class="ti">🌿</span>Jardin</button>
+  <button class="tab" data-nav="catalog"><span class="ti">📖</span>Catalogue</button>
+  <button class="tab" data-nav="calendar"><span class="ti">🗓️</span>Agenda</button>
+  <button class="tab" data-nav="journal"><span class="ti">📓</span>Journal</button>
+</nav>
+
+<!-- ===== FAB ===== -->
+<button class="fab" id="fab" style="display:none" onclick="openQuickAdd()" aria-label="Ajout rapide">+</button>
+
+<!-- ===== PLANT DETAIL PANEL ===== -->
+<div class="panel-backdrop" id="panelBackdrop" onclick="closePanel()"></div>
+<aside class="panel" id="plantPanel" aria-hidden="true">
+  <div class="panel-head">
+    <div>
+      <div class="eyebrow muted">Détails de la plante</div>
+      <div class="row gap-2" style="margin-top:4px">
+        <span class="dot" id="pdStatus"></span>
+        <b id="pdBedName">—</b>
+      </div>
+    </div>
+    <button class="close" onclick="closePanel()" aria-label="Fermer">✕</button>
+  </div>
+  <div class="panel-body" id="panelBody"></div>
+</aside>
+
+<!-- ===== QUICK ADD MODAL ===== -->
+<div class="modal-backdrop" id="quickaddBackdrop">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h2 id="qaTitle">Ajout rapide</h2>
+        <div class="muted small">Que souhaitez-vous ajouter ?</div>
+      </div>
+      <div class="row gap-2">
+        <span class="draft-pill" id="qaDraft" style="display:none"><span class="ddot"></span> Brouillon</span>
+        <button class="close" onclick="closeModal('quickaddBackdrop')">✕</button>
+      </div>
+    </div>
+    <div class="qa-types" id="qaTypes">
+      <button class="qa-type active" data-qa="task"><span class="qai">✅</span>Tâche</button>
+      <button class="qa-type" data-qa="plant"><span class="qai">🌱</span>Plante</button>
+      <button class="qa-type" data-qa="note"><span class="qai">📝</span>Note</button>
+    </div>
+    <!-- Task form -->
+    <div class="qa-form" data-qa-form="task">
+      <div class="field mb-2">
+        <label>Quelle est la tâche ?</label>
+        <input class="input" id="qaTaskTitle" placeholder="ex. Arroser les tomates">
+      </div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Type</label>
+          <select class="select" id="qaTaskKind">
+            <option value="water">💧 Arrosage</option>
+            <option value="sow">🌱 Semis</option>
+            <option value="harvest">🥕 Récolte</option>
+            <option value="treat">🛡️ Traitement</option>
+            <option value="other">📌 Autre</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Quand</label>
+          <input class="input" type="date" id="qaTaskDate">
+        </div>
+      </div>
+    </div>
+    <!-- Plant form -->
+    <div class="qa-form" data-qa-form="plant" style="display:none">
+      <div class="field mb-2">
+        <label>Choisir dans la bibliothèque</label>
+        <select class="select" id="qaPlantSelect"></select>
+      </div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Ajouter à la parcelle</label>
+          <select class="select" id="qaBedSelect"></select>
+        </div>
+        <div class="field">
+          <label>Planté le</label>
+          <input class="input" type="date" id="qaPlantDate">
+        </div>
+      </div>
+    </div>
+    <!-- Note form -->
+    <div class="qa-form" data-qa-form="note" style="display:none">
+      <div class="field mb-2">
+        <label>Qu'avez-vous observé ?</label>
+        <textarea class="textarea" id="qaNoteText" placeholder="Pucerons repérés sur les poireaux…"></textarea>
+      </div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Étiquette</label>
+          <select class="select" id="qaNoteTag">
+            <option value="">Aucune</option>
+            <option value="harvest">#récolte</option>
+            <option value="pest">#ravageur</option>
+            <option value="weather">#météo</option>
+            <option value="experiment">#essai</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Plante concernée</label>
+          <select class="select" id="qaNoteSubject"><option value="">—</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="row between mt-4">
+      <button class="btn ghost" onclick="closeModal('quickaddBackdrop')">Annuler</button>
+      <button class="btn primary" onclick="saveQuickAdd()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CONFIRM MODAL ===== -->
+<div class="modal-backdrop" id="confirmBackdrop">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-head">
+      <h2 id="confirmTitle">Êtes-vous sûr·e ?</h2>
+      <button class="close" onclick="closeModal('confirmBackdrop')">✕</button>
+    </div>
+    <p class="muted small" id="confirmMsg">Cette action est irréversible.</p>
+    <div class="confirm-actions">
+      <button class="btn" onclick="closeModal('confirmBackdrop')">Annuler</button>
+      <button class="btn danger" id="confirmYes">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BED MODAL ===== -->
+<div class="modal-backdrop" id="bedModalBackdrop">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-head">
+      <h2 id="bedModalTitle">Nouvelle parcelle</h2>
+      <button class="close" onclick="closeModal('bedModalBackdrop')">✕</button>
+    </div>
+    <div class="field mb-2">
+      <label>Nom de la parcelle</label>
+      <input class="input" id="bedModalName" placeholder="Ex. Parcelle du jardin">
+    </div>
+    <div class="grid grid-2">
+      <div class="field"><label>Colonnes</label><input class="input" type="number" id="bedModalCols" value="4" min="2" max="10"></div>
+      <div class="field"><label>Rangées</label><input class="input" type="number" id="bedModalRows" value="3" min="2" max="10"></div>
+    </div>
+    <div class="field mt-3">
+      <label>Couleur</label>
+      <div class="color-picker" id="bedColorPicker"></div>
+    </div>
+    <div class="row between mt-4">
+      <button class="btn ghost" onclick="closeModal('bedModalBackdrop')">Annuler</button>
+      <button class="btn primary" onclick="saveBed()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PLANT PICKER (pour case vide) ===== -->
+<div class="modal-backdrop" id="plantPickerBackdrop">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-head">
+      <h2>Choisir une plante</h2>
+      <button class="close" onclick="closeModal('plantPickerBackdrop')">✕</button>
+    </div>
+    <div class="search mb-2">
+      <input class="input" id="pickerSearch" placeholder="Rechercher…" oninput="renderPlantPicker()">
+    </div>
+    <div id="plantPickerGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-height:55vh;overflow-y:auto;padding:4px"></div>
+  </div>
+</div>
+
+<!-- ===== ACCOUNT MODAL ===== -->
+<div class="modal-backdrop" id="accountBackdrop">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-head">
+      <h2>Mon compte</h2>
+      <button class="close" onclick="closeModal('accountBackdrop')">✕</button>
+    </div>
+    <div id="accountBody"></div>
+  </div>
+</div>
+
+<!-- ===== REMINDER MODAL ===== -->
+<div class="modal-backdrop" id="reminderModalBackdrop">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-head">
+      <h2 id="reminderModalTitle">Nouveau rappel</h2>
+      <button class="close" onclick="closeModal('reminderModalBackdrop')">✕</button>
+    </div>
+    <div class="field mb-2">
+      <label>Titre du rappel</label>
+      <input class="input" id="reminderTitle" placeholder="Ex. Arroser les tomates">
+    </div>
+    <div class="field mb-2">
+      <label>Fréquence</label>
+      <select class="select" id="reminderFreq">
+        <option value="Tous les jours">Tous les jours</option>
+        <option value="Tous les 2 jours">Tous les 2 jours</option>
+        <option value="Tous les 3 jours">Tous les 3 jours</option>
+        <option value="Une fois par semaine">Une fois par semaine</option>
+        <option value="Toutes les 2 semaines">Toutes les 2 semaines</option>
+      </select>
+    </div>
+    <div class="field mb-2">
+      <label>Icône</label>
+      <select class="select" id="reminderIcon">
+        <option value="💧">💧 Arrosage</option>
+        <option value="🌱">🌱 Semis</option>
+        <option value="🥕">🥕 Récolte</option>
+        <option value="🛡️">🛡️ Traitement</option>
+        <option value="🐛">🐛 Surveillance</option>
+        <option value="🌿">🌿 Entretien</option>
+        <option value="📌">📌 Autre</option>
+      </select>
+    </div>
+    <div class="row between mt-4">
+      <button class="btn ghost" onclick="closeModal('reminderModalBackdrop')">Annuler</button>
+      <button class="btn primary" onclick="saveReminder()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== TOAST ===== -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="plants.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

@@ -1,1285 +1,1054 @@
-// ===== PLANT LIBRARY =====
-// Base de données des plantes du potager
+'use strict';
 
-const PLANT_LIBRARY = [
-    // LÉGUMES
-    { id: 'tomate', name: 'Tomate', type: 'legume', emoji: '🍅', water: 'semaine', notes: 'Plein soleil, tuteurer' },
-    { id: 'tomate_cerise', name: 'Tomate cerise', type: 'legume', emoji: '🍅', water: 'semaine', notes: 'Très productive, plein soleil' },
-    { id: 'courgette', name: 'Courgette', type: 'legume', emoji: '🥒', water: 'semaine', notes: 'Beaucoup de place, arrosage régulier' },
-    { id: 'carotte', name: 'Carotte', type: 'legume', emoji: '🥕', water: 'semaine', notes: 'Sol meuble et profond' },
-    { id: 'salade', name: 'Salade', type: 'legume', emoji: '🥬', water: '2jours', notes: "Mi-ombre accepté" },
-    { id: 'laitue', name: 'Laitue', type: 'legume', emoji: '🥬', water: '2jours', notes: 'Arrosage régulier' },
-    { id: 'epinard', name: 'Épinard', type: 'legume', emoji: '🥬', water: 'semaine', notes: 'Pousse rapide, tolère le froid' },
-    { id: 'radis', name: 'Radis', type: 'legume', emoji: '🌱', water: '2jours', notes: 'Récolte en 3-4 semaines' },
-    { id: 'haricot', name: 'Haricot vert', type: 'legume', emoji: '🫘', water: 'semaine', notes: 'Plein soleil, semis direct' },
-    { id: 'petit_pois', name: 'Petit pois', type: 'legume', emoji: '🫛', water: 'semaine', notes: 'Tuteurer, semis tôt' },
-    { id: 'poivron', name: 'Poivron', type: 'legume', emoji: '🫑', water: 'semaine', notes: 'Chaleur nécessaire' },
-    { id: 'aubergine', name: 'Aubergine', type: 'legume', emoji: '🍆', water: 'semaine', notes: 'Plein soleil, chaleur' },
-    { id: 'concombre', name: 'Concombre', type: 'legume', emoji: '🥒', water: '2jours', notes: 'Tuteurer, arrosage régulier' },
-    { id: 'poireau', name: 'Poireau', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Long à cultiver, résistant' },
-    { id: 'oignon', name: 'Oignon', type: 'legume', emoji: '🧅', water: 'semaine', notes: 'Sol bien drainé' },
-    { id: 'ail', name: 'Ail', type: 'legume', emoji: '🧄', water: 'rarement', notes: 'Plantation automne ou printemps' },
-    { id: 'brocoli', name: 'Brocoli', type: 'legume', emoji: '🥦', water: 'semaine', notes: 'Résistant au froid' },
-    { id: 'chou', name: 'Chou', type: 'legume', emoji: '🥬', water: 'semaine', notes: 'Beaucoup de place' },
-    { id: 'chou_fleur', name: 'Chou-fleur', type: 'legume', emoji: '🥦', water: 'semaine', notes: 'Sol riche' },
-    { id: 'betterave', name: 'Betterave', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Sol profond' },
-    { id: 'panais', name: 'Panais', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Semis direct, sol profond' },
-    { id: 'navet', name: 'Navet', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Croissance rapide' },
-    { id: 'celeri', name: 'Céleri', type: 'legume', emoji: '🌱', water: '2jours', notes: "Beaucoup d'eau" },
-    { id: 'fenouil', name: 'Fenouil', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Isoler des autres légumes' },
-    { id: 'artichaut', name: 'Artichaut', type: 'legume', emoji: '🌱', water: 'semaine', notes: 'Vivace, grande place' },
-    { id: 'patate_douce', name: 'Patate douce', type: 'legume', emoji: '🍠', water: 'semaine', notes: 'Sol léger, chaleur' },
-    { id: 'mais', name: 'Maïs', type: 'legume', emoji: '🌽', water: 'semaine', notes: 'Planter en groupe' },
-    { id: 'potiron', name: 'Potiron', type: 'legume', emoji: '🎃', water: 'semaine', notes: 'Beaucoup de place' },
-    { id: 'courgette_ronde', name: 'Courge', type: 'legume', emoji: '🥒', water: 'semaine', notes: 'Sol riche, soleil' },
-
-    // FRUITS
-    { id: 'fraise', name: 'Fraise', type: 'fruit', emoji: '🍓', water: '2jours', notes: 'Plein soleil, stolons à couper' },
-    { id: 'framboise', name: 'Framboise', type: 'fruit', emoji: '🫐', water: 'semaine', notes: 'Tuteurage, mi-ombre ok' },
-    { id: 'myrtille', name: 'Myrtille', type: 'fruit', emoji: '🫐', water: 'semaine', notes: 'Sol acide obligatoire' },
-    { id: 'groseille', name: 'Groseille', type: 'fruit', emoji: '🍇', water: 'semaine', notes: "Résistant, peu d'entretien" },
-    { id: 'cassis', name: 'Cassis', type: 'fruit', emoji: '🍇', water: 'semaine', notes: "Mi-ombre accepté" },
-    { id: 'melon', name: 'Melon', type: 'fruit', emoji: '🍈', water: 'semaine', notes: 'Chaleur et soleil indispensables' },
-    { id: 'pastèque', name: "Pastèque", type: 'fruit', emoji: '🍉', water: 'semaine', notes: 'Très grande place, chaleur' },
-    { id: 'raisin', name: 'Vigne', type: 'fruit', emoji: '🍇', water: 'rarement', notes: 'Taille annuelle nécessaire' },
-
-    // HERBES AROMATIQUES
-    { id: 'basilic', name: 'Basilic', type: 'herbe', emoji: '🌿', water: '2jours', notes: "Chaud, pas de courant d'air" },
-    { id: 'persil', name: 'Persil', type: 'herbe', emoji: '🌿', water: 'semaine', notes: "Mi-ombre accepté" },
-    { id: 'ciboulette', name: 'Ciboulette', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Vivace, facile' },
-    { id: 'thym', name: 'Thym', type: 'herbe', emoji: '🌿', water: 'rarement', notes: 'Sol sec, plein soleil' },
-    { id: 'romarin', name: 'Romarin', type: 'herbe', emoji: '🌿', water: 'rarement', notes: 'Sol drainant, résistant' },
-    { id: 'menthe', name: 'Menthe', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Envahissante, isoler en pot' },
-    { id: 'sauge', name: 'Sauge', type: 'herbe', emoji: '🌿', water: 'rarement', notes: 'Sol sec, plein soleil' },
-    { id: 'origan', name: 'Origan', type: 'herbe', emoji: '🌿', water: 'rarement', notes: 'Vivace, plein soleil' },
-    { id: 'estragon', name: 'Estragon', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Vivace, sol bien drainé' },
-    { id: 'laurier', name: 'Laurier', type: 'herbe', emoji: '🌿', water: 'rarement', notes: 'Arbuste, résistant' },
-    { id: 'aneth', name: 'Aneth', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Semis direct, ne transplante pas bien' },
-    { id: 'coriandre', name: 'Coriandre', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Monte vite en graine' },
-    { id: 'lavande', name: 'Lavande', type: 'herbe', emoji: '💜', water: 'rarement', notes: 'Sol calcaire, plein soleil' },
-    { id: 'citronnelle', name: 'Citronnelle', type: 'herbe', emoji: '🌿', water: 'semaine', notes: 'Repousse les moustiques' },
-
-    // FLEURS
-    { id: 'tournesol', name: 'Tournesol', type: 'fleur', emoji: '🌻', water: 'semaine', notes: 'Plein soleil, grand' },
-    { id: 'rose', name: 'Rose', type: 'fleur', emoji: '🌹', water: 'semaine', notes: 'Tailler chaque année' },
-    { id: 'capucine', name: 'Capucine', type: 'fleur', emoji: '🌸', water: 'semaine', notes: 'Comestible, repousse pucerons' },
-    { id: 'souci', name: 'Souci', type: 'fleur', emoji: '🌼', water: 'semaine', notes: 'Protège le potager' },
-    { id: 'lavande_fleur', name: 'Lavande', type: 'fleur', emoji: '💜', water: 'rarement', notes: 'Attire les abeilles' },
-    { id: 'cosmos', name: 'Cosmos', type: 'fleur', emoji: '🌸', water: 'semaine', notes: 'Facile, floraison estivale' },
-    { id: 'zinnia', name: 'Zinnia', type: 'fleur', emoji: '🌺', water: 'semaine', notes: 'Chaleur, plein soleil' },
-    { id: 'dahlia', name: 'Dahlia', type: 'fleur', emoji: '🌸', water: 'semaine', notes: 'Tubeuse, rentrer en hiver' },
-    { id: 'coquelicot', name: 'Coquelicot', type: 'fleur', emoji: '🌺', water: 'rarement', notes: 'Semis direct en automne' },
-    { id: 'bleuet', name: 'Bleuet', type: 'fleur', emoji: '💙', water: 'rarement', notes: 'Semis direct, mellifère' },
-    { id: 'bourrache', name: 'Bourrache', type: 'fleur', emoji: '🌸', water: 'semaine', notes: 'Fleurs comestibles, mellifère' },
-    { id: 'pensee', name: 'Pensée', type: 'fleur', emoji: '💜', water: '2jours', notes: 'Floraison printanière' },
-
-    // ARBRES / ARBUSTES
-    { id: 'tomate_arbre', name: 'Tomate en arbre', type: 'arbre', emoji: '🌳', water: 'semaine', notes: 'Variété arbustive' },
-    { id: 'pommier', name: 'Pommier', type: 'arbre', emoji: '🍎', water: 'semaine', notes: 'Taille annuelle' },
-    { id: 'poirier', name: 'Poirier', type: 'arbre', emoji: '🍐', water: 'semaine', notes: 'Plantation en bonne exposition' },
-    { id: 'cerisier', name: 'Cerisier', type: 'arbre', emoji: '🍒', water: 'semaine', notes: 'Grand arbre' },
-    { id: 'prunier', name: 'Prunier', type: 'arbre', emoji: '🍑', water: 'semaine', notes: 'Sol profond' },
-    { id: 'figuier', name: 'Figuier', type: 'arbre', emoji: '🫐', water: 'rarement', notes: "Résistant, peu d'entretien" },
-    { id: 'olivier', name: 'Olivier', type: 'arbre', emoji: '🫒', water: 'rarement', notes: 'Sol drainant, chaleur' },
-    { id: 'lilas', name: 'Lilas', type: 'arbre', emoji: '💜', water: 'semaine', notes: 'Floraison printanière parfumée' },
-    { id: 'hortensia', name: 'Hortensia', type: 'arbre', emoji: '🌸', water: '2jours', notes: 'Mi-ombre, sol frais' }
-];
-
-// ============================================================
-// APP.JS - Le Potager des Brauds
-// ============================================================
-
-// ===== STATE =====
-let state = {
-    zones: [],
-    currentZoneId: null,
-    selectedCell: null,
-    editingPlantId: null,
-    touchDragPlant: null,
-    selectedPlantFromLibrary: null,
-    draggedPlant: null
-};
-
+/* ============================================================
+   STATE
+   ============================================================ */
 let currentUser = null;
-let calendarDate = new Date();
-let selectedColor = '#4CAF50';
-let copiedPlant = null;
+let isLocalMode = false;
+let currentView = 'dashboard';
+let zones = {};
+let activeZoneId = null;
+let tasks = [];
+let journalEntries = [];
+let reminders = [];
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+let activeCatalogFilter = 'all';
+let activeJournalFilter = 'all';
+let activeCalFilter = 'all';
+let pickerTarget = null;
+let editingBedId = null;
+let editingReminderId = null;
+let confirmCb = null;
+let zonesRef = null;
+let draftTimer = null;
 
-// ===== INIT =====
+const BED_COLORS = ['#4a7c59','#5b9166','#b07b4f','#d4a96a','#4a8fc8','#c25450','#8b5e3c','#a8d5a2'];
+
+/* ============================================================
+   LOCALSTORAGE
+   ============================================================ */
+const lsGet = (k, def = null) => {
+  try { const v = localStorage.getItem(k); return v !== null ? JSON.parse(v) : def; } catch { return def; }
+};
+const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+
+function loadLocalData() {
+  tasks = lsGet('potager_tasks', []);
+  journalEntries = lsGet('potager_journal', []);
+  reminders = lsGet('potager_reminders', []);
+}
+function saveTasks() { lsSet('potager_tasks', tasks); }
+function saveJournal() { lsSet('potager_journal', journalEntries); }
+function saveReminders() { lsSet('potager_reminders', reminders); }
+
+/* ============================================================
+   FIREBASE HELPERS
+   ============================================================ */
+function isFirebaseConfigured() {
+  try { return typeof firebase !== 'undefined' && firebase.apps.length > 0 && !!firebase.app().options.apiKey; }
+  catch { return false; }
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
-    bindEvents();
-    initAuth();
+  wireNav();
+  wireCatalogFilters();
+  wireCalFilters();
+  wireJournalFilters();
+  wireQaTypes();
+  wireModalBackdrops();
+
+  document.getElementById('googleSignIn').addEventListener('click', handleGoogleSignIn);
+  document.getElementById('localModeBtn').addEventListener('click', handleLocalMode);
+  document.getElementById('topbarAccount').addEventListener('click', openAccountModal);
+  document.getElementById('accountChipDesktop').addEventListener('click', openAccountModal);
+  document.getElementById('calPrev').addEventListener('click', () => { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); });
+  document.getElementById('calNext').addEventListener('click', () => { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); });
+  document.getElementById('calToday').addEventListener('click', () => { const n = new Date(); calYear = n.getFullYear(); calMonth = n.getMonth(); renderCalendar(); });
+  document.getElementById('renameBedBtn').addEventListener('click', () => activeZoneId && openBedModal(activeZoneId));
+  document.getElementById('confirmYes').addEventListener('click', () => { closeModal('confirmBackdrop'); if (typeof confirmCb === 'function') { confirmCb(); } confirmCb = null; });
+
+  // Auto-save quickadd draft
+  ['qaTaskTitle', 'qaNoteText'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', autosaveDraft);
+  });
+
+  if (!isFirebaseConfigured()) {
+    document.getElementById('localModeNotice').style.display = 'flex';
+    if (lsGet('potager_localMode')) { activateLocalMode(); }
+    return;
+  }
+
+  auth.onAuthStateChanged(user => {
+    currentUser = user;
+    if (user) {
+      activateApp(user);
+    } else if (lsGet('potager_localMode')) {
+      activateLocalMode();
+    } else {
+      showAuthScreen();
+    }
+  });
 });
 
-// ===== AUTH =====
-function initAuth() {
-    firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-            currentUser = user;
-            showApp(user);
-            loadZones();
-        } else {
-            showLogin();
-        }
-    });
+/* ============================================================
+   AUTH
+   ============================================================ */
+function showAuthScreen() {
+  document.getElementById('authScreen').style.display = 'flex';
+  document.getElementById('appShell').style.display = 'none';
+  document.getElementById('bottomNav').style.display = 'none';
+  document.getElementById('fab').style.display = 'none';
 }
 
-function showLogin() {
-    document.body.classList.remove('app-ready');
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('appMain').style.display = 'none';
-    document.getElementById('userInfo').style.display = 'none';
-    document.getElementById('logoutBtn').style.display = 'none';
+function showApp() {
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('appShell').style.display = 'grid';
+  document.getElementById('bottomNav').style.display = 'flex';
+  document.getElementById('fab').style.display = 'flex';
 }
 
-function showApp(user) {
-    document.body.classList.add('app-ready');
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('appMain').style.display = 'flex';
-    document.getElementById('userInfo').style.display = 'flex';
-    document.getElementById('logoutBtn').style.display = 'flex';
-    const avatar = document.getElementById('userAvatar');
-    const userName = document.getElementById('userName');
-    if (avatar) { avatar.src = user.photoURL || ''; avatar.style.display = user.photoURL ? 'block' : 'none'; }
-    if (userName) userName.textContent = user.displayName || user.email || '';
+function activateApp(user) {
+  isLocalMode = false;
+  lsSet('potager_localMode', false);
+  loadLocalData();
+  initZonesListener();
+  updateAvatars(user);
+  showApp();
+  setView('dashboard');
 }
 
-// ===== FIREBASE REF =====
-function dbRef() {
-    return firebase.database().ref('jardin');
+function activateLocalMode() {
+  isLocalMode = true;
+  lsSet('potager_localMode', true);
+  loadLocalData();
+  zones = lsGet('potager_zones_local', {});
+  updateAvatars(null);
+  showApp();
+  setView('dashboard');
+  renderGarden();
 }
 
-// ===== ZONES =====
-function loadZones() {
-    dbRef().child('zones').on('value', snapshot => {
-        const data = snapshot.val() || {};
-        state.zones = Object.entries(data).map(([id, z]) => ({ ...z, id }));
-        renderZonesList();
-        updateStats();
-        updateRemindersBadge();
-        showSeasonalTip();
-        if (state.currentZoneId) {
-            const zone = getZone(state.currentZoneId);
-            if (zone) {
-                renderGrid(zone);
-            }
-        }
-    });
+async function handleGoogleSignIn() {
+  const errEl = document.getElementById('authError');
+  errEl.textContent = '';
+  errEl.classList.remove('show');
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await auth.signInWithPopup(provider);
+  } catch (e) {
+    errEl.textContent = translateAuthError(e.code);
+    errEl.classList.add('show');
+  }
 }
 
-function getZone(id) {
-    return state.zones.find(z => z.id === id) || null;
+function handleLocalMode() {
+  activateLocalMode();
 }
 
-function getCurrentZone() {
-    return getZone(state.currentZoneId);
+async function signOut() {
+  if (!isLocalMode && isFirebaseConfigured()) {
+    if (zonesRef) { zonesRef.off(); zonesRef = null; }
+    await auth.signOut();
+  }
+  currentUser = null;
+  zones = {};
+  lsSet('potager_localMode', false);
+  isLocalMode = false;
+  closeModal('accountBackdrop');
+  showAuthScreen();
 }
 
-function renderZonesList() {
-    const list = document.getElementById('zonesList');
-    if (!list) return;
-    list.innerHTML = '';
-    state.zones.forEach(zone => {
-        const item = document.createElement('li');
-        item.className = 'zone-item' + (zone.id === state.currentZoneId ? ' active' : '');
-        const plantCount = zone.plants ? Object.keys(zone.plants).length : 0;
-        item.innerHTML = `
-            <span class="zone-dot" style="background:${zone.color || '#2d6a4f'}"></span>
-            <span>${zone.name}</span>
-            ${plantCount > 0 ? `<span class="zone-plant-count">${plantCount}</span>` : ''}
-        `;
-        item.addEventListener('click', () => selectZone(zone.id));
-        list.appendChild(item);
-    });
+function updateAvatars(user) {
+  const name = user ? (user.displayName || user.email || 'Jardinier') : (isLocalMode ? 'Local' : '?');
+  const initial = name.charAt(0).toUpperCase();
+  document.getElementById('avaDesktop').textContent = initial;
+  document.getElementById('avaMobile').textContent = initial;
+  document.getElementById('accNameDesktop').textContent = user ? (user.displayName || user.email) : 'Mode local';
+  document.getElementById('accStateDesktop').textContent = isLocalMode ? 'Données locales' : (user?.email || 'Connecté');
+}
+
+function translateAuthError(code) {
+  const map = {
+    'auth/popup-closed-by-user': 'Connexion annulée.',
+    'auth/network-request-failed': 'Erreur réseau. Vérifiez votre connexion.',
+    'auth/user-not-found': 'Aucun compte avec cet email.',
+    'auth/wrong-password': 'Mot de passe incorrect.',
+    'auth/too-many-requests': 'Trop de tentatives. Réessayez plus tard.',
+    'auth/cancelled-popup-request': 'Une seule fenêtre à la fois.',
+  };
+  return map[code] || 'Erreur de connexion. Réessayez.';
+}
+
+/* ============================================================
+   FIREBASE ZONES
+   ============================================================ */
+function initZonesListener() {
+  if (!isFirebaseConfigured() || isLocalMode) return;
+  zonesRef = db.ref('jardin/zones');
+  zonesRef.on('value', snap => {
+    zones = snap.val() || {};
+    if (currentView === 'garden') renderGarden();
+    if (currentView === 'dashboard') renderDashboard();
+  });
+}
+
+function savePlantToCell(zoneId, cellKey, plant) {
+  if (isLocalMode) {
+    if (!zones[zoneId]) return;
+    if (!zones[zoneId].plants) zones[zoneId].plants = {};
+    if (plant) zones[zoneId].plants[cellKey] = plant;
+    else delete zones[zoneId].plants[cellKey];
+    lsSet('potager_zones_local', zones);
+    renderBedStage(zones[zoneId]);
+    if (currentView === 'dashboard') renderDashboard();
+  } else {
+    const ref = db.ref(`jardin/zones/${zoneId}/plants/${cellKey}`);
+    if (plant) ref.set(plant);
+    else ref.remove();
+  }
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function wireNav() {
+  document.querySelectorAll('[data-nav]').forEach(btn => {
+    btn.addEventListener('click', () => setView(btn.dataset.nav));
+  });
+}
+
+function setView(viewId) {
+  currentView = viewId;
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.dataset.view === viewId));
+  document.querySelectorAll('.nav-item[data-nav]').forEach(b => b.classList.toggle('active', b.dataset.nav === viewId));
+  document.querySelectorAll('.tab[data-nav]').forEach(b => b.classList.toggle('active', b.dataset.nav === viewId));
+
+  if (viewId === 'dashboard') renderDashboard();
+  else if (viewId === 'garden') renderGarden();
+  else if (viewId === 'catalog') renderCatalog();
+  else if (viewId === 'calendar') renderCalendar();
+  else if (viewId === 'journal') renderJournal();
+  else if (viewId === 'reminders') renderReminders();
+}
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+function renderDashboard() {
+  if (currentView !== 'dashboard') return;
+  const now = new Date();
+
+  document.getElementById('todayDate').textContent = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+
+  const hour = now.getHours();
+  const part = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
+  const uname = currentUser?.displayName?.split(' ')[0] || 'jardinier·ère';
+  document.getElementById('greeting').textContent = `${part}, ${uname}`;
+  document.getElementById('greetSub').textContent = isLocalMode ? 'Mode local — données sur cet appareil.' : 'Voici le résumé de votre potager.';
+
+  const allPlants = Object.values(zones).flatMap(z => Object.values(z.plants || {}));
+  const needWater = allPlants.filter(p => p.water === '2jours');
+  const todayIso = toISODate(now);
+  const todayTasks = tasks.filter(t => t.date === todayIso);
+  const todayDone = todayTasks.filter(t => t.done).length;
+
+  document.getElementById('statPlants').textContent = allPlants.length;
+  document.getElementById('statWater').textContent = needWater.length;
+  document.getElementById('statTasks').textContent = todayTasks.length - todayDone;
+  document.getElementById('statBeds').textContent = Object.keys(zones).length;
+
+  document.getElementById('tasksMeta').textContent = `${todayDone}/${todayTasks.length}`;
+  const tl = document.getElementById('tasksList');
+  if (todayTasks.length === 0) {
+    tl.innerHTML = `<div class="empty-inline"><span>✅</span> Aucune tâche pour aujourd'hui</div>`;
+  } else {
+    tl.innerHTML = todayTasks.map(t => `
+      <div class="task-row" onclick="toggleTask('${t.id}')">
+        <span class="task-check ${t.done ? 'done' : ''}"></span>
+        <span class="task-kind-ic">${kindIcon(t.kind)}</span>
+        <span class="task-label ${t.done ? 'strikethrough' : ''}">${esc(t.title)}</span>
+      </div>`).join('');
+  }
+
+  renderAlerts();
+  renderWeekGlance();
+}
+
+function renderAlerts() {
+  const el = document.getElementById('alertsList');
+  const alerts = [];
+  const allPlants = Object.values(zones).flatMap(z => Object.values(z.plants || {}));
+  const daily = allPlants.filter(p => p.water === '2jours');
+  if (daily.length > 0) alerts.push({ type: 'warn', icon: '💧', text: `${daily.length} plante(s) à arrosage fréquent`, action: 'garden' });
+  const todayPending = tasks.filter(t => t.date === toISODate(new Date()) && !t.done);
+  if (todayPending.length >= 3) alerts.push({ type: 'urgent', icon: '⚠️', text: `${todayPending.length} tâches en attente aujourd'hui`, action: 'calendar' });
+  el.innerHTML = alerts.map(a => `
+    <div class="alert-banner ${a.type}">
+      <span>${a.icon}</span>
+      <span>${esc(a.text)}</span>
+      <button class="btn ghost sm" onclick="setView('${a.action}')">Voir →</button>
+    </div>`).join('');
+}
+
+function renderWeekGlance() {
+  const el = document.getElementById('weekGlance');
+  const now = new Date();
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(now); d.setDate(now.getDate() + i);
+    return { date: d, tasks: tasks.filter(t => t.date === toISODate(d)) };
+  });
+  el.innerHTML = days.map((d, i) => `
+    <div class="week-day ${i === 0 ? 'today' : ''}" onclick="setView('calendar')">
+      <div class="wd-label">${d.date.toLocaleDateString('fr-FR', { weekday: 'short' })}</div>
+      <div class="wd-num">${d.date.getDate()}</div>
+      <div class="wd-dots">${d.tasks.slice(0, 3).map(t => `<span class="d-dot" style="background:${taskColor(t.kind)}"></span>`).join('')}</div>
+    </div>`).join('');
+}
+
+function toggleTask(id) {
+  const t = tasks.find(x => x.id === id);
+  if (!t) return;
+  t.done = !t.done;
+  saveTasks();
+  if (currentView === 'dashboard') renderDashboard();
+  else if (currentView === 'calendar') renderCalendar();
+}
+
+function kindIcon(k) {
+  return { water: '💧', sow: '🌱', harvest: '🥕', treat: '🛡️', other: '📌' }[k] || '📌';
+}
+function taskColor(k) {
+  return { water: '#4a8fc8', sow: '#5b9166', harvest: '#b07b4f', treat: '#c25450', other: '#98a39b' }[k] || '#98a39b';
+}
+
+/* ============================================================
+   GARDEN
+   ============================================================ */
+function renderGarden() {
+  if (currentView !== 'garden') return;
+  const ids = Object.keys(zones);
+  const toolbar = document.getElementById('bedsToolbar');
+  const empty = document.getElementById('gardenEmpty');
+  const stage = document.getElementById('bedStage');
+
+  if (ids.length === 0) {
+    toolbar.innerHTML = '';
+    stage.style.display = 'none';
+    empty.style.display = 'flex';
+    return;
+  }
+
+  empty.style.display = 'none';
+  stage.style.display = 'block';
+
+  toolbar.innerHTML = ids.map(id => {
+    const z = zones[id];
+    const color = z.color || BED_COLORS[0];
+    return `<button class="bed-chip ${id === activeZoneId ? 'active' : ''}" onclick="selectZone('${id}')">
+      <span class="bchip-dot" style="background:${color}"></span>${esc(z.name)}
+    </button>`;
+  }).join('');
+
+  if (!activeZoneId || !zones[activeZoneId]) {
+    activeZoneId = ids[0];
+  }
+  renderBedStage(zones[activeZoneId]);
 }
 
 function selectZone(id) {
-    state.currentZoneId = id;
-    const zone = getZone(id);
-    if (!zone) return;
-
-    document.getElementById('zoneHeader').style.display = 'flex';
-    document.getElementById('welcomeMsg').style.display = 'none';
-
-    document.getElementById('zoneName').textContent = zone.name;
-    document.getElementById('zoneSize').textContent = `${zone.cols} × ${zone.rows}`;
-    document.getElementById('zoneColorDot').style.background = zone.color || '#2d6a4f';
-
-    const gridColsEl = document.getElementById('gridCols');
-    const gridRowsEl = document.getElementById('gridRows');
-    if (gridColsEl) gridColsEl.value = zone.cols || 5;
-    if (gridRowsEl) gridRowsEl.value = zone.rows || 5;
-
-    renderGrid(zone);
-    renderZonesList();
-    updateStats();
+  activeZoneId = id;
+  document.querySelectorAll('.bed-chip').forEach(c => {
+    c.classList.toggle('active', c.getAttribute('onclick') === `selectZone('${id}')`);
+  });
+  renderBedStage(zones[id]);
 }
 
-function deleteZone() {
-    if (!state.currentZoneId) return;
-    const zone = getZone(state.currentZoneId);
-    if (!zone) return;
-    if (!confirm(`Supprimer la zone "${zone.name}" et toutes ses plantes ?`)) return;
-
-    dbRef().child(`zones/${state.currentZoneId}`).remove()
-        .then(() => {
-            state.currentZoneId = null;
-            document.getElementById('zoneHeader').style.display = 'none';
-            document.getElementById('welcomeMsg').style.display = 'flex';
-            document.getElementById('gridContainer').innerHTML = '';
-            renderZonesList();
-            updateStats();
-            showToast('Zone supprimée 🗑️', 'info');
-        })
-        .catch(err => showToast('Erreur: ' + err.message, 'error'));
+function renderBedStage(zone) {
+  if (!zone) return;
+  document.getElementById('bedName').textContent = zone.name || 'Parcelle';
+  const plantCount = Object.keys(zone.plants || {}).length;
+  const total = (zone.cols || 4) * (zone.rows || 3);
+  document.getElementById('bedSub').textContent = `${zone.cols || 4} × ${zone.rows || 3} cases · ${plantCount}/${total} occupées`;
+  renderBedGrid(zone);
 }
 
-// ===== ZONE MODAL =====
-function openZoneModal(zone = null) {
-    document.getElementById('zoneModalTitle').textContent = zone ? 'Modifier la zone' : 'Nouvelle zone';
-    document.getElementById('zoneName_input').value = zone ? zone.name || '' : '';
-    document.getElementById('zoneCols').value = zone ? zone.cols || 5 : 5;
-    document.getElementById('zoneRows').value = zone ? zone.rows || 5 : 5;
-    const saveZoneText = document.getElementById('saveZoneText');
-    if (saveZoneText) saveZoneText.textContent = zone ? 'Modifier' : 'Créer';
-
-    // Couleur
-    selectedColor = zone ? (zone.color || '#4CAF50') : '#4CAF50';
-    document.querySelectorAll('.color-option').forEach(opt => {
-        opt.classList.toggle('selected', opt.dataset.color === selectedColor);
-    });
-
-    state.editingZoneId = zone ? zone.id : null;
-    openModal('zoneModal');
-}
-
-function saveZoneModal() {
-    const name = document.getElementById('zoneName_input').value.trim();
-    if (!name) { showToast('Le nom est obligatoire', 'error'); return; }
-
-    const cols = parseInt(document.getElementById('zoneCols').value) || 5;
-    const rows = parseInt(document.getElementById('zoneRows').value) || 5;
-
-    if (state.editingZoneId) {
-        dbRef().child(`zones/${state.editingZoneId}`).update({ name, cols, rows, color: selectedColor })
-            .then(() => {
-                closeModal('zoneModal');
-                showToast('Zone modifiée ✅', 'success');
-            })
-            .catch(err => showToast('Erreur: ' + err.message, 'error'));
-    } else {
-        const newZone = { name, cols, rows, color: selectedColor, plants: {} };
-        dbRef().child('zones').push(newZone)
-            .then(ref => {
-                closeModal('zoneModal');
-                selectZone(ref.key);
-                showToast('Zone créée 🌿', 'success');
-            })
-            .catch(err => showToast('Erreur: ' + err.message, 'error'));
-    }
-}
-
-// ===== GRID =====
-function renderGrid(zone) {
-    const container = document.getElementById('gridContainer');
-    container.innerHTML = '';
-
-    const cols = zone.cols || 5;
-    const rows = zone.rows || 5;
-
-    const grid = document.createElement('div');
-    grid.className = 'garden-grid';
-    grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-
-    for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-            const key = `${r}_${c}`;
-            const plant = zone.plants && zone.plants[key];
-
-            const cell = document.createElement('div');
-            cell.className = 'grid-cell' + (plant ? ' has-plant' : '');
-            cell.dataset.row = r;
-            cell.dataset.col = c;
-
-            if (plant && plant.name) {
-                cell.dataset.type = plant.type || 'autre';
-                const wMap = { quotidien: 'water-daily', '2jours': 'water-2days', semaine: 'water-weekly', rarement: 'water-rare' };
-                cell.classList.add(wMap[plant.water] || 'water-weekly');
-                cell.innerHTML = plant.photo
-                    ? `<img src="${plant.photo}" class="cell-photo" alt="${plant.name}"><div class="cell-name">${plant.name}</div><div class="cell-water-dot"></div>`
-                    : `<div class="cell-emoji">${getPlantEmoji(plant)}</div><div class="cell-name">${plant.name}</div><div class="cell-water-dot"></div>`;
-                if (window.innerWidth > 768) {
-                    cell.addEventListener('mouseenter', (e) => showPlantTooltip(e, plant));
-                    cell.addEventListener('mouseleave', hidePlantTooltip);
-                    cell.addEventListener('mousemove', positionTooltip);
-                }
-            } else {
-                cell.style.borderColor = zone.color || '#2d6a4f';
-                cell.innerHTML = '<div class="cell-add-icon"><i class="fas fa-plus"></i></div>';
-            }
-
-            // Appui long (mobile) → menu contextuel
-            let pressTimer = null;
-            let longPressOccurred = false;
-
-            cell.addEventListener('touchstart', (e) => {
-                longPressOccurred = false;
-                pressTimer = setTimeout(() => {
-                    const touch = e.touches[0];
-                    longPressOccurred = true;
-                    handleCellRightClick({
-                        preventDefault: () => {},
-                        clientX: touch.clientX,
-                        clientY: touch.clientY - 10
-                    }, r, c);
-                }, 550);
-            }, { passive: true });
-
-            cell.addEventListener('touchend', () => clearTimeout(pressTimer));
-            cell.addEventListener('touchmove', () => {
-                clearTimeout(pressTimer);
-                longPressOccurred = false;
-            });
-
-            // Clic gauche
-            cell.addEventListener('click', () => {
-                if (longPressOccurred) { longPressOccurred = false; return; }
-                if (state.selectedPlantFromLibrary) {
-                    dropLibraryPlant(r, c);
-                } else if (state.touchDragPlant) {
-                    dropTouchPlant(r, c);
-                } else {
-                    openPlantModal(r, c);
-                }
-            });
-
-            // Clic droit
-            cell.addEventListener('contextmenu', (e) => handleCellRightClick(e, r, c));
-
-            // Drag & drop desktop
-            cell.addEventListener('dragover', (e) => e.preventDefault());
-            cell.addEventListener('drop', (e) => {
-                e.preventDefault();
-                const data = e.dataTransfer.getData('plant');
-                if (!data) return;
-                const plant = JSON.parse(data);
-                savePlantToCell(r, c, plant);
-            });
-
-            // Touch drop
-            cell.addEventListener('touchend', () => {
-                if (state.touchDragPlant) {
-                    dropTouchPlant(r, c);
-                }
-            });
-
-            grid.appendChild(cell);
-        }
-    }
-
-    container.appendChild(grid);
-}
-
-function dropLibraryPlant(r, c) {
-    const p = state.selectedPlantFromLibrary;
-    savePlantToCell(r, c, {
-        name: p.name, emoji: p.emoji, type: p.type,
-        variety: '', water: 'semaine', notes: '', photo: '', date: ''
-    });
-    state.selectedPlantFromLibrary = null;
-}
-
-function dropTouchPlant(r, c) {
-    savePlantToCell(r, c, state.touchDragPlant);
-    state.touchDragPlant = null;
-}
-
-function savePlantToCell(r, c, plantData) {
-    const key = `${r}_${c}`;
-    dbRef().child(`zones/${state.currentZoneId}/plants/${key}`).set(plantData)
-        .then(() => showToast(`${plantData.emoji || '🌱'} ${plantData.name} planté !`, 'success'))
-        .catch(err => showToast('Erreur: ' + err.message, 'error'));
-}
-
-function applyGrid() {
-    const cols = parseInt(document.getElementById('gridCols').value) || 5;
-    const rows = parseInt(document.getElementById('gridRows').value) || 5;
-    if (!state.currentZoneId) return;
-    dbRef().child(`zones/${state.currentZoneId}`).update({ cols, rows })
-        .then(() => showToast('Grille redimensionnée ✅', 'success'))
-        .catch(err => showToast('Erreur: ' + err.message, 'error'));
-}
-
-// ===== LEGEND =====
-const CATEGORY_LABELS = {
-    legume: '\ud83e\udd55 L\u00e9gumes',
-    fruit:  '\ud83c\udf53 Fruits',
-    herbe:  '\ud83c\udf3f Herbes aromatiques',
-    fleur:  '\ud83c\udf38 Fleurs',
-    arbre:  '\ud83c\udf33 Arbres & Arbustes',
-};
-
-function renderLegend(filter) {
-    if (!filter || typeof filter === 'object') filter = 'all';
-
-    const items = document.getElementById('legendItems');
-    if (!items) { console.warn('legendItems introuvable'); return; }
-
-    const lib = typeof PLANT_LIBRARY !== "undefined" ? PLANT_LIBRARY : null;
-    if (!lib || !lib.length) {
-        items.innerHTML = '<p style="color:red;text-align:center;">PLANT_LIBRARY manquant !</p>';
-        console.error('PLANT_LIBRARY undefined ou vide', typeof lib);
-        return;
-    }
-
-    items.innerHTML = '';
-    items.style.cssText = '';
-
-    const cats = filter === 'all'
-        ? ['legume', 'fruit', 'herbe', 'fleur', 'arbre']
-        : [filter];
-
-    cats.forEach(function(cat) {
-        var list = lib.filter(function(p) { return p.type === cat; });
-        if (!list.length) return;
-
-        var title = document.createElement('div');
-        title.style.cssText = 'font-size:12px;font-weight:800;color:#2d6a4f;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px;padding-bottom:4px;border-bottom:2px solid #e8f5e9;';
-        title.textContent = CATEGORY_LABELS[cat] || cat;
-        items.appendChild(title);
-
-        var grid = document.createElement('div');
-        grid.style.cssText = 'display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;';
-
-        list.forEach(function(plant) {
-            var item = document.createElement('div');
-            item.style.cssText = 'display:flex;flex-direction:column;align-items:center;border:2px solid #eee;border-radius:10px;padding:8px 6px;cursor:pointer;background:white;transition:all .2s;';
-            item.innerHTML = '<span style="font-size:26px">' + plant.emoji + '</span>'
-                + '<span style="font-size:11px;margin-top:4px;text-align:center;font-weight:700;line-height:1.2">' + plant.name + '</span>';
-
-            item.onmouseenter = function() { item.style.border='2px solid #2d6a4f'; item.style.background='#f0faf4'; };
-            item.onmouseleave = function() { item.style.border='2px solid #eee';    item.style.background='white'; };
-            item.onclick = function() {
-                state.selectedPlantFromLibrary = Object.assign({}, plant);
-                showToast(plant.emoji + ' ' + plant.name + ' s\u00e9lectionn\u00e9 \u2014 cliquez sur une case', 'info');
-                toggleLegend();
-            };
-            grid.appendChild(item);
-        });
-        items.appendChild(grid);
-    });
-}
-
-function filterLibrary(type, btn) {
-    document.querySelectorAll('#legendPanel .filter-btn').forEach(function(b) { b.classList.remove('active'); });
-    if (btn) btn.classList.add('active');
-    renderLegend(type);
-}
-
-function filterPalette(type, btn) {
-    document.querySelectorAll('.filter-btns .filter-btn').forEach(b => b.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-    renderPalette(type);
-}
-
-function toggleLegend() {
-    const panel = document.getElementById('legendPanel');
-    const isOpen = panel.style.display === 'flex';
-    if (isOpen) {
-        panel.style.display = 'none';
-        updateMobileNav('zones');
-    } else {
-        panel.style.display = 'flex';
-        panel.style.flexDirection = 'column';
-        panel.style.gap = '12px';
-        panel.style.transform = 'none';
-        renderLegend('all');
-        updateMobileNav('library');
-    }
-}
-
-// ===== MOBILE NAV =====
-function updateMobileNav(tab) {
-    document.querySelectorAll('.mobile-nav-btn').forEach(btn => btn.classList.remove('active'));
-    const el = document.getElementById('nav-' + tab);
-    if (el) el.classList.add('active');
-}
-
-function mobileNavTo(tab) {
-    const panel = document.getElementById('legendPanel');
-
-    if (tab === 'library') {
-        toggleLegend();
-        return;
-    }
-
-    updateMobileNav(tab);
-
-    if (panel) panel.style.display = 'none';
-
-    if (tab === 'calendar') {
-        renderCalendar();
-        openModal('calendarModal');
-    } else if (tab === 'reminders') {
-        renderReminders();
-        openModal('remindersModal');
-    }
-}
-
-function updateRemindersBadge() {
-    const badge = document.getElementById('remindersBadge');
-    if (!badge) return;
-    const today = new Date();
-    let count = 0;
-    state.zones.forEach(z => {
-        if (!z.plants) return;
-        Object.values(z.plants).forEach(p => {
-            if (p && p.reminder && p.reminder.date) {
-                const d = new Date(p.reminder.date);
-                if (d <= today) count++;
-            }
-        });
-    });
-    badge.textContent = count;
-    badge.style.display = count > 0 ? 'flex' : 'none';
-}
-
-
-// ===== PLANT MODAL =====
-function openPlantModal(row, col) {
-    state.selectedCell = { row, col };
-    const zone = getZone(state.currentZoneId);
-    const key = `${row}_${col}`;
-    const plant = zone.plants && zone.plants[key];
-
-    state.editingPlantId = plant ? key : null;
-
-    document.getElementById('plantModalTitle').textContent = plant ? 'Modifier la plante' : 'Ajouter une plante';
-    document.getElementById('plantName').value = plant ? plant.name || '' : '';
-    document.getElementById('plantVariety').value = plant ? plant.variety || '' : '';
-    document.getElementById('plantDate').value = plant ? plant.date || '' : '';
-    document.getElementById('plantType').value = plant ? plant.type || 'legume' : 'legume';
-    document.getElementById('plantWater').value = plant ? plant.water || 'semaine' : 'semaine';
-    document.getElementById('plantNotes').value = plant ? plant.notes || '' : '';
-
-    const preview = document.getElementById('photoPreview');
-    const placeholder = document.getElementById('photoPlaceholder');
-    if (plant && plant.photo) {
-        preview.src = plant.photo;
-        preview.style.display = 'block';
-        placeholder.style.display = 'none';
-    } else {
-        preview.src = '';
-        preview.style.display = 'none';
-        placeholder.style.display = 'flex';
-    }
-
-    document.getElementById('reminderEnabled').checked = plant ? !!plant.reminder : false;
-    document.getElementById('reminderDetail').style.display = (plant && plant.reminder) ? 'flex' : 'none';
-    document.getElementById('reminderDate').value = plant && plant.reminder ? plant.reminder.date || '' : '';
-    document.getElementById('reminderText').value = plant && plant.reminder ? plant.reminder.text || '' : '';
-
-    document.getElementById('deletePlantBtn').style.display = plant ? 'block' : 'none';
-
-    openModal('plantModal');
-}
-
-function savePlant() {
-    const name = document.getElementById('plantName').value.trim();
-    if (!name) { showToast('Le nom est obligatoire', 'error'); return; }
-
-    const zone = getZone(state.currentZoneId);
-    const key = `${state.selectedCell.row}_${state.selectedCell.col}`;
-
-    const reminderEnabled = document.getElementById('reminderEnabled').checked;
-    const plant = {
-        name,
-        variety: document.getElementById('plantVariety').value.trim(),
-        date: document.getElementById('plantDate').value,
-        type: document.getElementById('plantType').value,
-        water: document.getElementById('plantWater').value,
-        notes: document.getElementById('plantNotes').value.trim(),
-        photo: document.getElementById('photoPreview').src || '',
-        reminder: reminderEnabled ? {
-            date: document.getElementById('reminderDate').value,
-            text: document.getElementById('reminderText').value.trim()
-        } : null
-    };
-
-    dbRef().child(`zones/${state.currentZoneId}/plants/${key}`).set(plant)
-        .then(() => {
-            showToast('Plante sauvegardée ! 🌱', 'success');
-            closeModal('plantModal');
-        })
-        .catch(err => showToast('Erreur: ' + err.message, 'error'));
-}
-
-function deletePlant() {
-    if (!state.editingPlantId) return;
-    if (!confirm('Supprimer cette plante ?')) return;
-
-    dbRef().child(`zones/${state.currentZoneId}/plants/${state.editingPlantId}`).remove()
-        .then(() => {
-            closeModal('plantModal');
-            showToast('Plante supprimée 🗑️', 'success');
-        });
-}
-
-function deletePlantFromMenu(r, c) {
-    closeContextMenu();
-    const key = `${r}_${c}`;
-    dbRef().child(`zones/${state.currentZoneId}/plants/${key}`).remove()
-        .then(() => showToast('Plante supprimée 🗑️', 'success'));
-}
-
-function editPlantFromMenu(r, c) {
-    closeContextMenu();
-    openPlantModal(r, c);
-}
-
-// ===== SAVE DATA (local zones sync) =====
-function saveData() {
-    const zone = getCurrentZone();
-    if (!zone) return;
-    dbRef().child(`zones/${state.currentZoneId}`).set(zone)
-        .catch(err => showToast('Erreur sauvegarde: ' + err.message, 'error'));
-}
-
-// ===== STATS =====
-function updateStats() {
-    let total = 0;
-    state.zones.forEach(z => {
-        if (z.plants) total += Object.keys(z.plants).length;
-    });
-    const el1 = document.getElementById('totalPlants');
-    const el2 = document.getElementById('totalZones');
-    if (el1) el1.textContent = total;
-    if (el2) el2.textContent = state.zones.length;
-}
-
-// ===== PALETTE / LIBRARY =====
-function renderPalette(filter = 'all') {
-    const palette = document.getElementById('plantPalette');
-    if (!palette) return;
-    palette.innerHTML = '';
-
-    const list = filter === 'all' ? PLANT_LIBRARY : PLANT_LIBRARY.filter(p => p.type === filter);
-
-    list.forEach(plant => {
-        const btn = document.createElement('div');
-        btn.className = 'palette-btn';
-        btn.innerHTML = `
-            <span class="palette-emoji">${plant.emoji}</span>
-            <span class="palette-name">${plant.name}</span>
-        `;
-
-        btn.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('plant', JSON.stringify({
-                name: plant.name, emoji: plant.emoji, type: plant.type,
-                variety: '', water: 'semaine', notes: '', photo: '', date: ''
-            }));
-            btn.style.opacity = '0.5';
-        });
-        btn.addEventListener('dragend', () => { btn.style.opacity = '1'; });
-
-        btn.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            state.touchDragPlant = {
-                name: plant.name, emoji: plant.emoji, type: plant.type,
-                variety: '', water: 'semaine', notes: '', photo: '', date: ''
-            };
-            btn.style.opacity = '0.5';
-            showToast(`${plant.emoji} ${plant.name} sélectionné — touchez une case`, 'info');
-        }, { passive: false });
-        btn.addEventListener('touchend', () => { btn.style.opacity = '1'; });
-
-        btn.addEventListener('click', () => {
-            state.selectedPlantFromLibrary = { ...plant };
-            showToast(`${plant.emoji} ${plant.name} sélectionné — cliquez sur une cellule`, 'info');
-        });
-
-        palette.appendChild(btn);
-    });
-}
-
-// ===== HELPERS =====
-function getPlantEmoji(plant) {
-    if (plant.emoji) return plant.emoji;
-    const found = PLANT_LIBRARY.find(p => p.name.toLowerCase() === plant.name.toLowerCase());
-    if (found) return found.emoji;
-    return getTypeEmoji(plant.type);
-}
-
-function getTypeEmoji(type) {
-    const map = {
-        legume: '🥦', fruit: '🍓', herbe: '🌿', fleur: '🌸', arbre: '🌳'
-    };
-    return map[type] || '🌱';
-}
-
-function getWaterLabel(water) {
-    const map = { quotidien: '💧 Quotidien', '2jours': '💧 Tous les 2 jours', semaine: '💧 1x / semaine', rarement: '💧 Rarement' };
-    return map[water] || '💧 Arrosage non précisé';
-}
-
-function showPlantTooltip(e, plant) {
-    const tip = document.getElementById('plantTooltip');
-    if (!tip) return;
-    document.getElementById('tip-emoji').textContent = plant.emoji || getTypeEmoji(plant.type);
-    document.getElementById('tip-name').textContent = plant.name + (plant.variety ? ` — ${plant.variety}` : '');
-    document.getElementById('tip-water').textContent = getWaterLabel(plant.water);
-    const dateEl = document.getElementById('tip-date');
-    dateEl.textContent = plant.date ? `📅 Planté le ${plant.date}` : '';
-    dateEl.style.display = plant.date ? '' : 'none';
-    const notesEl = document.getElementById('tip-notes');
-    notesEl.textContent = plant.notes || '';
-    notesEl.style.display = plant.notes ? '' : 'none';
-    tip.style.opacity = '1';
-    tip.style.pointerEvents = 'none';
-    positionTooltip(e);
-}
-
-function hidePlantTooltip() {
-    const tip = document.getElementById('plantTooltip');
-    if (tip) tip.style.opacity = '0';
-}
-
-function positionTooltip(e) {
-    const tip = document.getElementById('plantTooltip');
-    if (!tip || tip.style.opacity === '0') return;
-    const offset = 14;
-    let x = e.clientX + offset;
-    let y = e.clientY + offset;
-    if (x + 240 > window.innerWidth) x = e.clientX - 240 - offset;
-    if (y + 160 > window.innerHeight) y = e.clientY - 160 - offset;
-    tip.style.left = x + 'px';
-    tip.style.top = y + 'px';
-}
-
-const SEASONAL_TIPS = [
-    { months: [3, 4, 5], tip: '🌱 Printemps — Idéal pour semer tomates, courgettes et salades en pleine terre !' },
-    { months: [6, 7, 8], tip: '☀️ Été — Arrosez tôt le matin ou le soir, jamais en plein soleil.' },
-    { months: [9, 10, 11], tip: '🍂 Automne — Plantez ail, oignons et épinards pour l\'hiver.' },
-    { months: [12, 1, 2], tip: '❄️ Hiver — Préparez vos plans de semis pour le printemps prochain !' },
-];
-
-function showSeasonalTip() {
-    const el = document.getElementById('seasonalTip');
-    if (!el) return;
-    const month = new Date().getMonth() + 1;
-    const entry = SEASONAL_TIPS.find(t => t.months.includes(month));
-    if (entry) {
-        el.textContent = entry.tip;
-        el.style.display = '';
-    } else {
-        el.style.display = 'none';
-    }
-}
-
-function searchPlantLibrary(query) {
-    const q = query.trim().toLowerCase();
-    const palette = document.getElementById('plantPalette');
-    if (!palette) return;
-    if (!q) { renderPalette('all'); return; }
-    const matches = PLANT_LIBRARY.filter(p => p.name.toLowerCase().includes(q) || (p.notes && p.notes.toLowerCase().includes(q)));
-    palette.innerHTML = '';
-    matches.forEach(plant => {
-        const btn = document.createElement('div');
-        btn.className = 'palette-btn';
-        btn.innerHTML = `<span style="font-size:28px;">${plant.emoji}</span><span style="font-size:11px; margin-top:4px; text-align:center; line-height:1;">${plant.name}</span>`;
-        btn.addEventListener('click', () => {
-            state.selectedPlantFromLibrary = { ...plant };
-            showToast(`${plant.emoji} ${plant.name} sélectionné — cliquez sur une cellule`, 'info');
-        });
-        palette.appendChild(btn);
-    });
-}
-
-// ===== CONTEXT MENU / TAMPON =====
-function handleCellRightClick(e, row, col) {
-    e.preventDefault();
-    const zone = getCurrentZone();
-    if (!zone) return;
-
-    const key = `${row}_${col}`;
-    const plant = zone.plants && zone.plants[key];
-    if (!plant || !plant.name) return;
-
-    closeContextMenu();
-
-    const menu = document.createElement('div');
-    menu.id = 'context-menu';
-    menu.style.cssText = `
-        position: fixed;
-        top: ${e.clientY}px;
-        left: ${e.clientX}px;
-        background: white;
-        border: 2px solid #2d6a4f;
-        border-radius: 10px;
-        padding: 8px 0;
-        z-index: 9999;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-        min-width: 200px;
-    `;
-
-    menu.innerHTML = `
-        <div style="padding:8px 16px; font-weight:bold; color:#2d6a4f; border-bottom:1px solid #eee; margin-bottom:4px;">
-            ${getTypeEmoji(plant.type)} ${plant.name}
-        </div>
-        <div class="ctx-item" onclick="editPlantFromMenu(${row}, ${col})">✏️ Modifier</div>
-        <div class="ctx-item" onclick="stampLine(${row}, ${col})">➡️ Copier sur toute la ligne</div>
-        <div class="ctx-item" onclick="stampColumn(${row}, ${col})">⬇️ Copier sur toute la colonne</div>
-        <div class="ctx-item" onclick="stampRectPrompt(${row}, ${col})">▦ Copier sur une zone rectangle</div>
-        <div style="border-top:1px solid #eee; margin-top:4px;">
-            <div class="ctx-item" style="color:#e63946;" onclick="deletePlantFromMenu(${row}, ${col})">🗑️ Supprimer cette plante</div>
-        </div>
-    `;
-
-    document.body.appendChild(menu);
-
-    // Empêcher le menu de sortir de l'écran
-    const rect = menu.getBoundingClientRect();
-    const navH = window.innerWidth <= 480 ? 68 : 0;
-    if (rect.right > window.innerWidth - 8) {
-        menu.style.left = Math.max(8, e.clientX - rect.width) + 'px';
-    }
-    if (rect.bottom > window.innerHeight - navH - 8) {
-        menu.style.top = Math.max(80, e.clientY - rect.height) + 'px';
-    }
-
-    copiedPlant = { ...plant };
-    highlightSourceCell(row, col);
-
-    setTimeout(() => {
-        document.addEventListener('click', closeContextMenu, { once: true });
-    }, 100);
-}
-
-function closeContextMenu() {
-    const menu = document.getElementById('context-menu');
-    if (menu) menu.remove();
-}
-
-function highlightSourceCell(row, col) {
-    const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-    if (cell) {
-        cell.style.outline = '3px solid orange';
-        cell.style.outlineOffset = '-3px';
-        setTimeout(() => {
-            cell.style.outline = '';
-            cell.style.outlineOffset = '';
-        }, 3000);
-    }
-}
-
-function flashCell(row, col) {
-    const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
-    if (cell) {
-        cell.style.transition = 'background 0.3s';
-        cell.style.background = '#95d5b2';
-        setTimeout(() => { cell.style.background = ''; }, 600);
-    }
-}
-
-function clearCell(row, col) {
-    const zone = getCurrentZone();
-    if (!zone) return;
-    const key = `${row}_${col}`;
-    dbRef().child(`zones/${state.currentZoneId}/plants/${key}`).remove()
-        .then(() => showToast('Plante supprimée 🗑️', 'success'));
-}
-
-function stampLine(row, col) {
-    closeContextMenu();
-    const zone = getCurrentZone();
-    if (!zone || !copiedPlant) return;
-
-    const cols = zone.cols || 5;
-    const updates = {};
-    let count = 0;
-
+function renderBedGrid(zone) {
+  const grid = document.getElementById('bedGrid');
+  if (!zone) { grid.innerHTML = ''; return; }
+  const cols = zone.cols || 4;
+  const rows = zone.rows || 3;
+  const plants = zone.plants || {};
+  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+  grid.innerHTML = '';
+
+  for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-        if (c !== col) {
-            updates[`zones/${state.currentZoneId}/plants/${row}_${c}`] = { ...copiedPlant };
-            flashCell(row, c);
-            count++;
-        }
+      const key = `${r}_${c}`;
+      const plant = plants[key];
+      const cell = document.createElement('div');
+      cell.className = `bed-cell ${plant ? 'has-plant' : 'empty'}`;
+      if (plant) {
+        cell.innerHTML = `
+          <div class="pc-emoji">${plant.emoji || '🌱'}</div>
+          <div class="pc-name">${esc(plant.name)}</div>
+          ${plant.plantedDate ? `<div class="pc-date">${formatShortDate(plant.plantedDate)}</div>` : ''}`;
+        cell.addEventListener('click', () => openPlantPanel(activeZoneId, key, plant));
+      } else {
+        cell.innerHTML = `<div class="pc-plus">+</div>`;
+        cell.addEventListener('click', () => openPlantPicker(activeZoneId, key));
+      }
+      grid.appendChild(cell);
     }
-
-    dbRef().update(updates)
-        .then(() => showToast(`✅ ${count} cellules remplies sur la ligne !`, 'success'));
+  }
 }
 
-function stampColumn(row, col) {
-    closeContextMenu();
-    const zone = getCurrentZone();
-    if (!zone || !copiedPlant) return;
+/* ============================================================
+   PLANT PANEL
+   ============================================================ */
+function openPlantPanel(zoneId, cellKey, plant) {
+  const z = zones[zoneId];
+  document.getElementById('pdBedName').textContent = z?.name || '—';
+  document.getElementById('pdStatus').className = 'dot healthy';
 
-    const rows = zone.rows || 5;
-    const updates = {};
-    let count = 0;
+  const waterLabels = { '2jours': 'Tous les 2 jours', 'semaine': 'Hebdomadaire', 'rarement': 'Rarement' };
+  const body = document.getElementById('panelBody');
+  body.innerHTML = `
+    <div class="pd-hero">
+      <div class="pd-emoji">${plant.emoji || '🌱'}</div>
+      <div>
+        <h2 class="pd-name">${esc(plant.name)}</h2>
+        <div class="pd-type muted small">${typeName(plant.type)}</div>
+      </div>
+    </div>
+    ${plant.plantedDate ? `<div class="pd-meta"><span class="meta-key">Planté le</span><span>${formatDate(plant.plantedDate)}</span></div>` : ''}
+    <div class="pd-meta"><span class="meta-key">Arrosage</span><span class="badge green">${waterLabels[plant.water] || plant.water || '—'}</span></div>
+    ${plant.notes ? `<div class="pd-notes small muted">${esc(plant.notes)}</div>` : ''}
+    <div class="pd-actions">
+      <button class="btn primary" onclick="addTaskForPlant('${esc(plant.name)}','water')">💧 Arroser</button>
+      <button class="btn" onclick="addTaskForPlant('${esc(plant.name)}','harvest')">🥕 Récolter</button>
+      <button class="btn" onclick="addJournalFromPanel('${esc(plant.name)}')">📝 Noter</button>
+      <button class="btn danger" onclick="confirmRemovePlant('${zoneId}','${cellKey}')">🗑️ Supprimer</button>
+    </div>`;
 
-    for (let r = 0; r < rows; r++) {
-        if (r !== row) {
-            updates[`zones/${state.currentZoneId}/plants/${r}_${col}`] = { ...copiedPlant };
-            flashCell(r, col);
-            count++;
-        }
-    }
-
-    dbRef().update(updates)
-        .then(() => showToast(`✅ ${count} cellules remplies sur la colonne !`, 'success'));
+  document.getElementById('panelBackdrop').style.display = 'block';
+  document.getElementById('plantPanel').classList.add('open');
+  document.getElementById('plantPanel').setAttribute('aria-hidden', 'false');
 }
 
-function stampRectPrompt(row, col) {
-    closeContextMenu();
+function closePanel() {
+  document.getElementById('panelBackdrop').style.display = 'none';
+  document.getElementById('plantPanel').classList.remove('open');
+  document.getElementById('plantPanel').setAttribute('aria-hidden', 'true');
+}
 
-    const modal = document.createElement('div');
-    modal.id = 'rect-modal';
-    modal.style.cssText = `
-        position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-        z-index: 9999; display: flex; align-items: center; justify-content: center;
-    `;
-    modal.innerHTML = `
-        <div style="background:white; border-radius:16px; padding:30px; min-width:300px; text-align:center; box-shadow:0 8px 30px rgba(0,0,0,0.3);">
-            <h3 style="color:#2d6a4f; margin-bottom:20px;">▦ Zone rectangle</h3>
-            <p style="color:#666; margin-bottom:16px;">Depuis la cellule source, copier sur :</p>
-            <div style="display:flex; gap:16px; justify-content:center; margin-bottom:20px;">
-                <div>
-                    <label style="display:block; color:#333; margin-bottom:6px; font-weight:bold;">Colonnes →</label>
-                    <input id="rect-cols" type="number" min="1" max="50" value="3"
-                        style="width:80px; padding:8px; border:2px solid #2d6a4f; border-radius:8px; text-align:center; font-size:18px;">
-                </div>
-                <div>
-                    <label style="display:block; color:#333; margin-bottom:6px; font-weight:bold;">Lignes ↓</label>
-                    <input id="rect-rows" type="number" min="1" max="50" value="3"
-                        style="width:80px; padding:8px; border:2px solid #2d6a4f; border-radius:8px; text-align:center; font-size:18px;">
-                </div>
-            </div>
-            <div style="display:flex; gap:10px; justify-content:center;">
-                <button onclick="applyRectStamp(${row}, ${col})"
-                    style="background:#2d6a4f; color:white; border:none; padding:10px 24px; border-radius:10px; cursor:pointer; font-weight:bold; font-size:15px;">
-                    ✅ Appliquer
-                </button>
-                <button onclick="document.getElementById('rect-modal').remove()"
-                    style="background:#eee; color:#333; border:none; padding:10px 24px; border-radius:10px; cursor:pointer; font-size:15px;">
-                    Annuler
-                </button>
-            </div>
+function confirmRemovePlant(zoneId, cellKey) {
+  showConfirm('Supprimer la plante ?', 'Cette action est irréversible.', () => {
+    savePlantToCell(zoneId, cellKey, null);
+    closePanel();
+    showToast('Plante supprimée');
+  });
+}
+
+function addTaskForPlant(plantName, kind) {
+  tasks.unshift({ id: uid(), title: `${kindIcon(kind)} ${plantName}`, kind, date: toISODate(new Date()), done: false, createdAt: Date.now() });
+  saveTasks();
+  closePanel();
+  showToast('Tâche ajoutée !');
+}
+
+function addJournalFromPanel(plantName) {
+  closePanel();
+  openQuickAdd('note');
+  const ns = document.getElementById('qaNoteSubject');
+  if (ns) {
+    const opt = Array.from(ns.options).find(o => o.value === plantName);
+    if (opt) ns.value = plantName;
+  }
+}
+
+function typeName(t) {
+  return { legume: 'Légume', fruit: 'Fruit', herbe: 'Herbe aromatique', fleur: 'Fleur', arbre: 'Arbre / Arbuste' }[t] || t || '—';
+}
+
+/* ============================================================
+   BED MODAL
+   ============================================================ */
+function openBedModal(zoneId = null) {
+  editingBedId = zoneId;
+  const z = zoneId ? zones[zoneId] : null;
+  document.getElementById('bedModalTitle').textContent = z ? 'Modifier la parcelle' : 'Nouvelle parcelle';
+  document.getElementById('bedModalName').value = z?.name || '';
+  document.getElementById('bedModalCols').value = z?.cols || 4;
+  document.getElementById('bedModalRows').value = z?.rows || 3;
+  const currentColor = z?.color || BED_COLORS[0];
+  document.getElementById('bedColorPicker').innerHTML = BED_COLORS.map(c => `
+    <button class="color-swatch ${c === currentColor ? 'selected' : ''}" style="background:${c}" onclick="selectBedColor(this)" aria-label="Couleur ${c}"></button>`).join('');
+  openModal('bedModalBackdrop');
+}
+
+function selectBedColor(el) {
+  document.querySelectorAll('#bedColorPicker .color-swatch').forEach(s => s.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function saveBed() {
+  const name = document.getElementById('bedModalName').value.trim();
+  const cols = Math.min(10, Math.max(2, parseInt(document.getElementById('bedModalCols').value) || 4));
+  const rows = Math.min(10, Math.max(2, parseInt(document.getElementById('bedModalRows').value) || 3));
+  const selectedSwatch = document.querySelector('#bedColorPicker .color-swatch.selected');
+  const color = selectedSwatch ? selectedSwatch.style.background : BED_COLORS[0];
+  if (!name) { showToast('Donnez un nom à la parcelle', 'warn'); return; }
+
+  const id = editingBedId || uid();
+  const existing = editingBedId ? zones[editingBedId] : null;
+  const data = { name, cols, rows, color, plants: existing?.plants || {} };
+
+  if (isLocalMode) {
+    zones[id] = data;
+    lsSet('potager_zones_local', zones);
+    activeZoneId = id;
+    renderGarden();
+    renderDashboard();
+  } else {
+    db.ref(`jardin/zones/${id}`).set(data);
+    activeZoneId = id;
+  }
+  closeModal('bedModalBackdrop');
+  showToast(editingBedId ? 'Parcelle modifiée !' : 'Parcelle créée !');
+}
+
+function deleteBed() {
+  if (!activeZoneId) return;
+  const z = zones[activeZoneId];
+  showConfirm(`Supprimer « ${z?.name || 'cette parcelle'} » ?`, 'Toutes les plantes seront perdues.', () => {
+    const idToDelete = activeZoneId;
+    activeZoneId = null;
+    if (isLocalMode) {
+      delete zones[idToDelete];
+      lsSet('potager_zones_local', zones);
+      renderGarden();
+      renderDashboard();
+    } else {
+      db.ref(`jardin/zones/${idToDelete}`).remove();
+    }
+    showToast('Parcelle supprimée');
+  });
+}
+
+/* ============================================================
+   PLANT PICKER
+   ============================================================ */
+function openPlantPicker(zoneId, cellKey) {
+  pickerTarget = { zoneId, cellKey };
+  document.getElementById('pickerSearch').value = '';
+  renderPlantPicker();
+  openModal('plantPickerBackdrop');
+}
+
+function renderPlantPicker() {
+  const q = (document.getElementById('pickerSearch')?.value || '').toLowerCase();
+  const grid = document.getElementById('plantPickerGrid');
+  const filtered = PLANT_LIBRARY.filter(p => !q || p.name.toLowerCase().includes(q) || (p.notes || '').toLowerCase().includes(q));
+  grid.innerHTML = filtered.map(p => `
+    <button class="picker-cell" onclick="pickPlant('${p.id}')">
+      <div class="picker-emoji">${p.emoji}</div>
+      <div class="picker-name">${esc(p.name)}</div>
+    </button>`).join('');
+}
+
+function pickPlant(plantId) {
+  if (!pickerTarget) return;
+  const plant = PLANT_LIBRARY.find(p => p.id === plantId);
+  if (!plant) return;
+  savePlantToCell(pickerTarget.zoneId, pickerTarget.cellKey, {
+    name: plant.name, emoji: plant.emoji, type: plant.type,
+    water: plant.water, notes: plant.notes, plantedDate: toISODate(new Date()),
+  });
+  closeModal('plantPickerBackdrop');
+  pickerTarget = null;
+  showToast(`${plant.emoji} ${plant.name} planté·e !`);
+}
+
+/* ============================================================
+   CATALOG
+   ============================================================ */
+function wireCatalogFilters() {
+  const types = [
+    { id: 'all', label: '🌿 Tout' }, { id: 'legume', label: '🥕 Légumes' },
+    { id: 'fruit', label: '🍓 Fruits' }, { id: 'herbe', label: '🌿 Herbes' },
+    { id: 'fleur', label: '🌸 Fleurs' }, { id: 'arbre', label: '🌳 Arbres' },
+  ];
+  document.getElementById('catalogFilters').innerHTML = types.map(t => `
+    <button class="filter-chip ${t.id === 'all' ? 'active' : ''}" data-cat-f="${t.id}" onclick="setCatalogFilter('${t.id}')">${t.label}</button>`).join('');
+}
+
+function setCatalogFilter(f) {
+  activeCatalogFilter = f;
+  document.querySelectorAll('[data-cat-f]').forEach(b => b.classList.toggle('active', b.dataset.catF === f));
+  renderCatalog();
+}
+
+function renderCatalog() {
+  const q = (document.getElementById('catalogSearch')?.value || '').toLowerCase();
+  const grid = document.getElementById('catalogGrid');
+  const filtered = PLANT_LIBRARY.filter(p =>
+    (activeCatalogFilter === 'all' || p.type === activeCatalogFilter) &&
+    (!q || p.name.toLowerCase().includes(q) || (p.notes || '').toLowerCase().includes(q))
+  );
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="ei">🔍</div><h3>Aucun résultat</h3><p>Essayez un autre filtre ou terme de recherche.</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(p => `
+    <div class="catalog-card">
+      <div class="cc-head">
+        <div class="cc-emoji">${p.emoji}</div>
+        <div class="cc-info">
+          <div class="cc-name">${esc(p.name)}</div>
+          <div class="cc-type muted xsmall">${typeName(p.type)}</div>
         </div>
-    `;
-    document.body.appendChild(modal);
+        <span class="badge ${waterBadgeClass(p.water)}">${waterLabel(p.water)}</span>
+      </div>
+      ${p.notes ? `<div class="cc-notes small muted">${esc(p.notes)}</div>` : ''}
+      <button class="btn primary sm mt-3" onclick="catalogAddToGarden('${p.id}')">+ Ajouter au jardin</button>
+    </div>`).join('');
 }
 
-function applyRectStamp(startRow, startCol) {
-    const zone = getCurrentZone();
-    if (!zone || !copiedPlant) return;
-
-    const nbCols = parseInt(document.getElementById('rect-cols').value) || 1;
-    const nbRows = parseInt(document.getElementById('rect-rows').value) || 1;
-    document.getElementById('rect-modal').remove();
-
-    const updates = {};
-    let count = 0;
-
-    for (let r = startRow; r < startRow + nbRows && r < zone.rows; r++) {
-        for (let c = startCol; c < startCol + nbCols && c < zone.cols; c++) {
-            if (r === startRow && c === startCol) continue;
-            updates[`zones/${state.currentZoneId}/plants/${r}_${c}`] = { ...copiedPlant };
-            flashCell(r, c);
-            count++;
-        }
-    }
-
-    dbRef().update(updates)
-        .then(() => showToast(`✅ ${count} cellules remplies dans la zone !`, 'success'));
+function catalogAddToGarden(plantId) {
+  if (Object.keys(zones).length === 0) {
+    showToast("Créez d'abord une parcelle dans « Mon jardin »", 'warn');
+    return;
+  }
+  openQuickAdd('plant');
+  setTimeout(() => {
+    const sel = document.getElementById('qaPlantSelect');
+    if (sel) sel.value = plantId;
+  }, 50);
 }
 
-// ===== EXPORT PDF =====
-function exportPDF() {
-    const zone = getCurrentZone();
-    if (!zone) return;
+function waterLabel(w) { return { '2jours': '2 jours', 'semaine': 'Hebdo', 'rarement': 'Rarement' }[w] || w || '—'; }
+function waterBadgeClass(w) { return { '2jours': 'green', 'semaine': 'earth', 'rarement': 'warn' }[w] || ''; }
 
-    const content = document.createElement('div');
-    content.style.padding = '20px';
-    content.style.fontFamily = 'Arial, sans-serif';
-    content.innerHTML = `
-        <h1 style="color:${zone.color || '#2d6a4f'}; text-align:center; margin-bottom:5px;">
-            🌿 ${zone.name}
-        </h1>
-        <p style="text-align:center; color:#666; margin-bottom:20px;">
-            Grille ${zone.cols} × ${zone.rows} — Imprimé le ${new Date().toLocaleDateString('fr-FR')}
-        </p>
-    `;
-
-    const gridDiv = document.createElement('div');
-    gridDiv.style.display = 'grid';
-    gridDiv.style.gridTemplateColumns = `repeat(${zone.cols}, 1fr)`;
-    gridDiv.style.gap = '4px';
-    gridDiv.style.marginBottom = '30px';
-
-    for (let r = 0; r < zone.rows; r++) {
-        for (let c = 0; c < zone.cols; c++) {
-            const key = `${r}_${c}`;
-            const plant = zone.plants && zone.plants[key];
-            const cell = document.createElement('div');
-            cell.style.cssText = `
-                border: 2px solid ${plant ? (zone.color || '#2d6a4f') : '#ccc'};
-                border-radius: 6px; padding: 4px 2px; text-align: center;
-                min-height: 50px; font-size: 11px;
-                background: ${plant ? '#f0faf4' : '#fafafa'};
-                display: flex; flex-direction: column;
-                align-items: center; justify-content: center;
-            `;
-            if (plant && plant.name) {
-                cell.innerHTML = `
-                    <div style="font-size:18px;">${getPlantEmoji(plant)}</div>
-                    <div style="font-weight:bold; font-size:10px;">${plant.name}</div>
-                    ${plant.variety ? `<div style="color:#888; font-size:9px;">${plant.variety}</div>` : ''}
-                `;
-            } else {
-                cell.innerHTML = `<div style="color:#ddd; font-size:18px;">·</div>`;
-            }
-            gridDiv.appendChild(cell);
-        }
-    }
-    content.appendChild(gridDiv);
-
-    const options = {
-        margin: 10,
-        filename: `jardin_${zone.name}_${new Date().toLocaleDateString('fr-FR').replace(/\//g, '-')}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: zone.cols > 10 ? 'landscape' : 'portrait' }
-    };
-
-    showToast('Génération du PDF...', 'info');
-    html2pdf().set(options).from(content).save()
-        .then(() => showToast('PDF exporté ! 📄', 'success'));
+/* ============================================================
+   CALENDAR
+   ============================================================ */
+function wireCalFilters() {
+  document.getElementById('calFilters').querySelectorAll('[data-cf]').forEach(b => {
+    b.addEventListener('click', () => {
+      activeCalFilter = b.dataset.cf;
+      document.getElementById('calFilters').querySelectorAll('[data-cf]').forEach(x => x.classList.toggle('active', x.dataset.cf === activeCalFilter));
+      renderCalendar();
+    });
+  });
 }
 
-// ===== CALENDAR =====
 function renderCalendar() {
-    const year = calendarDate.getFullYear();
-    const month = calendarDate.getMonth();
+  const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  document.getElementById('calMonth').textContent = `${MONTHS[calMonth]} ${calYear}`;
 
-    document.getElementById('calendarTitle').textContent =
-        calendarDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+  const first = new Date(calYear, calMonth, 1);
+  const lastDay = new Date(calYear, calMonth + 1, 0).getDate();
+  let startDow = first.getDay() - 1; if (startDow < 0) startDow = 6;
 
-    const grid = document.getElementById('calendarGrid');
-    grid.innerHTML = '';
+  const grid = document.getElementById('calGrid');
+  const todayIso = toISODate(new Date());
+  const DAYS = ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'];
 
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const offset = (firstDay + 6) % 7;
+  let html = DAYS.map(d => `<div class="cal-dow">${d}</div>`).join('');
+  for (let i = 0; i < startDow; i++) html += `<div class="cal-day empty"></div>`;
 
-    ['L', 'M', 'M', 'J', 'V', 'S', 'D'].forEach(d => {
-        const h = document.createElement('div');
-        h.className = 'cal-day-header';
-        h.textContent = d;
-        grid.appendChild(h);
-    });
-
-    for (let i = 0; i < offset; i++) {
-        const empty = document.createElement('div');
-        empty.className = 'cal-day empty';
-        grid.appendChild(empty);
-    }
-
-    const today = new Date();
-
-    for (let d = 1; d <= daysInMonth; d++) {
-        const dayEl = document.createElement('div');
-        dayEl.className = 'cal-day';
-        dayEl.textContent = d;
-
-        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-
-        if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
-            dayEl.classList.add('today');
-        }
-
-        // Vérifier rappels
-        let hasReminder = false;
-        state.zones.forEach(z => {
-            if (!z.plants) return;
-            Object.values(z.plants).forEach(p => {
-                if (p && p.reminder && p.reminder.date === dateStr) hasReminder = true;
-                if (p && p.date === dateStr) hasReminder = true;
-            });
-        });
-        if (hasReminder) dayEl.classList.add('has-event');
-
-        grid.appendChild(dayEl);
-    }
+  for (let day = 1; day <= lastDay; day++) {
+    const iso = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const dayTasks = tasks.filter(t => t.date === iso && (activeCalFilter === 'all' || t.kind === activeCalFilter));
+    const isToday = iso === todayIso;
+    const dots = dayTasks.slice(0, 4).map(t => `<span class="d-dot" style="background:${taskColor(t.kind)}"></span>`).join('');
+    html += `<div class="cal-day ${isToday ? 'today' : ''}" onclick="selectCalDay('${iso}',${day})">
+      <span class="cal-day-num">${day}</span>
+      <div class="cal-dots">${dots}</div>
+    </div>`;
+  }
+  grid.innerHTML = html;
 }
 
-// ===== REMINDERS =====
+function selectCalDay(iso, day) {
+  const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+  const detail = document.getElementById('calDayDetail');
+  const dayTasks = tasks.filter(t => t.date === iso);
+  document.getElementById('calDayTitle').textContent = `${day} ${MONTHS[calMonth]} ${calYear}`;
+  document.getElementById('calDayTasks').innerHTML = dayTasks.length === 0
+    ? `<div class="empty-inline"><span>✅</span> Aucune tâche ce jour</div>`
+    : dayTasks.map(t => `
+      <div class="task-row" onclick="toggleTask('${t.id}')">
+        <span class="task-check ${t.done ? 'done' : ''}"></span>
+        <span class="task-kind-ic">${kindIcon(t.kind)}</span>
+        <span class="task-label ${t.done ? 'strikethrough' : ''}">${esc(t.title)}</span>
+        <button class="btn ghost sm" onclick="event.stopPropagation();deleteTask('${t.id}')" style="margin-left:auto">✕</button>
+      </div>`).join('');
+  detail.style.display = 'block';
+  detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function deleteTask(id) {
+  tasks = tasks.filter(t => t.id !== id);
+  saveTasks();
+  if (currentView === 'calendar') renderCalendar();
+  else if (currentView === 'dashboard') renderDashboard();
+}
+
+/* ============================================================
+   JOURNAL
+   ============================================================ */
+function wireJournalFilters() {
+  document.querySelectorAll('[data-jf]').forEach(b => {
+    b.addEventListener('click', () => {
+      activeJournalFilter = b.dataset.jf;
+      document.querySelectorAll('[data-jf]').forEach(x => x.classList.toggle('active', x.dataset.jf === activeJournalFilter));
+      renderJournal();
+    });
+  });
+}
+
+function renderJournal() {
+  const list = document.getElementById('journalList');
+  const filtered = journalEntries.filter(e => activeJournalFilter === 'all' || e.tag === activeJournalFilter);
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty"><div class="ei">📓</div><h3>Aucune entrée</h3><p>Notez vos premières observations du jardin.</p><button class="btn primary" onclick="openQuickAdd('note')">+ Nouvelle note</button></div>`;
+    return;
+  }
+  list.innerHTML = filtered.map(e => `
+    <div class="journal-entry">
+      <div class="je-meta">
+        <span class="je-time muted xsmall">${relativeTime(e.timestamp)}</span>
+        ${e.tag ? `<span class="badge earth">#${tagLabel(e.tag)}</span>` : ''}
+        ${e.subject ? `<span class="muted xsmall">· ${esc(e.subject)}</span>` : ''}
+        <button class="btn ghost sm" onclick="deleteJournalEntry('${e.id}')" style="margin-left:auto;color:var(--urgent)">✕</button>
+      </div>
+      <div class="je-text">${esc(e.text)}</div>
+    </div>`).join('');
+}
+
+function deleteJournalEntry(id) {
+  showConfirm('Supprimer cette note ?', 'Cette action est irréversible.', () => {
+    journalEntries = journalEntries.filter(e => e.id !== id);
+    saveJournal();
+    renderJournal();
+    showToast('Note supprimée');
+  });
+}
+
+function tagLabel(t) {
+  return { harvest: 'récolte', pest: 'ravageur', weather: 'météo', experiment: 'essai' }[t] || t;
+}
+
+/* ============================================================
+   REMINDERS
+   ============================================================ */
 function renderReminders() {
-    const list = document.getElementById('remindersList');
-    list.innerHTML = '';
+  const list = document.getElementById('remindersList');
+  if (reminders.length === 0) {
+    list.innerHTML = `<div class="empty-inline"><span>🔔</span> Aucun rappel configuré</div>`;
+    return;
+  }
+  list.innerHTML = reminders.map(r => `
+    <div class="reminder">
+      <div class="ri">${r.icon || '🔔'}</div>
+      <div class="rb">
+        <div class="rt">${esc(r.title)}</div>
+        <div class="rs muted xsmall">${esc(r.freq)}</div>
+      </div>
+      <button class="btn ghost sm" onclick="openReminderModal('${r.id}')">✏️</button>
+      <button class="btn ghost sm" onclick="deleteReminder('${r.id}')" style="color:var(--urgent)">✕</button>
+      <div class="toggle ${r.on ? 'on' : ''}" onclick="toggleReminder('${r.id}')"></div>
+    </div>`).join('');
+}
 
-    const today = new Date();
-    const reminders = [];
+function toggleReminder(id) {
+  const r = reminders.find(x => x.id === id);
+  if (r) { r.on = !r.on; saveReminders(); renderReminders(); }
+}
 
-    state.zones.forEach(z => {
-        if (!z.plants) return;
-        Object.values(z.plants).forEach(p => {
-            if (p && p.reminder && p.reminder.date) {
-                reminders.push({
-                    zone: z.name,
-                    plant: p.name,
-                    emoji: getPlantEmoji(p),
-                    date: p.reminder.date,
-                    text: p.reminder.text || ''
-                });
-            }
-        });
+function deleteReminder(id) {
+  showConfirm('Supprimer ce rappel ?', 'Cette action est irréversible.', () => {
+    reminders = reminders.filter(r => r.id !== id);
+    saveReminders();
+    renderReminders();
+    showToast('Rappel supprimé');
+  });
+}
+
+function openReminderModal(id = null) {
+  editingReminderId = id || null;
+  const r = id ? reminders.find(x => x.id === id) : null;
+  document.getElementById('reminderModalTitle').textContent = r ? 'Modifier le rappel' : 'Nouveau rappel';
+  document.getElementById('reminderTitle').value = r?.title || '';
+  document.getElementById('reminderFreq').value = r?.freq || 'Tous les jours';
+  document.getElementById('reminderIcon').value = r?.icon || '💧';
+  openModal('reminderModalBackdrop');
+}
+
+function saveReminder() {
+  const title = document.getElementById('reminderTitle').value.trim();
+  const freq = document.getElementById('reminderFreq').value;
+  const icon = document.getElementById('reminderIcon').value;
+  if (!title) { showToast('Donnez un titre au rappel', 'warn'); return; }
+  if (editingReminderId) {
+    const r = reminders.find(x => x.id === editingReminderId);
+    if (r) Object.assign(r, { title, freq, icon });
+  } else {
+    reminders.unshift({ id: uid(), title, freq, icon, on: true, createdAt: Date.now() });
+  }
+  saveReminders();
+  closeModal('reminderModalBackdrop');
+  renderReminders();
+  showToast(editingReminderId ? 'Rappel modifié !' : 'Rappel créé !');
+}
+
+/* ============================================================
+   QUICK ADD
+   ============================================================ */
+let currentQaType = 'task';
+
+function wireQaTypes() {
+  document.querySelectorAll('.qa-type').forEach(btn => {
+    btn.addEventListener('click', () => switchQaType(btn.dataset.qa));
+  });
+}
+
+function openQuickAdd(type = 'task') {
+  currentQaType = type;
+  switchQaType(type);
+
+  // Populate bed select
+  const bs = document.getElementById('qaBedSelect');
+  const zids = Object.keys(zones);
+  bs.innerHTML = zids.length
+    ? zids.map(id => `<option value="${id}">${esc(zones[id].name)}</option>`).join('')
+    : '<option value="">Aucune parcelle disponible</option>';
+
+  // Populate plant select
+  const ps = document.getElementById('qaPlantSelect');
+  ps.innerHTML = PLANT_LIBRARY.map(p => `<option value="${p.id}">${p.emoji} ${p.name}</option>`).join('');
+
+  // Populate note subject
+  const ns = document.getElementById('qaNoteSubject');
+  const allPlants = Object.values(zones).flatMap(z => Object.values(z.plants || {}));
+  const unique = [...new Map(allPlants.map(p => [p.name, p])).values()];
+  ns.innerHTML = '<option value="">—</option>' + unique.map(p => `<option value="${p.name}">${p.emoji} ${p.name}</option>`).join('');
+
+  document.getElementById('qaTaskDate').value = toISODate(new Date());
+  document.getElementById('qaPlantDate').value = toISODate(new Date());
+
+  loadDraft();
+  openModal('quickaddBackdrop');
+}
+
+function switchQaType(type) {
+  currentQaType = type;
+  document.querySelectorAll('.qa-type').forEach(b => b.classList.toggle('active', b.dataset.qa === type));
+  document.querySelectorAll('[data-qa-form]').forEach(f => f.style.display = f.dataset.qaForm === type ? 'block' : 'none');
+  const titles = { task: 'Nouvelle tâche', plant: 'Planter dans le jardin', note: 'Nouvelle observation' };
+  document.getElementById('qaTitle').textContent = titles[type] || 'Ajout rapide';
+}
+
+function saveQuickAdd() {
+  if (currentQaType === 'task') {
+    const title = document.getElementById('qaTaskTitle').value.trim();
+    if (!title) { showToast('Entrez le titre de la tâche', 'warn'); return; }
+    tasks.unshift({
+      id: uid(), title,
+      kind: document.getElementById('qaTaskKind').value,
+      date: document.getElementById('qaTaskDate').value || toISODate(new Date()),
+      done: false, createdAt: Date.now(),
     });
+    saveTasks();
+    document.getElementById('qaTaskTitle').value = '';
 
-    reminders.sort((a, b) => a.date.localeCompare(b.date));
-
-    if (reminders.length === 0) {
-        list.innerHTML = '<li class="empty-msg">Aucun rappel pour le moment</li>';
-        return;
+  } else if (currentQaType === 'plant') {
+    const plantId = document.getElementById('qaPlantSelect').value;
+    const zoneId = document.getElementById('qaBedSelect').value;
+    if (!zoneId) { showToast("Créez d'abord une parcelle", 'warn'); return; }
+    const plant = PLANT_LIBRARY.find(p => p.id === plantId);
+    const zone = zones[zoneId];
+    if (!plant || !zone) return;
+    const plants = zone.plants || {};
+    let placed = false;
+    outer: for (let r = 0; r < (zone.rows || 3); r++) {
+      for (let c = 0; c < (zone.cols || 4); c++) {
+        const key = `${r}_${c}`;
+        if (!plants[key]) {
+          savePlantToCell(zoneId, key, {
+            name: plant.name, emoji: plant.emoji, type: plant.type,
+            water: plant.water, notes: plant.notes,
+            plantedDate: document.getElementById('qaPlantDate').value || toISODate(new Date()),
+          });
+          placed = true;
+          break outer;
+        }
+      }
     }
+    if (!placed) { showToast('Parcelle pleine ! Choisissez-en une autre.', 'warn'); return; }
+    showToast(`${plant.emoji} ${plant.name} planté·e !`);
 
-    reminders.forEach(r => {
-        const d = new Date(r.date);
-        const isPast = d < today;
-        const item = document.createElement('li');
-        item.className = 'reminder-card' + (isPast ? ' overdue' : '');
-        item.innerHTML = `
-            <div class="reminder-info">
-                <h5>${r.emoji} ${r.plant} <small style="font-weight:400;color:var(--text-light)">— ${r.zone}</small></h5>
-                <p>${d.toLocaleDateString('fr-FR')}${r.text ? ' — ' + r.text : ''}${isPast ? ' ⚠️' : ''}</p>
-            </div>
-        `;
-        list.appendChild(item);
+  } else if (currentQaType === 'note') {
+    const text = document.getElementById('qaNoteText').value.trim();
+    if (!text) { showToast('Entrez votre observation', 'warn'); return; }
+    journalEntries.unshift({
+      id: uid(), text,
+      tag: document.getElementById('qaNoteTag').value || '',
+      subject: document.getElementById('qaNoteSubject').value || '',
+      timestamp: Date.now(),
     });
+    saveJournal();
+    document.getElementById('qaNoteText').value = '';
+  }
+
+  lsSet('draft:quickadd', null);
+  document.getElementById('qaDraft').style.display = 'none';
+  closeModal('quickaddBackdrop');
+  showToast(currentQaType === 'task' ? 'Tâche ajoutée !' : currentQaType === 'note' ? 'Note ajoutée !' : '');
+  if (currentView === 'dashboard') renderDashboard();
+  else if (currentView === 'journal') renderJournal();
+  else if (currentView === 'calendar') renderCalendar();
 }
 
-// ===== PHOTO UPLOAD =====
-function initPhotoUpload() {
-    const input = document.getElementById('photoInput');
-    const preview = document.getElementById('photoPreview');
-    const placeholder = document.getElementById('photoPlaceholder');
-
-    if (!input) return;
-
-    placeholder.addEventListener('click', () => input.click());
-    preview.addEventListener('click', () => input.click());
-
-    input.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            preview.src = ev.target.result;
-            preview.style.display = 'block';
-            placeholder.style.display = 'none';
-        };
-        reader.readAsDataURL(file);
+function autosaveDraft() {
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(() => {
+    lsSet('draft:quickadd', {
+      type: currentQaType,
+      taskTitle: document.getElementById('qaTaskTitle').value,
+      noteText: document.getElementById('qaNoteText').value,
     });
+    document.getElementById('qaDraft').style.display = 'inline-flex';
+  }, 500);
 }
 
-// ===== MODALS =====
+function loadDraft() {
+  const draft = lsGet('draft:quickadd');
+  if (!draft) return;
+  if (draft.taskTitle && currentQaType === 'task') {
+    document.getElementById('qaTaskTitle').value = draft.taskTitle;
+    document.getElementById('qaDraft').style.display = 'inline-flex';
+  }
+  if (draft.noteText && currentQaType === 'note') {
+    document.getElementById('qaNoteText').value = draft.noteText;
+    document.getElementById('qaDraft').style.display = 'inline-flex';
+  }
+}
+
+/* ============================================================
+   ACCOUNT MODAL
+   ============================================================ */
+function openAccountModal() {
+  const body = document.getElementById('accountBody');
+  if (currentUser) {
+    body.innerHTML = `
+      <div class="ac-profile" style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <div class="ava" style="width:56px;height:56px;font-size:24px;border-radius:50%;flex-shrink:0">${currentUser.displayName?.charAt(0).toUpperCase() || '?'}</div>
+        <div>
+          <div style="font-weight:700;font-size:16px">${esc(currentUser.displayName || 'Jardinier')}</div>
+          <div class="muted small">${esc(currentUser.email || '')}</div>
+        </div>
+      </div>
+      <div class="muted small" style="margin-bottom:16px">Données synchronisées via Firebase · ${Object.keys(zones).length} parcelle(s)</div>
+      <button class="btn danger" onclick="confirmSignOut()" style="width:100%">Se déconnecter</button>`;
+  } else {
+    body.innerHTML = `
+      <div class="ac-profile" style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <div class="ava" style="width:56px;height:56px;font-size:24px;border-radius:50%;flex-shrink:0">L</div>
+        <div>
+          <div style="font-weight:700;font-size:16px">Mode local</div>
+          <div class="muted small">Données sur cet appareil uniquement</div>
+        </div>
+      </div>
+      <div class="muted small" style="margin-bottom:16px">Connectez-vous pour synchroniser vos données sur tous vos appareils.</div>
+      <button class="btn primary" onclick="closeModal('accountBackdrop');lsSet('potager_localMode',false);showAuthScreen()" style="width:100%">Se connecter</button>`;
+  }
+  openModal('accountBackdrop');
+}
+
+function confirmSignOut() {
+  showConfirm('Se déconnecter ?', "Vous serez redirigé·e vers l'écran de connexion.", signOut);
+}
+
+/* ============================================================
+   MODAL SYSTEM
+   ============================================================ */
+function wireModalBackdrops() {
+  document.querySelectorAll('.modal-backdrop').forEach(bd => {
+    bd.addEventListener('click', e => { if (e.target === bd) closeModal(bd.id); });
+  });
+}
+
 function openModal(id) {
-    document.getElementById(id).classList.add('active');
+  document.getElementById(id)?.classList.add('open');
 }
 
 function closeModal(id) {
-    document.getElementById(id).classList.remove('active');
+  document.getElementById(id)?.classList.remove('open');
 }
 
-// ===== TOAST =====
-function showToast(message, type = 'info') {
-    const container = document.getElementById('toastContainer');
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-    container.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 10);
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 280);
-    }, 3000);
+function showConfirm(title, msg, cb) {
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').textContent = msg;
+  confirmCb = cb;
+  openModal('confirmBackdrop');
 }
 
-// ===== BIND EVENTS =====
-function bindEvents() {
-    document.getElementById('loginBtn').addEventListener('click', () => {
-        const provider = new firebase.auth.GoogleAuthProvider();
-        firebase.auth().signInWithPopup(provider)
-            .catch(err => showToast('Erreur connexion: ' + err.message, 'error'));
-    });
+/* ============================================================
+   TOAST
+   ============================================================ */
+function showToast(msg, type = 'ok') {
+  if (!msg) return;
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('show'));
+  setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+}
 
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-        firebase.auth().signOut();
-    });
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
 
-    document.getElementById('calendarBtn').addEventListener('click', () => {
-        renderCalendar();
-        openModal('calendarModal');
-    });
+function toISODate(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
 
-    document.getElementById('reminderBtn').addEventListener('click', () => {
-        renderReminders();
-        openModal('remindersModal');
-    });
+function formatDate(iso) {
+  if (!iso) return '—';
+  const d = new Date(iso + 'T12:00:00');
+  return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+}
 
-    document.getElementById('addZoneBtn').addEventListener('click', () => openZoneModal());
-    document.getElementById('editZoneBtn').addEventListener('click', () => {
-        const zone = getZone(state.currentZoneId);
-        if (zone) openZoneModal(zone);
-    });
-    document.getElementById('deleteZoneBtn').addEventListener('click', () => deleteZone());
-    document.getElementById('applyGridBtn').addEventListener('click', applyGrid);
+function formatShortDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso + 'T12:00:00');
+  const m = ['jan','fév','mar','avr','mai','juin','juil','août','sep','oct','nov','déc'];
+  return `${d.getDate()} ${m[d.getMonth()]}`;
+}
 
-    document.getElementById('savePlant').addEventListener('click', savePlant);
-    document.getElementById('deletePlantBtn').addEventListener('click', deletePlant);
-    document.getElementById('cancelModal').addEventListener('click', () => closeModal('plantModal'));
-    document.getElementById('closeModal').addEventListener('click', () => closeModal('plantModal'));
+function relativeTime(ts) {
+  const diff = Date.now() - ts;
+  if (diff < 60000) return "À l'instant";
+  if (diff < 3600000) return `Il y a ${Math.floor(diff / 60000)} min`;
+  if (diff < 86400000) return `Il y a ${Math.floor(diff / 3600000)} h`;
+  if (diff < 604800000) return `Il y a ${Math.floor(diff / 86400000)} jour(s)`;
+  return new Date(ts).toLocaleDateString('fr-FR');
+}
 
-    document.getElementById('reminderEnabled').addEventListener('change', e => {
-        document.getElementById('reminderDetail').style.display = e.target.checked ? 'flex' : 'none';
-    });
-
-    document.getElementById('saveZone').addEventListener('click', saveZoneModal);
-    document.getElementById('cancelZoneModal').addEventListener('click', () => closeModal('zoneModal'));
-    document.getElementById('closeZoneModal').addEventListener('click', () => closeModal('zoneModal'));
-
-    document.querySelectorAll('.color-option').forEach(opt => {
-        opt.addEventListener('click', () => {
-            document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
-            opt.classList.add('selected');
-            selectedColor = opt.dataset.color;
-        });
-    });
-
-    document.getElementById('closeCalendarModal').addEventListener('click', () => closeModal('calendarModal'));
-    document.getElementById('prevMonth').addEventListener('click', () => {
-        calendarDate.setMonth(calendarDate.getMonth() - 1);
-        renderCalendar();
-    });
-    document.getElementById('nextMonth').addEventListener('click', () => {
-        calendarDate.setMonth(calendarDate.getMonth() + 1);
-        renderCalendar();
-    });
-
-    document.getElementById('closeRemindersModal').addEventListener('click', () => closeModal('remindersModal'));
-
-    document.querySelectorAll('.modal-overlay').forEach(overlay => {
-        overlay.addEventListener('click', e => {
-            if (e.target === overlay) closeModal(overlay.id);
-        });
-    });
-
-    initPhotoUpload();
-    renderPalette('all');
-
-    const librarySearch = document.getElementById('librarySearchInput');
-    if (librarySearch) {
-        librarySearch.addEventListener('input', (e) => searchPlantLibrary(e.target.value));
-    }
+function esc(str) {
+  if (str == null) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
