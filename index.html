@@ -176,7 +176,7 @@
             <button class="btn sm danger" onclick="deleteBed()">🗑️ Supprimer</button>
           </div>
         </div>
-        <div class="bed-grid" id="bedGrid"></div>
+        <div class="bed-grid-wrap"><div class="bed-grid" id="bedGrid"></div></div>
       </div>
 
       <div class="empty" id="gardenEmpty">
@@ -309,6 +309,7 @@
 <!-- ===== PLANT DETAIL PANEL ===== -->
 <div class="panel-backdrop" id="panelBackdrop" onclick="closePanel()"></div>
 <aside class="panel" id="plantPanel" aria-hidden="true">
+  <div class="panel-handle"></div>
   <div class="panel-head">
     <div>
       <div class="eyebrow muted">Détails de la plante</div>

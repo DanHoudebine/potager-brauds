@@ -68,6 +68,26 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('calPrev').addEventListener('click', () => { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); });
   document.getElementById('calNext').addEventListener('click', () => { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); });
   document.getElementById('calToday').addEventListener('click', () => { const n = new Date(); calYear = n.getFullYear(); calMonth = n.getMonth(); renderCalendar(); });
+
+  // Calendar: swipe left/right to change month
+  let _calTouchX = 0;
+  document.getElementById('calGrid').addEventListener('touchstart', e => { _calTouchX = e.touches[0].clientX; }, { passive: true });
+  document.getElementById('calGrid').addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - _calTouchX;
+    if (Math.abs(dx) > 44) {
+      if (dx < 0) { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } }
+      else         { calMonth--; if (calMonth < 0)  { calMonth = 11; calYear--; } }
+      renderCalendar();
+    }
+  }, { passive: true });
+
+  // Panel: swipe down to close (mobile)
+  let _panelTouchY = 0;
+  document.getElementById('plantPanel').addEventListener('touchstart', e => { _panelTouchY = e.touches[0].clientY; }, { passive: true });
+  document.getElementById('plantPanel').addEventListener('touchend', e => {
+    const dy = e.changedTouches[0].clientY - _panelTouchY;
+    if (dy > 80) closePanel();
+  }, { passive: true });
   document.getElementById('renameBedBtn').addEventListener('click', () => activeZoneId && openBedModal(activeZoneId));
   document.getElementById('confirmYes').addEventListener('click', () => { closeModal('confirmBackdrop'); if (typeof confirmCb === 'function') { confirmCb(); } confirmCb = null; });
 
@@ -434,15 +454,19 @@ function openPlantPanel(zoneId, cellKey, plant) {
       <button class="btn danger" onclick="confirmRemovePlant('${zoneId}','${cellKey}')">🗑️ Supprimer</button>
     </div>`;
 
-  document.getElementById('panelBackdrop').style.display = 'block';
+  const backdrop = document.getElementById('panelBackdrop');
+  backdrop.classList.add('visible');
+  requestAnimationFrame(() => backdrop.classList.add('open'));
   document.getElementById('plantPanel').classList.add('open');
   document.getElementById('plantPanel').setAttribute('aria-hidden', 'false');
 }
 
 function closePanel() {
-  document.getElementById('panelBackdrop').style.display = 'none';
+  const backdrop = document.getElementById('panelBackdrop');
+  backdrop.classList.remove('open');
   document.getElementById('plantPanel').classList.remove('open');
   document.getElementById('plantPanel').setAttribute('aria-hidden', 'true');
+  setTimeout(() => backdrop.classList.remove('visible'), 220);
 }
 
 function confirmRemovePlant(zoneId, cellKey) {
