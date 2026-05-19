@@ -1,1078 +1,1065 @@
 'use strict';
 
 /* ============================================================
-   STATE
+   CATALOG
+   ============================================================ */
+const CATALOG = [
+  { id:'tomato',    name:'Tomate',     sci:'Solanum lycopersicum',   icon:'🍅', family:'Solanacées',      season:['spring','summer'],          difficulty:2, sow:'mars–avr',  plant:'mai',      harvest:'juil–sept', space:'60 cm',  companions:['Basilic','Carotte','Oignon'],       waterEvery:2, tip:'Pincez les gourmands chaque semaine. Tuteurez tôt.' },
+  { id:'basil',     name:'Basilic',    sci:'Ocimum basilicum',       icon:'🌿', family:'Lamiacées',       season:['spring','summer'],          difficulty:1, sow:'avr',       plant:'mai–juin', harvest:'juil–sept', space:'25 cm',  companions:['Tomate','Poivron'],                 waterEvery:2, tip:'Aime la chaleur. Pincez les fleurs pour relancer les feuilles.' },
+  { id:'lettuce',   name:'Laitue',     sci:'Lactuca sativa',         icon:'🥬', family:'Astéracées',      season:['spring','autumn'],          difficulty:1, sow:'mars–sept', plant:'avr–sept', harvest:'mai–oct',   space:'25 cm',  companions:['Carotte','Radis','Fraisier'],        waterEvery:2, tip:'Semez toutes les 3 semaines pour une récolte continue.' },
+  { id:'carrot',    name:'Carotte',    sci:'Daucus carota',          icon:'🥕', family:'Apiacées',        season:['spring','autumn'],          difficulty:2, sow:'mars–juil', plant:'—',        harvest:'juil–nov',  space:'5 cm',   companions:['Oignon','Laitue','Tomate'],          waterEvery:3, tip:'Éclaircissez à 5 cm dès que les plants font 5 cm.' },
+  { id:'zucchini',  name:'Courgette',  sci:'Cucurbita pepo',         icon:'🥒', family:'Cucurbitacées',   season:['summer'],                   difficulty:1, sow:'avr',       plant:'mai–juin', harvest:'juil–oct',  space:'90 cm',  companions:['Capucine','Maïs'],                  waterEvery:2, tip:'Récoltez petit pour une chair tendre et plus de fleurs.' },
+  { id:'leek',      name:'Poireau',    sci:'Allium ampeloprasum',    icon:'🧅', family:'Amaryllidacées',  season:['spring','autumn','winter'], difficulty:3, sow:'fév–avr',   plant:'mai–juil', harvest:'oct–mars',  space:'15 cm',  companions:['Carotte','Céleri'],                 waterEvery:4, tip:'Buttez la terre autour des pieds pour des fûts blancs.' },
+  { id:'strawberry',name:'Fraisier',   sci:'Fragaria × ananassa',   icon:'🍓', family:'Rosacées',        season:['spring','summer'],          difficulty:2, sow:'—',         plant:'mars–mai', harvest:'mai–juil',  space:'30 cm',  companions:['Laitue','Épinard','Bourrache'],      waterEvery:2, tip:'Paillez avec de la paille pour des fruits propres.' },
+  { id:'radish',    name:'Radis',      sci:'Raphanus sativus',       icon:'🟠', family:'Brassicacées',    season:['spring','autumn'],          difficulty:1, sow:'mars–sept', plant:'—',        harvest:'30 jours',  space:'5 cm',   companions:['Laitue','Carotte','Petit pois'],     waterEvery:2, tip:'La culture la plus rapide. Ne les laissez pas devenir creux.' },
+  { id:'pepper',    name:'Poivron',    sci:'Capsicum annuum',        icon:'🌶️', family:'Solanacées',      season:['summer'],                   difficulty:3, sow:'fév–mars',  plant:'mai–juin', harvest:'juil–oct',  space:'45 cm',  companions:['Basilic','Tomate'],                 waterEvery:2, tip:'Aime la chaleur. Ne plantez pas avant des nuits >12°.' },
+  { id:'eggplant',  name:'Aubergine',  sci:'Solanum melongena',      icon:'🍆', family:'Solanacées',      season:['summer'],                   difficulty:3, sow:'fév–mars',  plant:'mai–juin', harvest:'août–oct',  space:'60 cm',  companions:['Basilic','Poivron'],                waterEvery:2, tip:'Pincez la tête à 30 cm pour favoriser la ramification.' },
+  { id:'pea',       name:'Petit pois', sci:'Pisum sativum',          icon:'🟢', family:'Fabacées',        season:['spring'],                   difficulty:1, sow:'fév–avr',   plant:'—',        harvest:'mai–juil',  space:'10 cm',  companions:['Carotte','Radis'],                  waterEvery:3, tip:"Installez un treillis tôt ; les vrilles ont besoin de s'accrocher." },
+  { id:'pumpkin',   name:'Citrouille', sci:'Cucurbita pepo',         icon:'🎃', family:'Cucurbitacées',   season:['summer','autumn'],          difficulty:2, sow:'avr',       plant:'mai–juin', harvest:'sept–oct',  space:'120 cm', companions:['Maïs','Haricot'],                  waterEvery:3, tip:'Donnez-leur de la place — les tiges courent sur 3 m+.' }
+];
+
+/* ============================================================
+   DEFAULT STATE
+   ============================================================ */
+const DEFAULT_STATE = {
+  beds: [
+    { id:'b1', name:'Parcelle du jardin', cols:4, rows:3, cells:[
+      { id:'c1', plant:'tomato',     planted:'2026-05-01', status:'healthy', notes:'Variété : San Marzano. Tuteurée.' },
+      { id:'c2', plant:'tomato',     planted:'2026-05-01', status:'warn',    notes:"Feuilles enroulées, manque d'eau peut-être." },
+      { id:'c3', plant:'basil',      planted:'2026-05-10', status:'healthy', notes:'Plantée à côté des tomates.' },
+      { id:'c4', plant:'lettuce',    planted:'2026-04-22', status:'healthy', notes:'Variété à couper.' },
+      null, null,
+      { id:'c5', plant:'leek',       planted:'2026-05-05', status:'urgent',  notes:"Pucerons repérés aujourd'hui." },
+      { id:'c6', plant:'carrot',     planted:'2026-04-15', status:'healthy', notes:'Éclaircie la semaine dernière.' },
+      { id:'c7', plant:'strawberry', planted:'2026-04-01', status:'healthy', notes:'Premières fleurs ouvertes !' },
+      { id:'c8', plant:'strawberry', planted:'2026-04-01', status:'healthy', notes:'' },
+      null,
+      { id:'c9', plant:'radish',     planted:'2026-05-10', status:'healthy', notes:'Prêts dans ~2 semaines.' }
+    ]},
+    { id:'b2', name:'Serre', cols:3, rows:2, cells:[
+      { id:'g1', plant:'pepper',   planted:'2026-04-25', status:'healthy', notes:'' },
+      { id:'g2', plant:'eggplant', planted:'2026-04-25', status:'warn',    notes:'Démarrage lent, surveiller les températures nocturnes.' },
+      { id:'g3', plant:'pepper',   planted:'2026-04-25', status:'healthy', notes:'' },
+      null, null, null
+    ]}
+  ],
+  activeBedId: 'b1',
+  tasks: [
+    { id:'t1', title:'Arroser les tomates',                                     kind:'water',   date: iso(new Date()), done:false, plantId:'tomato' },
+    { id:'t2', title:'Récolter les premiers radis',                              kind:'harvest', date: iso(new Date()), done:false, plantId:'radish' },
+    { id:'t3', title:'Pulvériser savon noir sur poireaux (pucerons)',            kind:'treat',   date: iso(new Date()), done:false, plantId:'leek' },
+    { id:'t4', title:'Semer la 2ᵉ série de laitues',                            kind:'sow',     date: iso(addDays(new Date(),1)), done:false, plantId:'lettuce' },
+    { id:'t5', title:'Arroser les poivrons',                                     kind:'water',   date: iso(addDays(new Date(),1)), done:false, plantId:'pepper' },
+    { id:'t6', title:'Vérifier le filet des fraisiers',                          kind:'other',   date: iso(addDays(new Date(),2)), done:false, plantId:'strawberry' },
+    { id:'t7', title:'Pincer les gourmands des tomates',                         kind:'other',   date: iso(addDays(new Date(),3)), done:false, plantId:'tomato' }
+  ],
+  journal: [
+    { id:'j1', date: iso(addDays(new Date(),-1)), subject:'Poireaux',  icon:'🧅', text:'Pucerons trouvés sur trois pieds de poireau. Pulvérisation de savon noir dilué. Re-contrôle dans 48h.', tags:['pest'] },
+    { id:'j2', date: iso(addDays(new Date(),-3)), subject:'Fraisiers', icon:'🍓', text:'Premières fleurs ouvertes sur la rangée 2. Paillage de paille pour garder les fruits propres.', tags:['experiment'] },
+    { id:'j3', date: iso(addDays(new Date(),-5)), subject:'Météo',     icon:'🌧️', text:'Grosse pluie cette nuit (28 mm). Pas d\'arrosage aujourd\'hui. Les tomates ont meilleure mine.', tags:['weather'] },
+    { id:'j4', date: iso(addDays(new Date(),-9)), subject:'Radis',     icon:'🟠', text:'Goûté les premiers — piquants mais pas creux. Bon timing.', tags:['harvest'] }
+  ],
+  reminders: [
+    { id:'r1', title:'Arroser les tomates',    schedule:'Tous les 2 jours',   icon:'💧', on:true },
+    { id:'r2', title:'Surveiller les poireaux', schedule:'Tous les samedis',  icon:'🐛', on:true },
+    { id:'r3', title:'Semer la laitue',          schedule:'Toutes les 3 semaines', icon:'🌱', on:true },
+    { id:'r4', title:'Apport potasse fraisiers', schedule:'Toutes les 2 semaines', icon:'🍓', on:false }
+  ],
+  prefs: { digest:true, weather:true, quiet:true, pushAsked:false, pushOn:false },
+  onboarded: false,
+  draft: null,
+  streak: 7
+};
+
+const STORAGE_KEY = 'potager.state.v2.fr';
+let state = loadState();
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return JSON.parse(JSON.stringify(DEFAULT_STATE));
+    return { ...JSON.parse(JSON.stringify(DEFAULT_STATE)), ...JSON.parse(raw) };
+  } catch { return JSON.parse(JSON.stringify(DEFAULT_STATE)); }
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+}
+function plantById(id) { return CATALOG.find(p => p.id === id); }
+function activeBed() { return state.beds.find(b => b.id === state.activeBedId) || state.beds[0]; }
+
+/* ============================================================
+   AUTH STATE
    ============================================================ */
 let currentUser = null;
 let isLocalMode = false;
-let currentView = 'dashboard';
-let zones = {};
-let activeZoneId = null;
-let tasks = [];
-let journalEntries = [];
-let reminders = [];
-let calYear = new Date().getFullYear();
-let calMonth = new Date().getMonth();
-let activeCatalogFilter = 'all';
-let activeJournalFilter = 'all';
-let activeCalFilter = 'all';
-let pickerTarget = null;
-let editingBedId = null;
-let editingReminderId = null;
-let confirmCb = null;
-let zonesRef = null;
-let draftTimer = null;
 
-const BED_COLORS = ['#4a7c59','#5b9166','#b07b4f','#d4a96a','#4a8fc8','#c25450','#8b5e3c','#a8d5a2'];
-
-/* ============================================================
-   LOCALSTORAGE
-   ============================================================ */
-const lsGet = (k, def = null) => {
-  try { const v = localStorage.getItem(k); return v !== null ? JSON.parse(v) : def; } catch { return def; }
-};
-const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
-
-function loadLocalData() {
-  tasks = lsGet('potager_tasks', []);
-  journalEntries = lsGet('potager_journal', []);
-  reminders = lsGet('potager_reminders', []);
-}
-function saveTasks() { lsSet('potager_tasks', tasks); }
-function saveJournal() { lsSet('potager_journal', journalEntries); }
-function saveReminders() { lsSet('potager_reminders', reminders); }
-
-/* ============================================================
-   FIREBASE HELPERS
-   ============================================================ */
 function isFirebaseConfigured() {
   try { return typeof firebase !== 'undefined' && firebase.apps.length > 0 && !!firebase.app().options.apiKey; }
   catch { return false; }
 }
 
-/* ============================================================
-   INIT
-   ============================================================ */
-document.addEventListener('DOMContentLoaded', () => {
-  wireNav();
-  wireCatalogFilters();
-  wireCalFilters();
-  wireJournalFilters();
-  wireQaTypes();
-  wireModalBackdrops();
+function updateAccountUI() {
+  const name = currentUser ? (currentUser.displayName || currentUser.email || 'Utilisateur') : (isLocalMode ? 'Mode local' : 'Non connecté');
+  const email = currentUser ? (currentUser.email || '') : '';
+  const initial = name[0].toUpperCase();
 
-  document.getElementById('googleSignIn').addEventListener('click', handleGoogleSignIn);
-  document.getElementById('localModeBtn').addEventListener('click', handleLocalMode);
-  document.getElementById('topbarAccount').addEventListener('click', openAccountModal);
-  document.getElementById('accountChipDesktop').addEventListener('click', openAccountModal);
-  document.getElementById('calPrev').addEventListener('click', () => { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); });
-  document.getElementById('calNext').addEventListener('click', () => { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); });
-  document.getElementById('calToday').addEventListener('click', () => { const n = new Date(); calYear = n.getFullYear(); calMonth = n.getMonth(); renderCalendar(); });
+  const setAva = (el, src) => {
+    if (!el) return;
+    if (src) { el.style.backgroundImage = `url('${src}')`; el.style.backgroundSize = 'cover'; el.textContent = ''; }
+    else { el.style.backgroundImage = ''; el.textContent = initial; }
+  };
 
-  // Calendar: swipe left/right to change month
-  let _calTouchX = 0;
-  document.getElementById('calGrid').addEventListener('touchstart', e => { _calTouchX = e.touches[0].clientX; }, { passive: true });
-  document.getElementById('calGrid').addEventListener('touchend', e => {
-    const dx = e.changedTouches[0].clientX - _calTouchX;
-    if (Math.abs(dx) > 44) {
-      if (dx < 0) { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } }
-      else         { calMonth--; if (calMonth < 0)  { calMonth = 11; calYear--; } }
-      renderCalendar();
-    }
-  }, { passive: true });
+  setAva(document.getElementById('ava-desktop'), currentUser?.photoURL);
+  setAva(document.getElementById('ava-mobile'), currentUser?.photoURL);
+  setAva(document.getElementById('ava-menu'), currentUser?.photoURL);
 
-  // Panel: swipe down to close (mobile)
-  let _panelTouchY = 0;
-  document.getElementById('plantPanel').addEventListener('touchstart', e => { _panelTouchY = e.touches[0].clientY; }, { passive: true });
-  document.getElementById('plantPanel').addEventListener('touchend', e => {
-    const dy = e.changedTouches[0].clientY - _panelTouchY;
-    if (dy > 80) closePanel();
-  }, { passive: true });
-  document.getElementById('renameBedBtn').addEventListener('click', () => activeZoneId && openBedModal(activeZoneId));
-  document.getElementById('confirmYes').addEventListener('click', () => { closeModal('confirmBackdrop'); if (typeof confirmCb === 'function') { confirmCb(); } confirmCb = null; });
-
-  // Auto-save quickadd draft
-  ['qaTaskTitle', 'qaNoteText'].forEach(id => {
-    document.getElementById(id)?.addEventListener('input', autosaveDraft);
-  });
-
-  if (!isFirebaseConfigured()) {
-    document.getElementById('localModeNotice').style.display = 'flex';
-    if (lsGet('potager_localMode')) { activateLocalMode(); }
-    return;
-  }
-
-  auth.onAuthStateChanged(user => {
-    currentUser = user;
-    if (user) {
-      activateApp(user);
-    } else if (lsGet('potager_localMode')) {
-      activateLocalMode();
-    } else {
-      showAuthScreen();
-    }
-  });
-});
-
-/* ============================================================
-   AUTH
-   ============================================================ */
-function showAuthScreen() {
-  document.getElementById('authScreen').style.display = 'flex';
-  document.getElementById('appShell').style.display = 'none';
-  document.getElementById('bottomNav').style.display = 'none';
-  document.getElementById('fab').style.display = 'none';
+  const nameEl = document.getElementById('acc-name-desktop');
+  if (nameEl) nameEl.textContent = name;
+  const stateEl = document.getElementById('acc-state-desktop');
+  if (stateEl) stateEl.textContent = currentUser ? 'Connecté' : 'Mode local';
+  const menuName = document.getElementById('acc-menu-name');
+  if (menuName) menuName.textContent = name;
+  const menuEmail = document.getElementById('acc-menu-email');
+  if (menuEmail) menuEmail.textContent = email;
+  const badge = document.getElementById('acc-sync-badge');
+  if (badge) { badge.textContent = currentUser ? '☁ Synchro' : 'Local'; badge.className = 'sync-badge' + (currentUser ? '' : ' local'); }
 }
 
-function showApp() {
-  document.getElementById('authScreen').style.display = 'none';
-  document.getElementById('appShell').style.display = 'grid';
-  document.getElementById('bottomNav').style.display = 'flex';
-  document.getElementById('fab').style.display = 'flex';
-}
-
-function activateApp(user) {
-  isLocalMode = false;
-  lsSet('potager_localMode', false);
-  loadLocalData();
-  initZonesListener();
-  updateAvatars(user);
-  showApp();
-  setView('dashboard');
-}
-
-function activateLocalMode() {
-  isLocalMode = true;
-  lsSet('potager_localMode', true);
-  loadLocalData();
-  zones = lsGet('potager_zones_local', {});
-  updateAvatars(null);
-  showApp();
-  setView('dashboard');
-  renderGarden();
-}
-
-async function handleGoogleSignIn() {
-  const errEl = document.getElementById('authError');
-  errEl.textContent = '';
-  errEl.classList.remove('show');
-  try {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    await auth.signInWithPopup(provider);
-  } catch (e) {
-    errEl.textContent = translateAuthError(e.code);
-    errEl.classList.add('show');
-  }
+function enterApp() {
+  updateAccountUI();
+  closeModal('auth-backdrop');
+  boot();
 }
 
 function handleLocalMode() {
-  activateLocalMode();
-}
-
-async function signOut() {
-  if (!isLocalMode && isFirebaseConfigured()) {
-    if (zonesRef) { zonesRef.off(); zonesRef = null; }
-    await auth.signOut();
-  }
+  isLocalMode = true;
   currentUser = null;
-  zones = {};
-  lsSet('potager_localMode', false);
-  isLocalMode = false;
-  closeModal('accountBackdrop');
-  showAuthScreen();
+  enterApp();
 }
 
-function updateAvatars(user) {
-  const name = user ? (user.displayName || user.email || 'Jardinier') : (isLocalMode ? 'Local' : '?');
-  const initial = name.charAt(0).toUpperCase();
-  document.getElementById('avaDesktop').textContent = initial;
-  document.getElementById('avaMobile').textContent = initial;
-  document.getElementById('accNameDesktop').textContent = user ? (user.displayName || user.email) : 'Mode local';
-  document.getElementById('accStateDesktop').textContent = isLocalMode ? 'Données locales' : (user?.email || 'Connecté');
+function handleGoogleSignIn() {
+  if (!isFirebaseConfigured()) {
+    flash('Firebase non configuré — mode local activé.');
+    handleLocalMode();
+    return;
+  }
+  const provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(provider).then(result => {
+    currentUser = result.user;
+    enterApp();
+  }).catch(err => {
+    const errEl = document.getElementById('auth-error');
+    errEl.textContent = translateAuthError(err.code);
+    errEl.classList.add('show');
+  });
 }
 
 function translateAuthError(code) {
   const map = {
     'auth/popup-closed-by-user': 'Connexion annulée.',
-    'auth/network-request-failed': 'Erreur réseau. Vérifiez votre connexion.',
-    'auth/user-not-found': 'Aucun compte avec cet email.',
-    'auth/wrong-password': 'Mot de passe incorrect.',
+    'auth/network-request-failed': 'Problème réseau. Vérifiez votre connexion.',
+    'auth/user-disabled': 'Ce compte a été désactivé.',
     'auth/too-many-requests': 'Trop de tentatives. Réessayez plus tard.',
-    'auth/cancelled-popup-request': 'Une seule fenêtre à la fois.',
   };
-  return map[code] || 'Erreur de connexion. Réessayez.';
+  return map[code] || 'Une erreur est survenue. Réessayez.';
 }
 
 /* ============================================================
-   FIREBASE ZONES
+   NAV
    ============================================================ */
-function initZonesListener() {
-  if (!isFirebaseConfigured() || isLocalMode) return;
-  zonesRef = db.ref('jardin/zones');
-  zonesRef.on('value', snap => {
-    zones = snap.val() || {};
-    if (currentView === 'garden') renderGarden();
-    if (currentView === 'dashboard') renderDashboard();
-  });
-}
-
-function savePlantToCell(zoneId, cellKey, plant) {
-  if (isLocalMode) {
-    if (!zones[zoneId]) return;
-    if (!zones[zoneId].plants) zones[zoneId].plants = {};
-    if (plant) zones[zoneId].plants[cellKey] = plant;
-    else delete zones[zoneId].plants[cellKey];
-    lsSet('potager_zones_local', zones);
-    renderBedStage(zones[zoneId]);
-    if (currentView === 'dashboard') renderDashboard();
-  } else {
-    const ref = db.ref(`jardin/zones/${zoneId}/plants/${cellKey}`);
-    if (plant) ref.set(plant);
-    else ref.remove();
-  }
-}
-
-/* ============================================================
-   NAVIGATION
-   ============================================================ */
-function wireNav() {
-  document.querySelectorAll('[data-nav]').forEach(btn => {
-    btn.addEventListener('click', () => setView(btn.dataset.nav));
-  });
-}
-
-function setView(viewId) {
-  currentView = viewId;
-  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.dataset.view === viewId));
-  document.querySelectorAll('.nav-item[data-nav]').forEach(b => b.classList.toggle('active', b.dataset.nav === viewId));
-  document.querySelectorAll('.tab[data-nav]').forEach(b => b.classList.toggle('active', b.dataset.nav === viewId));
-
-  if (viewId === 'dashboard') renderDashboard();
-  else if (viewId === 'garden') renderGarden();
-  else if (viewId === 'catalog') renderCatalog();
-  else if (viewId === 'calendar') renderCalendar();
-  else if (viewId === 'journal') renderJournal();
-  else if (viewId === 'reminders') renderReminders();
+function setView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.dataset.view === name));
+  document.querySelectorAll('[data-nav]').forEach(b => b.classList.toggle('active', b.dataset.nav === name));
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'garden') renderGarden();
+  if (name === 'catalog') renderCatalog();
+  if (name === 'calendar') renderCalendar();
+  if (name === 'journal') renderJournal();
+  if (name === 'reminders') renderReminders();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 /* ============================================================
    DASHBOARD
    ============================================================ */
 function renderDashboard() {
-  if (currentView !== 'dashboard') return;
-  const now = new Date();
+  const today = new Date();
+  const fmt = today.toLocaleDateString('fr-FR', { weekday:'long', month:'long', day:'numeric' });
+  document.getElementById('today-date').textContent = fmt;
+  const hour = today.getHours();
+  const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
+  const userName = currentUser ? (currentUser.displayName || '').split(' ')[0] : 'jardinier';
+  document.getElementById('greeting').textContent = `${greet}, ${userName || 'jardinier'}`;
 
-  document.getElementById('todayDate').textContent = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
-
-  const hour = now.getHours();
-  const part = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
-  const uname = currentUser?.displayName?.split(' ')[0] || 'jardinier·ère';
-  document.getElementById('greeting').textContent = `${part}, ${uname}`;
-  document.getElementById('greetSub').textContent = isLocalMode ? 'Mode local — données sur cet appareil.' : 'Voici le résumé de votre potager.';
-
-  const allPlants = Object.values(zones).flatMap(z => Object.values(z.plants || {}));
-  const needWater = allPlants.filter(p => p.water === '2jours');
-  const todayIso = toISODate(now);
-  const todayTasks = tasks.filter(t => t.date === todayIso);
-  const todayDone = todayTasks.filter(t => t.done).length;
-
-  document.getElementById('statPlants').textContent = allPlants.length;
-  document.getElementById('statWater').textContent = needWater.length;
-  document.getElementById('statTasks').textContent = todayTasks.length - todayDone;
-  document.getElementById('statBeds').textContent = Object.keys(zones).length;
-
-  document.getElementById('tasksMeta').textContent = `${todayDone}/${todayTasks.length}`;
-  const tl = document.getElementById('tasksList');
-  if (todayTasks.length === 0) {
-    tl.innerHTML = `<div class="empty-inline"><span>✅</span> Aucune tâche pour aujourd'hui</div>`;
-  } else {
-    tl.innerHTML = todayTasks.map(t => `
-      <div class="task-row" onclick="toggleTask('${t.id}')">
-        <span class="task-check ${t.done ? 'done' : ''}"></span>
-        <span class="task-kind-ic">${kindIcon(t.kind)}</span>
-        <span class="task-label ${t.done ? 'strikethrough' : ''}">${esc(t.title)}</span>
-      </div>`).join('');
-  }
-
-  renderAlerts();
-  renderWeekGlance();
-}
-
-function renderAlerts() {
-  const el = document.getElementById('alertsList');
+  // Alerts
+  const beds = state.beds;
   const alerts = [];
-  const allPlants = Object.values(zones).flatMap(z => Object.values(z.plants || {}));
-  const daily = allPlants.filter(p => p.water === '2jours');
-  if (daily.length > 0) alerts.push({ type: 'warn', icon: '💧', text: `${daily.length} plante(s) à arrosage fréquent`, action: 'garden' });
-  const todayPending = tasks.filter(t => t.date === toISODate(new Date()) && !t.done);
-  if (todayPending.length >= 3) alerts.push({ type: 'urgent', icon: '⚠️', text: `${todayPending.length} tâches en attente aujourd'hui`, action: 'calendar' });
-  el.innerHTML = alerts.map(a => `
-    <div class="alert-banner ${a.type}">
-      <span>${a.icon}</span>
-      <span>${esc(a.text)}</span>
-      <button class="btn ghost sm" onclick="setView('${a.action}')">Voir →</button>
-    </div>`).join('');
-}
-
-function renderWeekGlance() {
-  const el = document.getElementById('weekGlance');
-  const now = new Date();
-  const days = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(now); d.setDate(now.getDate() + i);
-    return { date: d, tasks: tasks.filter(t => t.date === toISODate(d)) };
+  const urgentCells = beds.flatMap(b => (b.cells || []).filter(c => c && c.status === 'urgent'));
+  const warnCells = beds.flatMap(b => (b.cells || []).filter(c => c && c.status === 'warn'));
+  urgentCells.slice(0, 2).forEach(c => {
+    const p = plantById(c.plant);
+    alerts.push({ kind:'urgent', icon:'🐛', text:`${p ? p.name : c.plant} demande de l'attention — ${c.notes || 'intervention urgente'}`, act:'TRAITER' });
   });
-  el.innerHTML = days.map((d, i) => `
-    <div class="week-day ${i === 0 ? 'today' : ''}" onclick="setView('calendar')">
-      <div class="wd-label">${d.date.toLocaleDateString('fr-FR', { weekday: 'short' })}</div>
-      <div class="wd-num">${d.date.getDate()}</div>
-      <div class="wd-dots">${d.tasks.slice(0, 3).map(t => `<span class="d-dot" style="background:${taskColor(t.kind)}"></span>`).join('')}</div>
-    </div>`).join('');
+  warnCells.slice(0, 1).forEach(c => {
+    const p = plantById(c.plant);
+    alerts.push({ kind:'warn', icon:'⚠️', text:`${p ? p.name : c.plant} montre des signes de stress — à vérifier`, act:'VÉRIFIER' });
+  });
+  if (!urgentCells.length) alerts.push({ kind:'green', icon:'☀️', text:"Fenêtre météo parfaite pour semer aujourd'hui", act:'SEMER' });
+  const al = document.getElementById('alerts-list');
+  al.innerHTML = alerts.slice(0,3).map(a => `<div class="alert ${a.kind}"><span class="ai">${a.icon}</span><span>${escapeHTML(a.text)}</span><span class="act">${a.act}</span></div>`).join('');
+
+  // Stats
+  const allPlanted = beds.flatMap(b => (b.cells || []).filter(Boolean));
+  const todayStr = iso(today);
+  document.getElementById('stat-plants').textContent = allPlanted.length;
+  document.getElementById('stat-water').textContent = state.tasks.filter(t => t.kind === 'water' && !t.done && t.date === todayStr).length;
+  document.getElementById('stat-harvest').textContent = state.tasks.filter(t => t.kind === 'harvest' && !t.done).length;
+  document.getElementById('stat-streak').textContent = `${state.streak}j`;
+
+  // Tasks
+  const todayTasks = state.tasks.filter(t => t.date === todayStr);
+  renderTasks(todayTasks);
+
+  // Week glance
+  renderWeekGlance(today);
 }
 
-function toggleTask(id) {
-  const t = tasks.find(x => x.id === id);
-  if (!t) return;
-  t.done = !t.done;
-  saveTasks();
-  if (currentView === 'dashboard') renderDashboard();
-  else if (currentView === 'calendar') renderCalendar();
+function renderTasks(tasks) {
+  const el = document.getElementById('tasks-list');
+  const done = tasks.filter(t => t.done).length;
+  document.getElementById('tasks-meta').textContent = `${done} sur ${tasks.length} terminées`;
+  if (!tasks.length) {
+    el.innerHTML = `<div class="empty"><div class="ei">🌼</div><h3>Aucune tâche aujourd'hui</h3><p>Profitez du jardin, ou parcourez le catalogue.</p><button class="btn primary" onclick="setView('catalog')">Ouvrir le catalogue</button></div>`;
+    return;
+  }
+  el.innerHTML = tasks.map(t => taskHTML(t)).join('');
+  bindTaskCheckboxes(el);
 }
 
-function kindIcon(k) {
-  return { water: '💧', sow: '🌱', harvest: '🥕', treat: '🛡️', other: '📌' }[k] || '📌';
+function taskHTML(t) {
+  const p = plantById(t.plantId);
+  const kindIcons = { water:'💧', harvest:'🥕', treat:'🛡️', sow:'🌱', other:'📌' };
+  const kindLabels = { water:'Arrosage', harvest:'Récolte', treat:'Traitement', sow:'Semis', other:'Note' };
+  return `<div class="task ${t.done ? 'done' : ''}" data-task="${t.id}">
+    <div class="t-kind ${t.kind}">${kindIcons[t.kind] || '📌'}</div>
+    <div class="t-body">
+      <div class="t-text">${escapeHTML(t.title)}</div>
+      <div class="t-meta"><span>${kindLabels[t.kind] || ''}</span>${p ? `<span>•</span><span>${p.icon} ${p.name}</span>` : ''}</div>
+    </div>
+    <div class="checkbox" role="checkbox" tabindex="0" aria-checked="${t.done}"></div>
+  </div>`;
 }
-function taskColor(k) {
-  return { water: '#4a8fc8', sow: '#5b9166', harvest: '#b07b4f', treat: '#c25450', other: '#98a39b' }[k] || '#98a39b';
+
+function bindTaskCheckboxes(scope) {
+  scope.querySelectorAll('.task').forEach(node => {
+    const cb = node.querySelector('.checkbox');
+    const toggle = () => {
+      const id = node.dataset.task;
+      const t = state.tasks.find(t => t.id === id);
+      if (!t) return;
+      t.done = !t.done;
+      saveState();
+      node.classList.toggle('done', t.done);
+      cb.setAttribute('aria-checked', t.done);
+      const todayStr = iso(new Date());
+      const todayTasks = state.tasks.filter(t => t.date === todayStr);
+      const doneCount = todayTasks.filter(t => t.done).length;
+      const meta = document.getElementById('tasks-meta');
+      if (meta) meta.textContent = `${doneCount} sur ${todayTasks.length} terminées`;
+    };
+    cb.addEventListener('click', toggle);
+    cb.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggle(); } });
+  });
+}
+
+function renderWeekGlance(today) {
+  const el = document.getElementById('week-glance');
+  const out = [];
+  for (let i = 0; i < 7; i++) {
+    const d = addDays(today, i);
+    const ds = iso(d);
+    const tasks = state.tasks.filter(t => t.date === ds);
+    const chips = ['water','sow','harvest','treat'].map(k => {
+      const n = tasks.filter(t => t.kind === k).length;
+      const colorClass = k === 'water' ? 'green' : k === 'harvest' ? 'earth' : k === 'treat' ? 'urgent' : 'green';
+      return n ? `<span class="chip ${colorClass}" style="padding:1px 7px;font-size:11px">${{water:'💧',sow:'🌱',harvest:'🥕',treat:'🛡️'}[k]} ${n}</span>` : '';
+    }).join('');
+    out.push(`<div class="card" style="flex:none;min-width:130px;padding:12px">
+      <div class="xsmall muted" style="font-weight:800;text-transform:uppercase;letter-spacing:.06em">${d.toLocaleDateString('fr-FR',{weekday:'short'})} ${d.getDate()}</div>
+      <div style="font-family:var(--serif);font-size:22px;font-weight:600;margin-top:2px">${tasks.length}</div>
+      <div class="row gap-2 mt-2">${chips}</div>
+    </div>`);
+  }
+  el.innerHTML = out.join('');
 }
 
 /* ============================================================
    GARDEN
    ============================================================ */
 function renderGarden() {
-  if (currentView !== 'garden') return;
-  const ids = Object.keys(zones);
-  const toolbar = document.getElementById('bedsToolbar');
-  const empty = document.getElementById('gardenEmpty');
-  const stage = document.getElementById('bedStage');
+  const beds = state.beds;
+  const bar = document.getElementById('beds-toolbar');
+  bar.innerHTML = beds.map(b => `<button class="bed-tab ${b.id === state.activeBedId ? 'active' : ''}" data-bed="${b.id}">🌿 ${escapeHTML(b.name)}<span class="x">${(b.cells||[]).filter(Boolean).length}/${(b.cols||4)*(b.rows||3)}</span></button>`).join('');
+  bar.querySelectorAll('[data-bed]').forEach(b => b.addEventListener('click', () => { state.activeBedId = b.dataset.bed; saveState(); renderGarden(); }));
 
-  if (ids.length === 0) {
-    toolbar.innerHTML = '';
-    stage.style.display = 'none';
-    empty.style.display = 'flex';
-    return;
-  }
+  const stage = document.getElementById('bed-stage');
+  const emptyEl = document.getElementById('garden-empty');
+  const bed = activeBed();
+  if (!bed) { stage.style.display = 'none'; emptyEl.style.display = ''; return; }
+  stage.style.display = '';
+  emptyEl.style.display = 'none';
 
-  empty.style.display = 'none';
-  stage.style.display = 'block';
+  document.getElementById('bed-name').textContent = bed.name;
+  const planted = (bed.cells || []).filter(Boolean).length;
+  const total = (bed.cols || 4) * (bed.rows || 3);
+  document.getElementById('bed-sub').textContent = `${bed.cols} × ${bed.rows} • ${planted} plantée${planted > 1 ? 's' : ''} • ${total - planted} libre${total - planted > 1 ? 's' : ''}`;
 
-  toolbar.innerHTML = ids.map(id => {
-    const z = zones[id];
-    const color = z.color || BED_COLORS[0];
-    return `<button class="bed-chip ${id === activeZoneId ? 'active' : ''}" onclick="selectZone('${id}')">
-      <span class="bchip-dot" style="background:${color}"></span>${esc(z.name)}
-    </button>`;
+  const grid = document.getElementById('bed-grid');
+  grid.style.setProperty('--cols', bed.cols || 4);
+  while ((bed.cells || []).length < total) bed.cells.push(null);
+  bed.cells.length = total;
+
+  grid.innerHTML = bed.cells.map((c, i) => {
+    if (c) {
+      const p = plantById(c.plant);
+      return `<div class="cell has-plant" draggable="true" data-idx="${i}" data-cell="${c.id}">
+        <span class="status-dot" style="background:${statusColor(c.status)}"></span>
+        <div class="pi">${p ? p.icon : '❓'}</div>
+        <div class="pn">${p ? p.name : '?'}</div>
+      </div>`;
+    }
+    return `<div class="cell" data-idx="${i}"><span class="empty-plus">+</span></div>`;
   }).join('');
 
-  if (!activeZoneId || !zones[activeZoneId]) {
-    activeZoneId = ids[0];
-  }
-  renderBedStage(zones[activeZoneId]);
-}
-
-function selectZone(id) {
-  activeZoneId = id;
-  document.querySelectorAll('.bed-chip').forEach(c => {
-    c.classList.toggle('active', c.getAttribute('onclick') === `selectZone('${id}')`);
+  grid.querySelectorAll('.cell').forEach(node => {
+    const idx = +node.dataset.idx;
+    node.addEventListener('click', () => {
+      if (node.classList.contains('has-plant')) openPlantPanel(idx);
+      else openQuickAdd('plant');
+    });
   });
-  renderBedStage(zones[id]);
+
+  // Drag-and-drop
+  let dragSrc = null;
+  grid.querySelectorAll('.cell').forEach(node => {
+    node.addEventListener('dragstart', e => {
+      if (!node.classList.contains('has-plant')) { e.preventDefault(); return; }
+      dragSrc = +node.dataset.idx;
+      node.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      try { e.dataTransfer.setData('text/plain', String(dragSrc)); } catch {}
+    });
+    node.addEventListener('dragend', () => grid.querySelectorAll('.cell').forEach(n => n.classList.remove('dragging','drag-over')));
+    node.addEventListener('dragover', e => { e.preventDefault(); node.classList.add('drag-over'); });
+    node.addEventListener('dragleave', () => node.classList.remove('drag-over'));
+    node.addEventListener('drop', e => {
+      e.preventDefault();
+      const from = dragSrc; const to = +node.dataset.idx;
+      if (from === null || from === to) return;
+      const tmp = bed.cells[from]; bed.cells[from] = bed.cells[to]; bed.cells[to] = tmp;
+      saveState(); renderGarden();
+    });
+  });
 }
 
-function renderBedStage(zone) {
-  if (!zone) return;
-  document.getElementById('bedName').textContent = zone.name || 'Parcelle';
-  const plantCount = Object.keys(zone.plants || {}).length;
-  const total = (zone.cols || 4) * (zone.rows || 3);
-  document.getElementById('bedSub').textContent = `${zone.cols || 4} × ${zone.rows || 3} cases · ${plantCount}/${total} occupées`;
-  renderBedGrid(zone);
-}
+function statusColor(s) { return s === 'urgent' ? 'var(--urgent)' : s === 'warn' ? 'var(--warn)' : 'var(--healthy)'; }
 
-function renderBedGrid(zone) {
-  const grid = document.getElementById('bedGrid');
-  if (!zone) { grid.innerHTML = ''; return; }
-  const cols = zone.cols || 4;
-  const rows = zone.rows || 3;
-  const plants = zone.plants || {};
-  grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-  grid.innerHTML = '';
+function openPlantPanel(idx) {
+  const bed = activeBed();
+  if (!bed) return;
+  const cell = bed.cells[idx];
+  if (!cell) return;
+  const p = plantById(cell.plant);
+  document.getElementById('pd-bed-name').textContent = `${bed.name} • cellule ${idx + 1}`;
+  const dot = document.getElementById('pd-status');
+  dot.className = 'dot ' + (cell.status === 'urgent' ? 'urgent' : cell.status === 'warn' ? 'warn' : 'healthy');
 
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const key = `${r}_${c}`;
-      const plant = plants[key];
-      const cell = document.createElement('div');
-      cell.className = `bed-cell ${plant ? 'has-plant' : 'empty'}`;
-      if (plant) {
-        cell.innerHTML = `
-          <div class="pc-emoji">${plant.emoji || '🌱'}</div>
-          <div class="pc-name">${esc(plant.name)}</div>
-          ${plant.plantedDate ? `<div class="pc-date">${formatShortDate(plant.plantedDate)}</div>` : ''}`;
-        cell.addEventListener('click', () => openPlantPanel(activeZoneId, key, plant));
-      } else {
-        cell.innerHTML = `<div class="pc-plus">+</div>`;
-        cell.addEventListener('click', () => openPlantPicker(activeZoneId, key));
-      }
-      grid.appendChild(cell);
-    }
-  }
-}
+  const today = new Date();
+  const since = daysBetween(parseISO(cell.planted), today);
+  const tip = p ? p.tip : '';
+  const sci = p ? p.sci : '';
+  const season = p && p.season ? p.season : [];
+  const family = p ? p.family : '';
+  const companions = p && p.companions ? p.companions : [];
 
-/* ============================================================
-   PLANT PANEL
-   ============================================================ */
-function openPlantPanel(zoneId, cellKey, plant) {
-  const z = zones[zoneId];
-  document.getElementById('pdBedName').textContent = z?.name || '—';
-  document.getElementById('pdStatus').className = 'dot healthy';
-
-  const waterLabels = { '2jours': 'Tous les 2 jours', 'semaine': 'Hebdomadaire', 'rarement': 'Rarement' };
-  const body = document.getElementById('panelBody');
-  body.innerHTML = `
+  document.getElementById('panel-body').innerHTML = `
     <div class="pd-hero">
-      <div class="pd-emoji">${plant.emoji || '🌱'}</div>
+      <div class="pdi">${p ? p.icon : '❓'}</div>
       <div>
-        <h2 class="pd-name">${esc(plant.name)}</h2>
-        <div class="pd-type muted small">${typeName(plant.type)}</div>
+        <h2>${p ? p.name : (cell.plant || '?')}</h2>
+        ${sci ? `<div class="sci">${escapeHTML(sci)}</div>` : ''}
+        <div class="row gap-2 mt-2">
+          ${season.slice(0,1).map(s => `<span class="chip green">${seasonLabel(s)}</span>`).join('')}
+          ${family ? `<span class="chip">${escapeHTML(family)}</span>` : ''}
+        </div>
       </div>
     </div>
-    ${plant.plantedDate ? `<div class="pd-meta"><span class="meta-key">Planté le</span><span>${formatDate(plant.plantedDate)}</span></div>` : ''}
-    <div class="pd-meta"><span class="meta-key">Arrosage</span><span class="badge green">${waterLabels[plant.water] || plant.water || '—'}</span></div>
-    ${plant.notes ? `<div class="pd-notes small muted">${esc(plant.notes)}</div>` : ''}
-    <div class="pd-actions">
-      <button class="btn primary" onclick="addTaskForPlant('${esc(plant.name)}','water')">💧 Arroser</button>
-      <button class="btn" onclick="addTaskForPlant('${esc(plant.name)}','harvest')">🥕 Récolter</button>
-      <button class="btn" onclick="addJournalFromPanel('${esc(plant.name)}')">📝 Noter</button>
-      <button class="btn danger" onclick="confirmRemovePlant('${zoneId}','${cellKey}')">🗑️ Supprimer</button>
-    </div>`;
 
-  const backdrop = document.getElementById('panelBackdrop');
-  backdrop.classList.add('visible');
-  requestAnimationFrame(() => backdrop.classList.add('open'));
-  document.getElementById('plantPanel').classList.add('open');
-  document.getElementById('plantPanel').setAttribute('aria-hidden', 'false');
+    <div class="pd-section">
+      <h4>En un coup d'œil</h4>
+      <div class="pd-rows">
+        <div class="pd-row"><b>État</b><span class="v">${{healthy:'🌿 En forme', warn:'⚠️ À surveiller', urgent:'🚨 Intervention urgente'}[cell.status] || '—'}</span></div>
+        <div class="pd-row"><b>Plantée</b><span class="v">${formatDate(cell.planted)} — il y a ${since} jour${since > 1 ? 's' : ''}</span></div>
+        ${p ? `<div class="pd-row"><b>Rythme d'arrosage</b><span class="v">Tous les ${p.waterEvery} jours</span></div>` : ''}
+        ${p ? `<div class="pd-row"><b>Récolte prévue</b><span class="v">${p.harvest}</span></div>` : ''}
+        ${p ? `<div class="pd-row"><b>Espacement</b><span class="v">${p.space}</span></div>` : ''}
+      </div>
+    </div>
+
+    ${tip ? `<div class="pd-section">
+      <h4>Conseils</h4>
+      <div class="card" style="background:var(--green-tint);border-color:transparent">
+        <div class="small">💡 <b>Astuce :</b> ${escapeHTML(tip)}</div>
+      </div>
+      ${cell.notes ? `<div class="card mt-3"><div class="small"><b>Vos notes :</b> ${escapeHTML(cell.notes)}</div></div>` : ''}
+    </div>` : ''}
+
+    ${companions.length ? `<div class="pd-section">
+      <h4>Bons voisinages</h4>
+      <div class="row gap-2" style="flex-wrap:wrap">
+        ${companions.map(c => `<span class="chip earth">🤝 ${escapeHTML(c)}</span>`).join('')}
+      </div>
+    </div>` : ''}
+
+    <div class="pd-section">
+      <h4>Historique</h4>
+      <div class="pd-history">
+        <div class="pd-event"><div class="pe-d">${formatDate(cell.planted)}</div><div class="pe-t">🌱 Plantée dans ${escapeHTML(bed.name)}</div></div>
+        ${since > 7 ? `<div class="pd-event"><div class="pe-d">${formatDate(iso(addDays(parseISO(cell.planted), 7)))}</div><div class="pe-t">💧 Premier arrosage hebdomadaire</div></div>` : ''}
+        ${cell.status === 'urgent' ? `<div class="pd-event"><div class="pe-d">${formatDate(iso(addDays(today, -1)))}</div><div class="pe-t">🐛 Ravageur repéré — traitement programmé</div></div>` : ''}
+        ${cell.status === 'warn' ? `<div class="pd-event"><div class="pe-d">${formatDate(iso(addDays(today, -2)))}</div><div class="pe-t">⚠️ Signes de stress — mise sous surveillance</div></div>` : ''}
+      </div>
+    </div>
+
+    <div class="row gap-2 mt-4">
+      <button class="btn" id="pd-water">💧 Marquer arrosée</button>
+      <button class="btn danger" id="pd-remove">🗑️ Retirer</button>
+    </div>
+  `;
+
+  document.getElementById('pd-water').onclick = () => { flash('Arrosée ✓'); closePanel(); };
+  document.getElementById('pd-remove').onclick = () => {
+    confirmDialog({
+      title: `Retirer ${p ? p.name : 'cette plante'} ?`,
+      msg: 'La plante sera retirée de cette cellule.',
+      yesLabel: 'Oui, retirer',
+      onYes: () => { bed.cells[idx] = null; saveState(); closePanel(); renderGarden(); }
+    });
+  };
+
+  document.getElementById('plant-panel').classList.add('open');
+  document.getElementById('panel-backdrop').classList.add('open');
 }
 
 function closePanel() {
-  const backdrop = document.getElementById('panelBackdrop');
-  backdrop.classList.remove('open');
-  document.getElementById('plantPanel').classList.remove('open');
-  document.getElementById('plantPanel').setAttribute('aria-hidden', 'true');
-  setTimeout(() => backdrop.classList.remove('visible'), 220);
+  document.getElementById('plant-panel').classList.remove('open');
+  document.getElementById('panel-backdrop').classList.remove('open');
 }
 
-function confirmRemovePlant(zoneId, cellKey) {
-  showConfirm('Supprimer la plante ?', 'Cette action est irréversible.', () => {
-    savePlantToCell(zoneId, cellKey, null);
-    closePanel();
-    showToast('Plante supprimée');
-  });
+function addBed() {
+  openBedModal();
 }
 
-function addTaskForPlant(plantName, kind) {
-  tasks.unshift({ id: uid(), title: `${kindIcon(kind)} ${plantName}`, kind, date: toISODate(new Date()), done: false, createdAt: Date.now() });
-  saveTasks();
-  closePanel();
-  showToast('Tâche ajoutée !');
+function openBedModal(bedId) {
+  const bed = bedId ? state.beds.find(b => b.id === bedId) : null;
+  document.getElementById('bed-modal-title').textContent = bed ? 'Modifier la parcelle' : 'Nouvelle parcelle';
+  document.getElementById('bed-modal-name').value = bed ? bed.name : '';
+  document.getElementById('bed-modal-cols').value = bed ? bed.cols : 4;
+  document.getElementById('bed-modal-rows').value = bed ? bed.rows : 3;
+  document.getElementById('bed-modal-save').onclick = () => saveBedModal(bedId);
+  openModal('bed-modal-backdrop');
 }
 
-function addJournalFromPanel(plantName) {
-  closePanel();
-  openQuickAdd('note');
-  const ns = document.getElementById('qaNoteSubject');
-  if (ns) {
-    const opt = Array.from(ns.options).find(o => o.value === plantName);
-    if (opt) ns.value = plantName;
-  }
-}
-
-function typeName(t) {
-  return { legume: 'Légume', fruit: 'Fruit', herbe: 'Herbe aromatique', fleur: 'Fleur', arbre: 'Arbre / Arbuste' }[t] || t || '—';
-}
-
-/* ============================================================
-   BED MODAL
-   ============================================================ */
-function openBedModal(zoneId = null) {
-  editingBedId = zoneId;
-  const z = zoneId ? zones[zoneId] : null;
-  document.getElementById('bedModalTitle').textContent = z ? 'Modifier la parcelle' : 'Nouvelle parcelle';
-  document.getElementById('bedModalName').value = z?.name || '';
-  document.getElementById('bedModalCols').value = z?.cols || 4;
-  document.getElementById('bedModalRows').value = z?.rows || 3;
-  const currentColor = z?.color || BED_COLORS[0];
-  document.getElementById('bedColorPicker').innerHTML = BED_COLORS.map(c => `
-    <button class="color-swatch ${c === currentColor ? 'selected' : ''}" style="background:${c}" onclick="selectBedColor(this)" aria-label="Couleur ${c}"></button>`).join('');
-  openModal('bedModalBackdrop');
-}
-
-function selectBedColor(el) {
-  document.querySelectorAll('#bedColorPicker .color-swatch').forEach(s => s.classList.remove('selected'));
-  el.classList.add('selected');
-}
-
-function saveBed() {
-  const name = document.getElementById('bedModalName').value.trim();
-  const cols = Math.min(10, Math.max(2, parseInt(document.getElementById('bedModalCols').value) || 4));
-  const rows = Math.min(10, Math.max(2, parseInt(document.getElementById('bedModalRows').value) || 3));
-  const selectedSwatch = document.querySelector('#bedColorPicker .color-swatch.selected');
-  const color = selectedSwatch ? selectedSwatch.style.background : BED_COLORS[0];
-  if (!name) { showToast('Donnez un nom à la parcelle', 'warn'); return; }
-
-  const id = editingBedId || uid();
-  const existing = editingBedId ? zones[editingBedId] : null;
-  const data = { name, cols, rows, color, plants: existing?.plants || {} };
-
-  if (isLocalMode) {
-    zones[id] = data;
-    lsSet('potager_zones_local', zones);
-    activeZoneId = id;
-    renderGarden();
-    renderDashboard();
+function saveBedModal(editId) {
+  const name = document.getElementById('bed-modal-name').value.trim();
+  if (!name) { flash('Donnez un nom à la parcelle'); return; }
+  const cols = clampInt(document.getElementById('bed-modal-cols').value, 2, 10, 4);
+  const rows = clampInt(document.getElementById('bed-modal-rows').value, 2, 10, 3);
+  if (editId) {
+    const bed = state.beds.find(b => b.id === editId);
+    if (bed) { bed.name = name; bed.cols = cols; bed.rows = rows; while (bed.cells.length < cols*rows) bed.cells.push(null); bed.cells.length = cols*rows; }
   } else {
-    db.ref(`jardin/zones/${id}`).set(data);
-    activeZoneId = id;
+    const newBed = { id:'b'+Date.now(), name, cols, rows, cells: Array(cols*rows).fill(null) };
+    state.beds.push(newBed);
+    state.activeBedId = newBed.id;
   }
-  closeModal('bedModalBackdrop');
-  showToast(editingBedId ? 'Parcelle modifiée !' : 'Parcelle créée !');
+  saveState(); closeModal('bed-modal-backdrop'); renderGarden();
+  flash(editId ? 'Parcelle modifiée ✓' : 'Parcelle créée ✓');
 }
 
 function deleteBed() {
-  if (!activeZoneId) return;
-  const z = zones[activeZoneId];
-  showConfirm(`Supprimer « ${z?.name || 'cette parcelle'} » ?`, 'Toutes les plantes seront perdues.', () => {
-    const idToDelete = activeZoneId;
-    activeZoneId = null;
-    if (isLocalMode) {
-      delete zones[idToDelete];
-      lsSet('potager_zones_local', zones);
-      renderGarden();
-      renderDashboard();
-    } else {
-      db.ref(`jardin/zones/${idToDelete}`).remove();
+  const bed = activeBed(); if (!bed) return;
+  confirmDialog({
+    title: `Supprimer « ${bed.name} » ?`,
+    msg: `Les ${(bed.cells||[]).filter(Boolean).length} plantes seront retirées. Action irréversible.`,
+    yesLabel: 'Oui, supprimer',
+    onYes: () => {
+      state.beds = state.beds.filter(b => b.id !== bed.id);
+      state.activeBedId = state.beds[0] ? state.beds[0].id : null;
+      saveState(); renderGarden();
     }
-    showToast('Parcelle supprimée');
   });
-}
-
-/* ============================================================
-   PLANT PICKER
-   ============================================================ */
-function openPlantPicker(zoneId, cellKey) {
-  pickerTarget = { zoneId, cellKey };
-  document.getElementById('pickerSearch').value = '';
-  renderPlantPicker();
-  openModal('plantPickerBackdrop');
-}
-
-function renderPlantPicker() {
-  const q = (document.getElementById('pickerSearch')?.value || '').toLowerCase();
-  const grid = document.getElementById('plantPickerGrid');
-  const filtered = PLANT_LIBRARY.filter(p => !q || p.name.toLowerCase().includes(q) || (p.notes || '').toLowerCase().includes(q));
-  grid.innerHTML = filtered.map(p => `
-    <button class="picker-cell" onclick="pickPlant('${p.id}')">
-      <div class="picker-emoji">${p.emoji}</div>
-      <div class="picker-name">${esc(p.name)}</div>
-    </button>`).join('');
-}
-
-function pickPlant(plantId) {
-  if (!pickerTarget) return;
-  const plant = PLANT_LIBRARY.find(p => p.id === plantId);
-  if (!plant) return;
-  savePlantToCell(pickerTarget.zoneId, pickerTarget.cellKey, {
-    name: plant.name, emoji: plant.emoji, type: plant.type,
-    water: plant.water, notes: plant.notes, plantedDate: toISODate(new Date()),
-  });
-  closeModal('plantPickerBackdrop');
-  pickerTarget = null;
-  showToast(`${plant.emoji} ${plant.name} planté·e !`);
 }
 
 /* ============================================================
    CATALOG
    ============================================================ */
-function wireCatalogFilters() {
-  const types = [
-    { id: 'all', label: '🌿 Tout' }, { id: 'legume', label: '🥕 Légumes' },
-    { id: 'fruit', label: '🍓 Fruits' }, { id: 'herbe', label: '🌿 Herbes' },
-    { id: 'fleur', label: '🌸 Fleurs' }, { id: 'arbre', label: '🌳 Arbres' },
-  ];
-  document.getElementById('catalogFilters').innerHTML = types.map(t => `
-    <button class="filter-chip ${t.id === 'all' ? 'active' : ''}" data-cat-f="${t.id}" onclick="setCatalogFilter('${t.id}')">${t.label}</button>`).join('');
-}
-
-function setCatalogFilter(f) {
-  activeCatalogFilter = f;
-  document.querySelectorAll('[data-cat-f]').forEach(b => b.classList.toggle('active', b.dataset.catF === f));
-  renderCatalog();
-}
+let catalogFilter = { q:'', season:'all', difficulty:'all' };
 
 function renderCatalog() {
-  const q = (document.getElementById('catalogSearch')?.value || '').toLowerCase();
-  const grid = document.getElementById('catalogGrid');
-  const filtered = PLANT_LIBRARY.filter(p =>
-    (activeCatalogFilter === 'all' || p.type === activeCatalogFilter) &&
-    (!q || p.name.toLowerCase().includes(q) || (p.notes || '').toLowerCase().includes(q))
-  );
+  const f = document.getElementById('catalog-filters');
+  const filters = [
+    { k:'season', v:'all', label:'Toutes saisons' },
+    { k:'season', v:'spring', label:'🌷 Printemps' },
+    { k:'season', v:'summer', label:'☀️ Été' },
+    { k:'season', v:'autumn', label:'🍂 Automne' },
+    { k:'season', v:'winter', label:'❄️ Hiver' },
+    { k:'difficulty', v:'all', label:'Tous niveaux' },
+    { k:'difficulty', v:'1', label:'🟢 Facile' },
+    { k:'difficulty', v:'2', label:'🟡 Moyen' },
+    { k:'difficulty', v:'3', label:'🔴 Délicat' }
+  ];
+  f.innerHTML = filters.map(x => `<button class="filter-chip ${catalogFilter[x.k] === x.v ? 'active' : ''}" data-k="${x.k}" data-v="${x.v}">${x.label}</button>`).join('');
+  f.querySelectorAll('.filter-chip').forEach(b => b.addEventListener('click', () => { catalogFilter[b.dataset.k] = b.dataset.v; renderCatalog(); }));
 
-  if (filtered.length === 0) {
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="ei">🔍</div><h3>Aucun résultat</h3><p>Essayez un autre filtre ou terme de recherche.</p></div>`;
+  const q = catalogFilter.q.trim().toLowerCase();
+  const list = CATALOG.filter(p => {
+    if (q && !p.name.toLowerCase().includes(q) && !(p.family||'').toLowerCase().includes(q)) return false;
+    if (catalogFilter.season !== 'all' && !(p.season||[]).includes(catalogFilter.season)) return false;
+    if (catalogFilter.difficulty !== 'all' && p.difficulty !== +catalogFilter.difficulty) return false;
+    return true;
+  });
+
+  const grid = document.getElementById('catalog-grid');
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="ei">🔍</div><h3>Aucune plante ne correspond</h3><p>Retirez un filtre ou essayez un autre mot-clé.</p><button class="btn primary" id="reset-catalog">Réinitialiser</button></div>`;
+    document.getElementById('reset-catalog').addEventListener('click', () => { catalogFilter = { q:'', season:'all', difficulty:'all' }; document.getElementById('catalog-search').value = ''; renderCatalog(); });
     return;
   }
-
-  grid.innerHTML = filtered.map(p => `
-    <div class="catalog-card">
-      <div class="cc-head">
-        <div class="cc-emoji">${p.emoji}</div>
-        <div class="cc-info">
-          <div class="cc-name">${esc(p.name)}</div>
-          <div class="cc-type muted xsmall">${typeName(p.type)}</div>
+  grid.innerHTML = list.map(p => `
+    <article class="plant-card">
+      <div class="pc-head">
+        <div class="pc-icon">${p.icon}</div>
+        <div>
+          <h3>${escapeHTML(p.name)}</h3>
+          <div class="pc-sub">${escapeHTML(p.family||'')} • <em>${escapeHTML(p.sci||'')}</em></div>
+          <div class="row gap-2 mt-2">
+            <span class="difficulty" aria-label="Difficulté ${p.difficulty} sur 3">
+              ${[1,2,3].map(n => `<span class="pip ${n <= p.difficulty ? 'on' : ''}"></span>`).join('')}
+            </span>
+            <span class="xsmall muted">${['Facile','Moyen','Délicat'][(p.difficulty||1)-1]}</span>
+          </div>
         </div>
-        <span class="badge ${waterBadgeClass(p.water)}">${waterLabel(p.water)}</span>
       </div>
-      ${p.notes ? `<div class="cc-notes small muted">${esc(p.notes)}</div>` : ''}
-      <button class="btn primary sm mt-3" onclick="catalogAddToGarden('${p.id}')">+ Ajouter au jardin</button>
-    </div>`).join('');
+      <div class="pc-rows">
+        <div class="r"><b>Semer</b> ${escapeHTML(p.sow||'—')}</div>
+        <div class="r"><b>Planter</b> ${escapeHTML(p.plant||'—')}</div>
+        <div class="r"><b>Récolter</b> ${escapeHTML(p.harvest||'—')}</div>
+        <div class="r"><b>Espacement</b> ${escapeHTML(p.space||'—')}</div>
+      </div>
+      <div class="pc-tags">
+        ${(p.season||[]).map(s => `<span class="chip green">${seasonLabel(s)}</span>`).join('')}
+        ${(p.companions||[]).length ? `<span class="chip earth">🤝 ${escapeHTML((p.companions||[]).slice(0,2).join(', '))}</span>` : ''}
+      </div>
+      <div class="pc-actions">
+        <button class="btn primary" data-add="${p.id}">+ Ajouter à mon jardin</button>
+      </div>
+    </article>`).join('');
+
+  grid.querySelectorAll('[data-add]').forEach(b => b.addEventListener('click', () => openAddToBedPicker(b.dataset.add)));
 }
 
-function catalogAddToGarden(plantId) {
-  if (Object.keys(zones).length === 0) {
-    showToast("Créez d'abord une parcelle dans « Mon jardin »", 'warn');
-    return;
+function openAddToBedPicker(plantId) {
+  const p = plantById(plantId);
+  document.getElementById('addbed-msg').textContent = `Où voulez-vous planter ${p ? p.icon + ' ' + p.name : plantId} ?`;
+  const wrap = document.getElementById('addbed-grid');
+  if (!state.beds.length) {
+    wrap.innerHTML = `<div class="empty"><div class="ei">🪴</div><h3>Aucune parcelle</h3><p>Créez d'abord une parcelle dans Mon jardin.</p></div>`;
+    openModal('addbed-backdrop'); return;
   }
-  openQuickAdd('plant');
-  setTimeout(() => {
-    const sel = document.getElementById('qaPlantSelect');
-    if (sel) sel.value = plantId;
-  }, 50);
+  wrap.innerHTML = state.beds.map(b => {
+    const cells = b.cells || [];
+    const free = cells.filter(c => !c).length;
+    return `<div class="card mb-2" style="padding:12px;cursor:pointer${free === 0 ? ';opacity:.5;pointer-events:none' : ''}" data-bed="${b.id}">
+      <div class="row between">
+        <div><div style="font-weight:800">🌿 ${escapeHTML(b.name)}</div><div class="xsmall muted">${cells.filter(Boolean).length}/${(b.cols||4)*(b.rows||3)} plantées • ${free} libre${free>1?'s':''}</div></div>
+        ${free > 0 ? '<div class="btn primary sm">Planter ici →</div>' : '<div class="xsmall muted">Plein</div>'}
+      </div>
+    </div>`;
+  }).join('');
+  wrap.querySelectorAll('[data-bed]').forEach(node => {
+    node.addEventListener('click', () => {
+      const bed = state.beds.find(b => b.id === node.dataset.bed);
+      const emptyIdx = (bed.cells || []).findIndex(c => !c);
+      if (emptyIdx === -1) { flash('Parcelle pleine.'); return; }
+      bed.cells[emptyIdx] = { id:'c'+Date.now(), plant: plantId, planted: iso(new Date()), status:'healthy', notes:'' };
+      saveState();
+      closeModal('addbed-backdrop');
+      flash(`${p ? p.name : plantId} ajoutée dans ${bed.name} ✓`);
+      state.activeBedId = bed.id;
+      setView('garden');
+    });
+  });
+  openModal('addbed-backdrop');
 }
-
-function waterLabel(w) { return { '2jours': '2 jours', 'semaine': 'Hebdo', 'rarement': 'Rarement' }[w] || w || '—'; }
-function waterBadgeClass(w) { return { '2jours': 'green', 'semaine': 'earth', 'rarement': 'warn' }[w] || ''; }
 
 /* ============================================================
    CALENDAR
    ============================================================ */
-function wireCalFilters() {
-  document.getElementById('calFilters').querySelectorAll('[data-cf]').forEach(b => {
-    b.addEventListener('click', () => {
-      activeCalFilter = b.dataset.cf;
-      document.getElementById('calFilters').querySelectorAll('[data-cf]').forEach(x => x.classList.toggle('active', x.dataset.cf === activeCalFilter));
-      renderCalendar();
+let calMonth = new Date(); calMonth.setDate(1);
+let calFilter = 'all';
+
+function renderCalendar() {
+  document.getElementById('cal-month').textContent = calMonth.toLocaleDateString('fr-FR', { month:'long', year:'numeric' });
+  document.querySelectorAll('#cal-filters .filter-chip').forEach(b => b.classList.toggle('active', b.dataset.cf === calFilter));
+
+  const grid = document.getElementById('cal-grid');
+  const dows = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  const today = new Date();
+  let html = dows.map(d => `<div class="cal-dow">${d}</div>`).join('');
+  const first = new Date(calMonth.getFullYear(), calMonth.getMonth(), 1);
+  const startOffset = (first.getDay() + 6) % 7;
+  const daysInMonth = new Date(calMonth.getFullYear(), calMonth.getMonth()+1, 0).getDate();
+
+  for (let i = 0; i < startOffset; i++) html += `<div class="cal-day off"></div>`;
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dd = new Date(calMonth.getFullYear(), calMonth.getMonth(), d);
+    const dStr = iso(dd);
+    const tasks = state.tasks.filter(t => t.date === dStr && (calFilter === 'all' || t.kind === calFilter));
+    const kinds = new Set(tasks.map(t => t.kind));
+    const dots = ['water','sow','harvest','treat'].filter(k => kinds.has(k)).map(k => `<span class="d-dot ${k}"></span>`).join('');
+    const isToday = iso(dd) === iso(today);
+    html += `<button class="cal-day ${isToday ? 'today' : ''}" data-d="${dStr}"><div>${d}</div><div class="dots">${dots}</div></button>`;
+  }
+  grid.innerHTML = html;
+
+  grid.querySelectorAll('[data-d]').forEach(node => {
+    node.addEventListener('click', () => {
+      const date = node.dataset.d;
+      const tasks = state.tasks.filter(t => t.date === date && (calFilter === 'all' || t.kind === calFilter));
+      if (!tasks.length) { flash(`Aucune tâche le ${formatDate(date)}`); return; }
+      showDayTasks(date, tasks);
     });
   });
 }
 
-function renderCalendar() {
-  const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-  document.getElementById('calMonth').textContent = `${MONTHS[calMonth]} ${calYear}`;
-
-  const first = new Date(calYear, calMonth, 1);
-  const lastDay = new Date(calYear, calMonth + 1, 0).getDate();
-  let startDow = first.getDay() - 1; if (startDow < 0) startDow = 6;
-
-  const grid = document.getElementById('calGrid');
-  const todayIso = toISODate(new Date());
-  const DAYS = ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'];
-
-  let html = DAYS.map(d => `<div class="cal-dow">${d}</div>`).join('');
-  for (let i = 0; i < startDow; i++) html += `<div class="cal-day empty"></div>`;
-
-  for (let day = 1; day <= lastDay; day++) {
-    const iso = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const dayTasks = tasks.filter(t => t.date === iso && (activeCalFilter === 'all' || t.kind === activeCalFilter));
-    const isToday = iso === todayIso;
-    const dots = dayTasks.slice(0, 4).map(t => `<span class="d-dot" style="background:${taskColor(t.kind)}"></span>`).join('');
-    html += `<div class="cal-day ${isToday ? 'today' : ''}" onclick="selectCalDay('${iso}',${day})">
-      <span class="cal-day-num">${day}</span>
-      <div class="cal-dots">${dots}</div>
-    </div>`;
-  }
-  grid.innerHTML = html;
-}
-
-function selectCalDay(iso, day) {
-  const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-  const detail = document.getElementById('calDayDetail');
-  const dayTasks = tasks.filter(t => t.date === iso);
-  document.getElementById('calDayTitle').textContent = `${day} ${MONTHS[calMonth]} ${calYear}`;
-  document.getElementById('calDayTasks').innerHTML = dayTasks.length === 0
-    ? `<div class="empty-inline"><span>✅</span> Aucune tâche ce jour</div>`
-    : dayTasks.map(t => `
-      <div class="task-row" onclick="toggleTask('${t.id}')">
-        <span class="task-check ${t.done ? 'done' : ''}"></span>
-        <span class="task-kind-ic">${kindIcon(t.kind)}</span>
-        <span class="task-label ${t.done ? 'strikethrough' : ''}">${esc(t.title)}</span>
-        <button class="btn ghost sm" onclick="event.stopPropagation();deleteTask('${t.id}')" style="margin-left:auto">✕</button>
-      </div>`).join('');
-  detail.style.display = 'block';
-  detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function deleteTask(id) {
-  tasks = tasks.filter(t => t.id !== id);
-  saveTasks();
-  if (currentView === 'calendar') renderCalendar();
-  else if (currentView === 'dashboard') renderDashboard();
+function showDayTasks(date, tasks) {
+  document.getElementById('pd-bed-name').textContent = formatDate(date);
+  document.getElementById('pd-status').className = 'dot healthy';
+  document.getElementById('panel-body').innerHTML = `<h2 class="mb-4">${tasks.length} tâche${tasks.length > 1 ? 's' : ''} ce jour-là</h2>${tasks.map(t => taskHTML(t)).join('')}`;
+  bindTaskCheckboxes(document.getElementById('panel-body'));
+  document.getElementById('plant-panel').classList.add('open');
+  document.getElementById('panel-backdrop').classList.add('open');
 }
 
 /* ============================================================
    JOURNAL
    ============================================================ */
-function wireJournalFilters() {
-  document.querySelectorAll('[data-jf]').forEach(b => {
-    b.addEventListener('click', () => {
-      activeJournalFilter = b.dataset.jf;
-      document.querySelectorAll('[data-jf]').forEach(x => x.classList.toggle('active', x.dataset.jf === activeJournalFilter));
-      renderJournal();
-    });
-  });
-}
+let journalFilter = 'all';
 
 function renderJournal() {
-  const list = document.getElementById('journalList');
-  const filtered = journalEntries.filter(e => activeJournalFilter === 'all' || e.tag === activeJournalFilter);
-  if (filtered.length === 0) {
-    list.innerHTML = `<div class="empty"><div class="ei">📓</div><h3>Aucune entrée</h3><p>Notez vos premières observations du jardin.</p><button class="btn primary" onclick="openQuickAdd('note')">+ Nouvelle note</button></div>`;
+  document.querySelectorAll('#journal-filters .filter-chip').forEach(b => b.classList.toggle('active', b.dataset.jf === journalFilter));
+  const list = (state.journal || []).filter(j => journalFilter === 'all' || (j.tags||[]).includes(journalFilter)).sort((a,b) => b.date.localeCompare(a.date));
+  const el = document.getElementById('journal-list');
+  if (!list.length) {
+    el.innerHTML = `<div class="empty"><div class="ei">📓</div><h3>Aucune note pour le moment</h3><p>Capturez observations et récoltes — votre futur vous remerciera.</p><button class="btn primary" id="empty-new-note">+ Écrire la première note</button></div>`;
+    document.getElementById('empty-new-note').addEventListener('click', () => openQuickAdd('note'));
     return;
   }
-  list.innerHTML = filtered.map(e => `
-    <div class="journal-entry">
-      <div class="je-meta">
-        <span class="je-time muted xsmall">${relativeTime(e.timestamp)}</span>
-        ${e.tag ? `<span class="badge earth">#${tagLabel(e.tag)}</span>` : ''}
-        ${e.subject ? `<span class="muted xsmall">· ${esc(e.subject)}</span>` : ''}
-        <button class="btn ghost sm" onclick="deleteJournalEntry('${e.id}')" style="margin-left:auto;color:var(--urgent)">✕</button>
+  el.innerHTML = list.map(j => `
+    <article class="journal-entry" data-j="${j.id}">
+      <div class="je-img" ${j.photo ? `style="background-image:url('${j.photo}')"` : ''}>${j.photo ? '' : (j.icon||'🌿')}</div>
+      <div class="je-body">
+        <div class="je-meta"><span style="font-weight:800;color:var(--ink)">${formatDate(j.date)}</span><span>•</span><span>${escapeHTML(j.subject||'')}</span></div>
+        <div class="je-text">${escapeHTML(j.text||'')}</div>
+        <div class="je-tags">
+          ${(j.tags||[]).map(t => `<span class="tag ${t}">#${t}</span>`).join('')}
+          <button class="btn ghost sm" data-add-photo="${j.id}">📷</button>
+          <button class="btn ghost sm danger" data-del="${j.id}">Supprimer</button>
+        </div>
       </div>
-      <div class="je-text">${esc(e.text)}</div>
-    </div>`).join('');
-}
+    </article>`).join('');
 
-function deleteJournalEntry(id) {
-  showConfirm('Supprimer cette note ?', 'Cette action est irréversible.', () => {
-    journalEntries = journalEntries.filter(e => e.id !== id);
-    saveJournal();
-    renderJournal();
-    showToast('Note supprimée');
-  });
-}
-
-function tagLabel(t) {
-  return { harvest: 'récolte', pest: 'ravageur', weather: 'météo', experiment: 'essai' }[t] || t;
+  el.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', e => {
+    e.stopPropagation();
+    const id = b.dataset.del;
+    const j = (state.journal||[]).find(j => j.id === id);
+    confirmDialog({ title:'Supprimer cette note ?', msg:'Action irréversible.', yesLabel:'Oui, supprimer', onYes: () => { state.journal = (state.journal||[]).filter(j => j.id !== id); saveState(); renderJournal(); } });
+  }));
+  el.querySelectorAll('[data-add-photo]').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.addPhoto;
+    const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
+    input.onchange = () => {
+      const file = input.files[0]; if (!file) return;
+      const r = new FileReader(); r.onload = () => { const j = (state.journal||[]).find(j => j.id === id); if (j) { j.photo = r.result; saveState(); renderJournal(); flash('Photo ajoutée ✓'); } }; r.readAsDataURL(file);
+    };
+    input.click();
+  }));
 }
 
 /* ============================================================
    REMINDERS
    ============================================================ */
 function renderReminders() {
-  const list = document.getElementById('remindersList');
-  if (reminders.length === 0) {
-    list.innerHTML = `<div class="empty-inline"><span>🔔</span> Aucun rappel configuré</div>`;
+  const wrap = document.getElementById('push-prompt-wrap');
+  if (!state.prefs.pushAsked) {
+    wrap.innerHTML = `<div class="push-prompt"><span class="pi">🔔</span><div class="pb"><div class="pt">Activer les notifications push</div><div class="small">Alertes gel, ravageurs et résumé quotidien — ne ratez aucun moment clé.</div></div><button class="btn primary sm" id="push-enable">Activer</button><button class="btn ghost sm" id="push-skip">Plus tard</button></div>`;
+    document.getElementById('push-enable').onclick = () => { state.prefs.pushAsked = true; state.prefs.pushOn = true; saveState(); flash('Notifications activées ✓'); renderReminders(); };
+    document.getElementById('push-skip').onclick = () => { state.prefs.pushAsked = true; saveState(); renderReminders(); };
+  } else wrap.innerHTML = '';
+
+  const list = document.getElementById('reminders-list');
+  if (!(state.reminders||[]).length) {
+    list.innerHTML = `<div class="empty"><div class="ei">⏰</div><h3>Aucun rappel</h3><p>Créez votre premier rappel récurrent.</p><button class="btn primary" id="empty-rem">+ Nouveau rappel</button></div>`;
+    document.getElementById('empty-rem').onclick = openReminderModal;
     return;
   }
-  list.innerHTML = reminders.map(r => `
+  list.innerHTML = (state.reminders||[]).map(r => `
     <div class="reminder">
-      <div class="ri">${r.icon || '🔔'}</div>
-      <div class="rb">
-        <div class="rt">${esc(r.title)}</div>
-        <div class="rs muted xsmall">${esc(r.freq)}</div>
-      </div>
-      <button class="btn ghost sm" onclick="openReminderModal('${r.id}')">✏️</button>
-      <button class="btn ghost sm" onclick="deleteReminder('${r.id}')" style="color:var(--urgent)">✕</button>
-      <div class="toggle ${r.on ? 'on' : ''}" onclick="toggleReminder('${r.id}')"></div>
+      <div class="ri">${r.icon}</div>
+      <div class="rb"><div class="rt">${escapeHTML(r.title)}</div><div class="rs">${escapeHTML(r.schedule)}</div></div>
+      <button class="btn ghost sm danger" data-rdel="${r.id}" aria-label="Supprimer">🗑️</button>
+      <div class="toggle ${r.on ? 'on' : ''}" data-rid="${r.id}" role="switch" aria-checked="${r.on}" tabindex="0"></div>
     </div>`).join('');
-}
 
-function toggleReminder(id) {
-  const r = reminders.find(x => x.id === id);
-  if (r) { r.on = !r.on; saveReminders(); renderReminders(); }
-}
+  list.querySelectorAll('[data-rid]').forEach(node => {
+    node.addEventListener('click', () => { const r = (state.reminders||[]).find(r => r.id === node.dataset.rid); if (r) { r.on = !r.on; node.classList.toggle('on', r.on); node.setAttribute('aria-checked', r.on); saveState(); } });
+    node.addEventListener('keydown', e => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); node.click(); } });
+  });
+  list.querySelectorAll('[data-rdel]').forEach(node => {
+    node.addEventListener('click', () => {
+      const id = node.dataset.rdel;
+      const r = (state.reminders||[]).find(r => r.id === id);
+      confirmDialog({ title:`Supprimer « ${r ? r.title : '?' } » ?`, msg:'Ce rappel cessera immédiatement.', yesLabel:'Oui, supprimer', onYes: () => { state.reminders = (state.reminders||[]).filter(r => r.id !== id); saveState(); renderReminders(); } });
+    });
+  });
 
-function deleteReminder(id) {
-  showConfirm('Supprimer ce rappel ?', 'Cette action est irréversible.', () => {
-    reminders = reminders.filter(r => r.id !== id);
-    saveReminders();
-    renderReminders();
-    showToast('Rappel supprimé');
+  document.querySelectorAll('[data-pref]').forEach(node => {
+    node.classList.toggle('on', !!(state.prefs||{})[node.dataset.pref]);
+    node.onclick = () => { const k = node.dataset.pref; if (!state.prefs) state.prefs = {}; state.prefs[k] = !state.prefs[k]; node.classList.toggle('on', state.prefs[k]); saveState(); };
   });
 }
 
-function openReminderModal(id = null) {
-  editingReminderId = id || null;
-  const r = id ? reminders.find(x => x.id === id) : null;
-  document.getElementById('reminderModalTitle').textContent = r ? 'Modifier le rappel' : 'Nouveau rappel';
-  document.getElementById('reminderTitle').value = r?.title || '';
-  document.getElementById('reminderFreq').value = r?.freq || 'Tous les jours';
-  document.getElementById('reminderIcon').value = r?.icon || '💧';
-  openModal('reminderModalBackdrop');
-}
+function openReminderModal() { openModal('reminder-modal-backdrop'); }
 
 function saveReminder() {
-  const title = document.getElementById('reminderTitle').value.trim();
-  const freq = document.getElementById('reminderFreq').value;
-  const icon = document.getElementById('reminderIcon').value;
-  if (!title) { showToast('Donnez un titre au rappel', 'warn'); return; }
-  if (editingReminderId) {
-    const r = reminders.find(x => x.id === editingReminderId);
-    if (r) Object.assign(r, { title, freq, icon });
-  } else {
-    reminders.unshift({ id: uid(), title, freq, icon, on: true, createdAt: Date.now() });
-  }
-  saveReminders();
-  closeModal('reminderModalBackdrop');
-  renderReminders();
-  showToast(editingReminderId ? 'Rappel modifié !' : 'Rappel créé !');
+  const title = document.getElementById('reminder-title').value.trim();
+  if (!title) { flash('Donnez un titre au rappel'); return; }
+  const schedule = document.getElementById('reminder-freq').value;
+  const icon = document.getElementById('reminder-icon').value;
+  state.reminders = state.reminders || [];
+  state.reminders.push({ id:'r'+Date.now(), title, schedule, icon, on:true });
+  saveState(); closeModal('reminder-modal-backdrop'); renderReminders(); flash('Rappel créé ✓');
 }
 
 /* ============================================================
    QUICK ADD
    ============================================================ */
-let currentQaType = 'task';
-
-function wireQaTypes() {
-  document.querySelectorAll('.qa-type').forEach(btn => {
-    btn.addEventListener('click', () => switchQaType(btn.dataset.qa));
-  });
-}
+let draftTimer = null;
 
 function openQuickAdd(type = 'task') {
-  currentQaType = type;
-  switchQaType(type);
+  type = type || 'task';
+  const draft = state.draft;
+  if (draft) {
+    document.getElementById('qa-draft').style.display = 'inline-flex';
+    Object.entries(draft.fields||{}).forEach(([k,v]) => { const el = document.querySelector(`[data-draft="${k}"]`); if (el) el.value = v; });
+    type = draft.type || type;
+  } else {
+    document.getElementById('qa-draft').style.display = 'none';
+  }
+  const dtEl = document.querySelector('[data-draft="task-date"]');
+  if (dtEl && !dtEl.value) dtEl.value = iso(new Date());
+  const pdEl = document.querySelector('[data-draft="plant-date"]');
+  if (pdEl && !pdEl.value) pdEl.value = iso(new Date());
 
-  // Populate bed select
-  const bs = document.getElementById('qaBedSelect');
-  const zids = Object.keys(zones);
-  bs.innerHTML = zids.length
-    ? zids.map(id => `<option value="${id}">${esc(zones[id].name)}</option>`).join('')
-    : '<option value="">Aucune parcelle disponible</option>';
+  const psel = document.getElementById('qa-plant-select');
+  psel.innerHTML = CATALOG.map(p => `<option value="${p.id}">${p.icon} ${p.name}</option>`).join('');
+  const bsel = document.getElementById('qa-bed-select');
+  bsel.innerHTML = (state.beds||[]).length ? (state.beds||[]).map(b => `<option value="${b.id}">${escapeHTML(b.name)}</option>`).join('') : '<option value="">Aucune parcelle</option>';
 
-  // Populate plant select
-  const ps = document.getElementById('qaPlantSelect');
-  ps.innerHTML = PLANT_LIBRARY.map(p => `<option value="${p.id}">${p.emoji} ${p.name}</option>`).join('');
+  const nsel = document.getElementById('qa-note-subject');
+  nsel.innerHTML = '<option value="">Général</option>' + (state.beds||[]).flatMap(b => (b.cells||[]).filter(Boolean).map(c => { const p = plantById(c.plant); return `<option value="${b.name}: ${p ? p.name : c.plant}">${p ? p.icon : ''} ${b.name}: ${p ? p.name : c.plant}</option>`; })).join('');
 
-  // Populate note subject
-  const ns = document.getElementById('qaNoteSubject');
-  const allPlants = Object.values(zones).flatMap(z => Object.values(z.plants || {}));
-  const unique = [...new Map(allPlants.map(p => [p.name, p])).values()];
-  ns.innerHTML = '<option value="">—</option>' + unique.map(p => `<option value="${p.name}">${p.emoji} ${p.name}</option>`).join('');
-
-  document.getElementById('qaTaskDate').value = toISODate(new Date());
-  document.getElementById('qaPlantDate').value = toISODate(new Date());
-
-  loadDraft();
-  openModal('quickaddBackdrop');
+  setQAType(type);
+  openModal('quickadd-backdrop');
 }
 
-function switchQaType(type) {
-  currentQaType = type;
-  document.querySelectorAll('.qa-type').forEach(b => b.classList.toggle('active', b.dataset.qa === type));
-  document.querySelectorAll('[data-qa-form]').forEach(f => f.style.display = f.dataset.qaForm === type ? 'block' : 'none');
-  const titles = { task: 'Nouvelle tâche', plant: 'Planter dans le jardin', note: 'Nouvelle observation' };
-  document.getElementById('qaTitle').textContent = titles[type] || 'Ajout rapide';
+function setQAType(type) {
+  document.querySelectorAll('[data-qa]').forEach(b => b.classList.toggle('active', b.dataset.qa === type));
+  document.querySelectorAll('[data-qa-form]').forEach(f => f.style.display = f.dataset.qaForm === type ? '' : 'none');
 }
 
 function saveQuickAdd() {
-  if (currentQaType === 'task') {
-    const title = document.getElementById('qaTaskTitle').value.trim();
-    if (!title) { showToast('Entrez le titre de la tâche', 'warn'); return; }
-    tasks.unshift({
-      id: uid(), title,
-      kind: document.getElementById('qaTaskKind').value,
-      date: document.getElementById('qaTaskDate').value || toISODate(new Date()),
-      done: false, createdAt: Date.now(),
-    });
-    saveTasks();
-    document.getElementById('qaTaskTitle').value = '';
-
-  } else if (currentQaType === 'plant') {
-    const plantId = document.getElementById('qaPlantSelect').value;
-    const zoneId = document.getElementById('qaBedSelect').value;
-    if (!zoneId) { showToast("Créez d'abord une parcelle", 'warn'); return; }
-    const plant = PLANT_LIBRARY.find(p => p.id === plantId);
-    const zone = zones[zoneId];
-    if (!plant || !zone) return;
-    const plants = zone.plants || {};
-    let placed = false;
-    outer: for (let r = 0; r < (zone.rows || 3); r++) {
-      for (let c = 0; c < (zone.cols || 4); c++) {
-        const key = `${r}_${c}`;
-        if (!plants[key]) {
-          savePlantToCell(zoneId, key, {
-            name: plant.name, emoji: plant.emoji, type: plant.type,
-            water: plant.water, notes: plant.notes,
-            plantedDate: document.getElementById('qaPlantDate').value || toISODate(new Date()),
-          });
-          placed = true;
-          break outer;
-        }
-      }
-    }
-    if (!placed) { showToast('Parcelle pleine ! Choisissez-en une autre.', 'warn'); return; }
-    showToast(`${plant.emoji} ${plant.name} planté·e !`);
-
-  } else if (currentQaType === 'note') {
-    const text = document.getElementById('qaNoteText').value.trim();
-    if (!text) { showToast('Entrez votre observation', 'warn'); return; }
-    journalEntries.unshift({
-      id: uid(), text,
-      tag: document.getElementById('qaNoteTag').value || '',
-      subject: document.getElementById('qaNoteSubject').value || '',
-      timestamp: Date.now(),
-    });
-    saveJournal();
-    document.getElementById('qaNoteText').value = '';
+  const activeTab = document.querySelector('[data-qa].active');
+  if (!activeTab) return;
+  const type = activeTab.dataset.qa;
+  if (type === 'task') {
+    const title = (document.querySelector('[data-draft="task-title"]').value || '').trim();
+    if (!title) { flash("Donnez d'abord un nom à la tâche"); return; }
+    const kind = document.querySelector('[data-draft="task-kind"]').value;
+    const date = document.querySelector('[data-draft="task-date"]').value || iso(new Date());
+    state.tasks = state.tasks || [];
+    state.tasks.push({ id:'t'+Date.now(), title, kind, date, done:false, plantId:null });
+    flash('Tâche ajoutée ✓');
+  } else if (type === 'plant') {
+    const plantId = document.querySelector('[data-draft="plant-id"]').value;
+    const bedId = document.querySelector('[data-draft="plant-bed"]').value;
+    const planted = document.querySelector('[data-draft="plant-date"]').value || iso(new Date());
+    const bed = (state.beds||[]).find(b => b.id === bedId);
+    if (!bed) { flash('Choisissez une parcelle'); return; }
+    const emptyIdx = (bed.cells||[]).findIndex(c => !c);
+    if (emptyIdx === -1) { flash('Parcelle pleine.'); return; }
+    bed.cells[emptyIdx] = { id:'c'+Date.now(), plant: plantId, planted, status:'healthy', notes:'' };
+    flash(`${plantById(plantId)?.name || plantId} ajoutée ✓`);
+  } else if (type === 'note') {
+    const text = (document.querySelector('[data-draft="note-text"]').value || '').trim();
+    if (!text) { flash("Écrivez une note d'abord"); return; }
+    const tag = document.querySelector('[data-draft="note-tag"]').value;
+    const subject = document.querySelector('[data-draft="note-subject"]').value || 'Général';
+    state.journal = state.journal || [];
+    state.journal.push({ id:'j'+Date.now(), date: iso(new Date()), subject, icon:'🌿', text, tags: tag ? [tag] : [] });
+    flash('Note enregistrée ✓');
   }
-
-  lsSet('draft:quickadd', null);
-  document.getElementById('qaDraft').style.display = 'none';
-  closeModal('quickaddBackdrop');
-  showToast(currentQaType === 'task' ? 'Tâche ajoutée !' : currentQaType === 'note' ? 'Note ajoutée !' : '');
-  if (currentView === 'dashboard') renderDashboard();
-  else if (currentView === 'journal') renderJournal();
-  else if (currentView === 'calendar') renderCalendar();
+  state.draft = null; saveState();
+  document.querySelectorAll('[data-draft]').forEach(el => { if (el.type !== 'date' && el.tagName !== 'SELECT') el.value = ''; });
+  closeModal('quickadd-backdrop');
+  const active = document.querySelector('.view.active');
+  if (active) setView(active.dataset.view);
 }
 
-function autosaveDraft() {
-  clearTimeout(draftTimer);
-  draftTimer = setTimeout(() => {
-    lsSet('draft:quickadd', {
-      type: currentQaType,
-      taskTitle: document.getElementById('qaTaskTitle').value,
-      noteText: document.getElementById('qaNoteText').value,
-    });
-    document.getElementById('qaDraft').style.display = 'inline-flex';
-  }, 500);
+/* ============================================================
+   ONBOARDING
+   ============================================================ */
+let onbStep = 1;
+function renderOnb() {
+  document.querySelectorAll('.onb-step').forEach(s => s.classList.toggle('active', +s.dataset.step === onbStep));
+  document.querySelectorAll('.onb-progress .pp').forEach((p, i) => p.classList.toggle('on', i < onbStep));
 }
 
-function loadDraft() {
-  const draft = lsGet('draft:quickadd');
-  if (!draft) return;
-  if (draft.taskTitle && currentQaType === 'task') {
-    document.getElementById('qaTaskTitle').value = draft.taskTitle;
-    document.getElementById('qaDraft').style.display = 'inline-flex';
+/* ============================================================
+   CONFIRM DIALOG
+   ============================================================ */
+let confirmCb = null;
+function confirmDialog({ title, msg, yesLabel = 'Oui, supprimer', onYes }) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-msg').textContent = msg;
+  document.getElementById('confirm-yes').textContent = yesLabel;
+  confirmCb = onYes;
+  openModal('confirm-backdrop');
+}
+
+/* ============================================================
+   MODAL HELPERS
+   ============================================================ */
+function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
+
+/* ============================================================
+   UTILITIES
+   ============================================================ */
+function iso(d) { const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`; }
+function addDays(d, n) { const r = new Date(d); r.setDate(r.getDate()+n); return r; }
+function parseISO(s) { if (!s) return new Date(); const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
+function formatDate(s) { try { return parseISO(s).toLocaleDateString('fr-FR', { month:'short', day:'numeric', year:'numeric' }); } catch { return s||'—'; } }
+function daysBetween(a, b) { return Math.round((b - a) / 86400000); }
+function clampInt(v, min, max, def) { const n = parseInt(v,10); if (isNaN(n)) return def; return Math.max(min, Math.min(max, n)); }
+function escapeHTML(s) { return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function capitalize(s) { return (s||'').charAt(0).toUpperCase() + (s||'').slice(1); }
+function seasonLabel(s) { return ({spring:'Printemps', summer:'Été', autumn:'Automne', winter:'Hiver'})[s] || capitalize(s); }
+
+function flash(msg) {
+  let el = document.getElementById('_toast');
+  if (!el) {
+    el = document.createElement('div'); el.id = '_toast';
+    el.style.cssText = 'position:fixed;left:50%;bottom:calc(var(--bottom-h) + 24px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:13px;font-weight:700;box-shadow:var(--shadow-lg);opacity:0;transition:transform .25s,opacity .25s;z-index:300;pointer-events:none;white-space:nowrap;';
+    document.body.appendChild(el);
   }
-  if (draft.noteText && currentQaType === 'note') {
-    document.getElementById('qaNoteText').value = draft.noteText;
-    document.getElementById('qaDraft').style.display = 'inline-flex';
-  }
+  el.textContent = msg;
+  requestAnimationFrame(() => { el.style.opacity = 1; el.style.transform = 'translate(-50%,0)'; });
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.opacity = 0; el.style.transform = 'translate(-50%,20px)'; }, 2400);
 }
 
 /* ============================================================
    ACCOUNT MODAL
    ============================================================ */
 function openAccountModal() {
-  const body = document.getElementById('accountBody');
-  if (currentUser) {
-    body.innerHTML = `
-      <div class="ac-profile" style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-        <div class="ava" style="width:56px;height:56px;font-size:24px;border-radius:50%;flex-shrink:0">${currentUser.displayName?.charAt(0).toUpperCase() || '?'}</div>
-        <div>
-          <div style="font-weight:700;font-size:16px">${esc(currentUser.displayName || 'Jardinier')}</div>
-          <div class="muted small">${esc(currentUser.email || '')}</div>
-        </div>
-      </div>
-      <div class="muted small" style="margin-bottom:16px">Données synchronisées via Firebase · ${Object.keys(zones).length} parcelle(s)</div>
-      <button class="btn danger" onclick="confirmSignOut()" style="width:100%">Se déconnecter</button>`;
-  } else {
-    body.innerHTML = `
-      <div class="ac-profile" style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-        <div class="ava" style="width:56px;height:56px;font-size:24px;border-radius:50%;flex-shrink:0">L</div>
-        <div>
-          <div style="font-weight:700;font-size:16px">Mode local</div>
-          <div class="muted small">Données sur cet appareil uniquement</div>
-        </div>
-      </div>
-      <div class="muted small" style="margin-bottom:16px">Connectez-vous pour synchroniser vos données sur tous vos appareils.</div>
-      <button class="btn primary" onclick="closeModal('accountBackdrop');lsSet('potager_localMode',false);showAuthScreen()" style="width:100%">Se connecter</button>`;
-  }
-  openModal('accountBackdrop');
-}
-
-function confirmSignOut() {
-  showConfirm('Se déconnecter ?', "Vous serez redirigé·e vers l'écran de connexion.", signOut);
+  updateAccountUI();
+  openModal('acc-backdrop');
 }
 
 /* ============================================================
-   MODAL SYSTEM
+   BOOT
    ============================================================ */
-function wireModalBackdrops() {
-  document.querySelectorAll('.modal-backdrop').forEach(bd => {
-    bd.addEventListener('click', e => { if (e.target === bd) closeModal(bd.id); });
+function boot() {
+  // Wire all nav
+  document.querySelectorAll('[data-nav]').forEach(b => b.addEventListener('click', () => setView(b.dataset.nav)));
+
+  // Wire topbar buttons
+  document.getElementById('topbar-search').addEventListener('click', () => setView('catalog'));
+  document.getElementById('topbar-bell').addEventListener('click', () => setView('reminders'));
+  document.getElementById('topbar-account').addEventListener('click', openAccountModal);
+  document.getElementById('account-chip-desktop').addEventListener('click', openAccountModal);
+
+  // Panel
+  document.getElementById('panel-close').addEventListener('click', closePanel);
+  document.getElementById('panel-backdrop').addEventListener('click', closePanel);
+
+  // Calendar nav
+  document.getElementById('cal-prev').addEventListener('click', () => { calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth()-1, 1); renderCalendar(); });
+  document.getElementById('cal-next').addEventListener('click', () => { calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth()+1, 1); renderCalendar(); });
+  document.getElementById('cal-today').addEventListener('click', () => { calMonth = new Date(); calMonth.setDate(1); renderCalendar(); });
+  document.querySelectorAll('#cal-filters .filter-chip').forEach(b => b.addEventListener('click', () => { calFilter = b.dataset.cf; renderCalendar(); }));
+
+  // Calendar swipe
+  let calTouchX = null;
+  document.getElementById('cal-grid').addEventListener('touchstart', e => { calTouchX = e.touches[0].clientX; }, { passive:true });
+  document.getElementById('cal-grid').addEventListener('touchend', e => {
+    if (calTouchX === null) return;
+    const dx = e.changedTouches[0].clientX - calTouchX;
+    if (Math.abs(dx) > 60) { calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth() + (dx<0?1:-1), 1); renderCalendar(); }
+    calTouchX = null;
+  }, { passive:true });
+
+  // Panel swipe to close
+  let panelTY = 0;
+  document.getElementById('plant-panel').addEventListener('touchstart', e => { panelTY = e.touches[0].clientY; }, { passive:true });
+  document.getElementById('plant-panel').addEventListener('touchend', e => { if (e.changedTouches[0].clientY - panelTY > 80) closePanel(); }, { passive:true });
+
+  // FAB
+  document.getElementById('fab').addEventListener('click', () => openQuickAdd('task'));
+
+  // Quick add
+  document.getElementById('qa-close').addEventListener('click', () => closeModal('quickadd-backdrop'));
+  document.getElementById('qa-cancel').addEventListener('click', () => closeModal('quickadd-backdrop'));
+  document.getElementById('qa-save').addEventListener('click', saveQuickAdd);
+  document.querySelectorAll('[data-qa]').forEach(b => b.addEventListener('click', () => setQAType(b.dataset.qa)));
+  document.getElementById('qa-clear-draft').addEventListener('click', () => {
+    state.draft = null; saveState();
+    document.querySelectorAll('[data-draft]').forEach(el => { if (el.type !== 'date' && el.tagName !== 'SELECT') el.value = ''; });
+    document.getElementById('qa-draft').style.display = 'none';
+    flash('Brouillon effacé');
   });
-}
 
-function openModal(id) {
-  document.getElementById(id)?.classList.add('open');
-}
+  // Auto-save draft
+  document.querySelectorAll('[data-draft]').forEach(el => {
+    el.addEventListener('input', () => {
+      clearTimeout(draftTimer);
+      draftTimer = setTimeout(() => {
+        const activeTab = document.querySelector('[data-qa].active');
+        if (!activeTab) return;
+        const type = activeTab.dataset.qa;
+        const fields = {};
+        document.querySelectorAll(`[data-qa-form="${type}"] [data-draft]`).forEach(n => { fields[n.dataset.draft] = n.value; });
+        state.draft = { type, fields, ts: Date.now() };
+        saveState();
+        document.getElementById('qa-draft').style.display = 'inline-flex';
+      }, 400);
+    });
+  });
 
-function closeModal(id) {
-  document.getElementById(id)?.classList.remove('open');
-}
+  // Journal
+  document.getElementById('new-note-btn').addEventListener('click', () => openQuickAdd('note'));
+  document.querySelectorAll('#journal-filters .filter-chip').forEach(b => b.addEventListener('click', () => { journalFilter = b.dataset.jf; renderJournal(); }));
 
-function showConfirm(title, msg, cb) {
-  document.getElementById('confirmTitle').textContent = title;
-  document.getElementById('confirmMsg').textContent = msg;
-  confirmCb = cb;
-  openModal('confirmBackdrop');
+  // Reminders
+  document.getElementById('new-reminder-btn').addEventListener('click', openReminderModal);
+  document.getElementById('reminder-modal-close').addEventListener('click', () => closeModal('reminder-modal-backdrop'));
+  document.getElementById('reminder-modal-cancel').addEventListener('click', () => closeModal('reminder-modal-backdrop'));
+  document.getElementById('reminder-modal-save').addEventListener('click', saveReminder);
+
+  // Garden
+  document.getElementById('rename-bed').addEventListener('click', () => { const bed = activeBed(); if (bed) openBedModal(bed.id); });
+  document.getElementById('delete-bed').addEventListener('click', deleteBed);
+  document.getElementById('add-bed-btn').addEventListener('click', addBed);
+  document.getElementById('empty-add-bed-btn').addEventListener('click', addBed);
+
+  // Bed modal
+  document.getElementById('bed-modal-close').addEventListener('click', () => closeModal('bed-modal-backdrop'));
+  document.getElementById('bed-modal-cancel').addEventListener('click', () => closeModal('bed-modal-backdrop'));
+
+  // Addbed backdrop
+  document.getElementById('addbed-close').addEventListener('click', () => closeModal('addbed-backdrop'));
+
+  // Catalog
+  document.getElementById('catalog-search').addEventListener('input', e => { catalogFilter.q = e.target.value; renderCatalog(); });
+
+  // Confirm
+  document.querySelectorAll('[data-confirm-no]').forEach(b => b.addEventListener('click', () => { confirmCb = null; closeModal('confirm-backdrop'); }));
+  document.getElementById('confirm-yes').addEventListener('click', () => { const cb = confirmCb; confirmCb = null; closeModal('confirm-backdrop'); if (cb) cb(); });
+
+  // Auth
+  document.getElementById('google-signin').addEventListener('click', handleGoogleSignIn);
+  document.getElementById('auth-skip').addEventListener('click', handleLocalMode);
+
+  // Account modal
+  document.getElementById('acc-close').addEventListener('click', () => closeModal('acc-backdrop'));
+  document.getElementById('acc-signout').addEventListener('click', () => {
+    confirmDialog({ title:'Se déconnecter ?', msg:'Vos données locales seront conservées.', yesLabel:'Se déconnecter', onYes: () => {
+      if (isFirebaseConfigured()) { try { firebase.auth().signOut(); } catch {} }
+      currentUser = null; isLocalMode = false;
+      closeModal('acc-backdrop');
+      openModal('auth-backdrop');
+    }});
+  });
+  document.getElementById('acc-export').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'potager-export.json'; a.click();
+    flash('Export téléchargé ✓');
+  });
+
+  // Click-outside to close modals
+  document.querySelectorAll('.modal-backdrop').forEach(bd => bd.addEventListener('click', e => { if (e.target === bd) { bd.classList.remove('open'); document.body.style.overflow = ''; } }));
+
+  // ESC
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-backdrop.open').forEach(m => { m.classList.remove('open'); document.body.style.overflow = ''; });
+      closePanel();
+    }
+  });
+
+  // Onboarding
+  document.querySelectorAll('[data-onb-next]').forEach(b => b.addEventListener('click', () => { onbStep = Math.min(3, onbStep+1); renderOnb(); }));
+  document.querySelectorAll('[data-onb-prev]').forEach(b => b.addEventListener('click', () => { onbStep = Math.max(1, onbStep-1); renderOnb(); }));
+  document.querySelectorAll('[data-onb-done]').forEach(b => b.addEventListener('click', () => {
+    const name = (document.getElementById('onb-bed-name').value||'').trim() || 'Parcelle du jardin';
+    const cols = clampInt(document.getElementById('onb-cols').value, 2, 8, 4);
+    const rows = clampInt(document.getElementById('onb-rows').value, 2, 8, 3);
+    if (state.beds.length) { state.beds[0].name = name; state.beds[0].cols = cols; state.beds[0].rows = rows; while (state.beds[0].cells.length < cols*rows) state.beds[0].cells.push(null); state.beds[0].cells.length = cols*rows; }
+    state.onboarded = true; saveState(); closeModal('onb-backdrop'); setView('garden');
+  }));
+
+  // Render initial view
+  renderDashboard();
+  renderGarden();
+
+  // Onboarding check
+  if (!state.onboarded) { onbStep = 1; renderOnb(); openModal('onb-backdrop'); }
 }
 
 /* ============================================================
-   TOAST
+   INIT — Firebase auth or direct boot
    ============================================================ */
-function showToast(msg, type = 'ok') {
-  if (!msg) return;
-  const container = document.getElementById('toastContainer');
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  toast.textContent = msg;
-  container.appendChild(toast);
-  requestAnimationFrame(() => toast.classList.add('show'));
-  setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
-}
+document.addEventListener('DOMContentLoaded', () => {
+  // Check Firebase
+  if (!isFirebaseConfigured()) {
+    document.getElementById('auth-firebase-warning').style.display = 'flex';
+  }
 
-/* ============================================================
-   UTILITIES
-   ============================================================ */
-function uid() {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-}
-
-function toISODate(d) {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-
-function formatDate(iso) {
-  if (!iso) return '—';
-  const d = new Date(iso + 'T12:00:00');
-  return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-}
-
-function formatShortDate(iso) {
-  if (!iso) return '';
-  const d = new Date(iso + 'T12:00:00');
-  const m = ['jan','fév','mar','avr','mai','juin','juil','août','sep','oct','nov','déc'];
-  return `${d.getDate()} ${m[d.getMonth()]}`;
-}
-
-function relativeTime(ts) {
-  const diff = Date.now() - ts;
-  if (diff < 60000) return "À l'instant";
-  if (diff < 3600000) return `Il y a ${Math.floor(diff / 60000)} min`;
-  if (diff < 86400000) return `Il y a ${Math.floor(diff / 3600000)} h`;
-  if (diff < 604800000) return `Il y a ${Math.floor(diff / 86400000)} jour(s)`;
-  return new Date(ts).toLocaleDateString('fr-FR');
-}
-
-function esc(str) {
-  if (str == null) return '';
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+  // Try Firebase auth
+  if (isFirebaseConfigured()) {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        currentUser = user;
+        enterApp();
+      } else {
+        // Show auth modal
+        openModal('auth-backdrop');
+      }
+    });
+  } else {
+    // No Firebase — show auth modal with local option
+    openModal('auth-backdrop');
+  }
+});
