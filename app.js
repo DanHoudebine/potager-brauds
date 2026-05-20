@@ -168,6 +168,7 @@ function translateAuthError(code) {
    NAV
    ============================================================ */
 function setView(name) {
+  closePanel();
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.dataset.view === name));
   document.querySelectorAll('[data-nav]').forEach(b => b.classList.toggle('active', b.dataset.nav === name));
   if (name === 'dashboard') renderDashboard();
@@ -988,10 +989,6 @@ function boot() {
   document.querySelectorAll('[data-confirm-no]').forEach(b => b.addEventListener('click', () => { confirmCb = null; closeModal('confirm-backdrop'); }));
   document.getElementById('confirm-yes').addEventListener('click', () => { const cb = confirmCb; confirmCb = null; closeModal('confirm-backdrop'); if (cb) cb(); });
 
-  // Auth
-  document.getElementById('google-signin').addEventListener('click', handleGoogleSignIn);
-  document.getElementById('auth-skip').addEventListener('click', handleLocalMode);
-
   // Account modal
   document.getElementById('acc-close').addEventListener('click', () => closeModal('acc-backdrop'));
   document.getElementById('acc-signout').addEventListener('click', () => {
@@ -1042,7 +1039,11 @@ function boot() {
    INIT — Firebase auth or direct boot
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
-  // Check Firebase
+  // Wire auth buttons immediately (before boot, before Firebase resolves)
+  document.getElementById('google-signin').addEventListener('click', handleGoogleSignIn);
+  document.getElementById('auth-skip').addEventListener('click', handleLocalMode);
+
+  // Firebase warning
   if (!isFirebaseConfigured()) {
     document.getElementById('auth-firebase-warning').style.display = 'flex';
   }
@@ -1054,7 +1055,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentUser = user;
         enterApp();
       } else {
-        // Show auth modal
         openModal('auth-backdrop');
       }
     });
