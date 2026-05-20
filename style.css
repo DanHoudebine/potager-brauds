@@ -136,7 +136,7 @@ a { color: var(--green-dark); }
 /* Sync badge */
 .sync-badge {
   display: inline-flex; align-items: center; gap: 5px;
-  font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
+  font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase;
   padding: 3px 7px; border-radius: 999px;
   background: var(--green-tint); color: var(--green-dark);
 }
@@ -190,7 +190,7 @@ a { color: var(--green-dark); }
 .tab {
   flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 3px; color: var(--ink-soft); font-size: 11px; font-weight: 700;
-  border-radius: 12px; padding: 4px 2px;
+  border-radius: 12px; padding: 4px 2px; min-height: 44px;
 }
 .tab .ti { font-size: 22px; }
 .tab.active { color: var(--green-dark); }
@@ -790,7 +790,7 @@ a { color: var(--green-dark); }
   .reminder .rs { font-size: 12px; }
 
   .bottom-nav { padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); }
-  .tab { gap: 2px; font-size: 10px; padding: 4px 0; }
+  .tab { gap: 2px; font-size: 11px; padding: 4px 0; }
   .tab .ti { font-size: 20px; }
   .tab-label { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 2px; }
 
@@ -814,7 +814,7 @@ a { color: var(--green-dark); }
   .main { padding: 10px 12px; padding-bottom: calc(var(--bottom-h) + 20px + env(safe-area-inset-bottom)); }
   .greet h1 { font-size: 20px; }
   .page-head h1 { font-size: 22px; }
-  .tab { font-size: 9px; }
+  .tab { font-size: 10px; }
   .tab .ti { font-size: 19px; }
   .stat .v { font-size: 20px; }
   .cal-day { min-height: 36px; font-size: 10px; }
