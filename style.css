@@ -75,9 +75,14 @@ a { color: var(--green-dark); }
 
 /* ============ App shell ============ */
 .app {
-  display: grid;
-  grid-template-columns: var(--sidebar-w) 1fr;
+  display: block;
   min-height: 100vh;
+}
+@media (min-width: 900px) {
+  .app {
+    display: grid;
+    grid-template-columns: 248px 1fr;
+  }
 }
 
 /* Sidebar */
