@@ -4,26 +4,323 @@
    CATALOG
    ============================================================ */
 const CATALOG = [
-  { id:'tomato',    name:'Tomate',     sci:'Solanum lycopersicum',   icon:'🍅', family:'Solanacées',      season:['spring','summer'],          difficulty:2, sow:'mars–avr',  plant:'mai',      harvest:'juil–sept', space:'60 cm',  companions:['Basilic','Carotte','Oignon'],       waterEvery:2, tip:'Pincez les gourmands chaque semaine. Tuteurez tôt.' },
-  { id:'basil',     name:'Basilic',    sci:'Ocimum basilicum',       icon:'🌿', family:'Lamiacées',       season:['spring','summer'],          difficulty:1, sow:'avr',       plant:'mai–juin', harvest:'juil–sept', space:'25 cm',  companions:['Tomate','Poivron'],                 waterEvery:2, tip:'Aime la chaleur. Pincez les fleurs pour relancer les feuilles.' },
-  { id:'lettuce',   name:'Laitue',     sci:'Lactuca sativa',         icon:'🥬', family:'Astéracées',      season:['spring','autumn'],          difficulty:1, sow:'mars–sept', plant:'avr–sept', harvest:'mai–oct',   space:'25 cm',  companions:['Carotte','Radis','Fraisier'],        waterEvery:2, tip:'Semez toutes les 3 semaines pour une récolte continue.' },
-  { id:'carrot',    name:'Carotte',    sci:'Daucus carota',          icon:'🥕', family:'Apiacées',        season:['spring','autumn'],          difficulty:2, sow:'mars–juil', plant:'—',        harvest:'juil–nov',  space:'5 cm',   companions:['Oignon','Laitue','Tomate'],          waterEvery:3, tip:'Éclaircissez à 5 cm dès que les plants font 5 cm.' },
-  { id:'zucchini',  name:'Courgette',  sci:'Cucurbita pepo',         icon:'🥒', family:'Cucurbitacées',   season:['summer'],                   difficulty:1, sow:'avr',       plant:'mai–juin', harvest:'juil–oct',  space:'90 cm',  companions:['Capucine','Maïs'],                  waterEvery:2, tip:'Récoltez petit pour une chair tendre et plus de fleurs.' },
-  { id:'leek',      name:'Poireau',    sci:'Allium ampeloprasum',    icon:'🧅', family:'Amaryllidacées',  season:['spring','autumn','winter'], difficulty:3, sow:'fév–avr',   plant:'mai–juil', harvest:'oct–mars',  space:'15 cm',  companions:['Carotte','Céleri'],                 waterEvery:4, tip:'Buttez la terre autour des pieds pour des fûts blancs.' },
-  { id:'strawberry',name:'Fraisier',   sci:'Fragaria × ananassa',   icon:'🍓', family:'Rosacées',        season:['spring','summer'],          difficulty:2, sow:'—',         plant:'mars–mai', harvest:'mai–juil',  space:'30 cm',  companions:['Laitue','Épinard','Bourrache'],      waterEvery:2, tip:'Paillez avec de la paille pour des fruits propres.' },
-  { id:'radish',    name:'Radis',      sci:'Raphanus sativus',       icon:'🟠', family:'Brassicacées',    season:['spring','autumn'],          difficulty:1, sow:'mars–sept', plant:'—',        harvest:'30 jours',  space:'5 cm',   companions:['Laitue','Carotte','Petit pois'],     waterEvery:2, tip:'La culture la plus rapide. Ne les laissez pas devenir creux.' },
-  { id:'pepper',    name:'Poivron',    sci:'Capsicum annuum',        icon:'🌶️', family:'Solanacées',      season:['summer'],                   difficulty:3, sow:'fév–mars',  plant:'mai–juin', harvest:'juil–oct',  space:'45 cm',  companions:['Basilic','Tomate'],                 waterEvery:2, tip:'Aime la chaleur. Ne plantez pas avant des nuits >12°.' },
-  { id:'eggplant',  name:'Aubergine',  sci:'Solanum melongena',      icon:'🍆', family:'Solanacées',      season:['summer'],                   difficulty:3, sow:'fév–mars',  plant:'mai–juin', harvest:'août–oct',  space:'60 cm',  companions:['Basilic','Poivron'],                waterEvery:2, tip:'Pincez la tête à 30 cm pour favoriser la ramification.' },
-  { id:'pea',       name:'Petit pois', sci:'Pisum sativum',          icon:'🟢', family:'Fabacées',        season:['spring'],                   difficulty:1, sow:'fév–avr',   plant:'—',        harvest:'mai–juil',  space:'10 cm',  companions:['Carotte','Radis'],                  waterEvery:3, tip:"Installez un treillis tôt ; les vrilles ont besoin de s'accrocher." },
-  { id:'pumpkin',   name:'Citrouille', sci:'Cucurbita pepo',         icon:'🎃', family:'Cucurbitacées',   season:['summer','autumn'],          difficulty:2, sow:'avr',       plant:'mai–juin', harvest:'sept–oct',  space:'120 cm', companions:['Maïs','Haricot'],                  waterEvery:3, tip:'Donnez-leur de la place — les tiges courent sur 3 m+.' }
+  // ── Légumes & Potager ─────────────────────────────────────────
+  { id:'tomato',          name:'Tomate',            sci:'Solanum lycopersicum',          icon:'🍅', category:'legume',         family:'Solanacées',     season:['spring','summer'],          difficulty:2, sow:'mars–avr',  plant:'mai',      harvest:'juil–sept', space:'60 cm',  companions:['Basilic','Carotte','Oignon'],         waterEvery:2,  tip:'Pincez les gourmands chaque semaine. Tuteurez tôt.' },
+  { id:'basil',           name:'Basilic',            sci:'Ocimum basilicum',              icon:'🌿', category:'herbe',          family:'Lamiacées',      season:['spring','summer'],          difficulty:1, sow:'avr',       plant:'mai–juin', harvest:'juil–sept', space:'25 cm',  companions:['Tomate','Poivron'],                   waterEvery:2,  tip:'Aime la chaleur. Pincez les fleurs pour relancer les feuilles.' },
+  { id:'lettuce',         name:'Laitue',             sci:'Lactuca sativa',                icon:'🥬', category:'legume',         family:'Astéracées',     season:['spring','autumn'],          difficulty:1, sow:'mars–sept', plant:'avr–sept', harvest:'mai–oct',   space:'25 cm',  companions:['Carotte','Radis','Fraisier'],          waterEvery:2,  tip:'Semez toutes les 3 semaines pour une récolte continue.' },
+  { id:'carrot',          name:'Carotte',            sci:'Daucus carota',                 icon:'🥕', category:'legume',         family:'Apiacées',       season:['spring','autumn'],          difficulty:2, sow:'mars–juil', plant:'—',        harvest:'juil–nov',  space:'5 cm',   companions:['Oignon','Laitue','Tomate'],            waterEvery:3,  tip:'Éclaircissez à 5 cm dès que les plants font 5 cm.' },
+  { id:'zucchini',        name:'Courgette',          sci:'Cucurbita pepo',                icon:'🥒', category:'legume',         family:'Cucurbitacées',  season:['summer'],                   difficulty:1, sow:'avr',       plant:'mai–juin', harvest:'juil–oct',  space:'90 cm',  companions:['Capucine','Maïs'],                    waterEvery:2,  tip:'Récoltez petit pour une chair tendre et plus de fleurs.' },
+  { id:'leek',            name:'Poireau',            sci:'Allium ampeloprasum',           icon:'🧅', category:'legume',         family:'Amaryllidacées', season:['spring','autumn','winter'], difficulty:3, sow:'fév–avr',   plant:'mai–juil', harvest:'oct–mars',  space:'15 cm',  companions:['Carotte','Céleri'],                    waterEvery:4,  tip:'Buttez la terre autour des pieds pour des fûts blancs.' },
+  { id:'strawberry',      name:'Fraisier',           sci:'Fragaria × ananassa',          icon:'🍓', category:'fruit',          family:'Rosacées',       season:['spring','summer'],          difficulty:2, sow:'—',         plant:'mars–mai', harvest:'mai–juil',  space:'30 cm',  companions:['Laitue','Épinard','Bourrache'],        waterEvery:2,  tip:'Paillez avec de la paille pour des fruits propres.' },
+  { id:'radish',          name:'Radis',              sci:'Raphanus sativus',              icon:'🟠', category:'legume',         family:'Brassicacées',   season:['spring','autumn'],          difficulty:1, sow:'mars–sept', plant:'—',        harvest:'30 jours',  space:'5 cm',   companions:['Laitue','Carotte','Petit pois'],       waterEvery:2,  tip:'La culture la plus rapide. Ne les laissez pas devenir creux.' },
+  { id:'pepper',          name:'Poivron',            sci:'Capsicum annuum',               icon:'🌶️', category:'legume',         family:'Solanacées',     season:['summer'],                   difficulty:3, sow:'fév–mars',  plant:'mai–juin', harvest:'juil–oct',  space:'45 cm',  companions:['Basilic','Tomate'],                    waterEvery:2,  tip:'Aime la chaleur. Ne plantez pas avant des nuits >12°.' },
+  { id:'eggplant',        name:'Aubergine',          sci:'Solanum melongena',             icon:'🍆', category:'legume',         family:'Solanacées',     season:['summer'],                   difficulty:3, sow:'fév–mars',  plant:'mai–juin', harvest:'août–oct',  space:'60 cm',  companions:['Basilic','Poivron'],                   waterEvery:2,  tip:'Pincez la tête à 30 cm pour favoriser la ramification.' },
+  { id:'pea',             name:'Petit pois',         sci:'Pisum sativum',                 icon:'🟢', category:'legume',         family:'Fabacées',       season:['spring'],                   difficulty:1, sow:'fév–avr',   plant:'—',        harvest:'mai–juil',  space:'10 cm',  companions:['Carotte','Radis'],                     waterEvery:3,  tip:"Installez un treillis tôt ; les vrilles ont besoin de s'accrocher." },
+  { id:'pumpkin',         name:'Citrouille',         sci:'Cucurbita pepo',                icon:'🎃', category:'legume',         family:'Cucurbitacées',  season:['summer','autumn'],          difficulty:2, sow:'avr',       plant:'mai–juin', harvest:'sept–oct',  space:'120 cm', companions:['Maïs','Haricot'],                     waterEvery:3,  tip:'Donnez-leur de la place — les tiges courent sur 3 m+.' },
+  // ── Nouvelles cultures maraîchères ────────────────────────────
+  { id:'squash-spaghetti',name:'Courge spaghetti',   sci:'Cucurbita pepo',                icon:'🌕', category:'legume',         family:'Cucurbitacées',  season:['summer','autumn'],          difficulty:1, sow:'avr–mai',   plant:'mai–juin', harvest:'sept–oct',  space:'100 cm', companions:['Maïs','Haricot'],                     waterEvery:3,  tip:"Laissez mûrir jusqu'à ce que la peau soit dorée et dure avant de récolter." },
+  { id:'butternut',       name:'Courge butternut',   sci:'Cucurbita moschata',            icon:'🟤', category:'legume',         family:'Cucurbitacées',  season:['summer','autumn'],          difficulty:1, sow:'avr–mai',   plant:'mai–juin', harvest:'sept–oct',  space:'100 cm', companions:['Maïs','Capucine'],                    waterEvery:3,  tip:'Récoltez quand le pédoncule commence à se liéger et à sécher.' },
+  { id:'pumpkin-marron',  name:'Courge petit marron',sci:'Cucurbita maxima',              icon:'🌰', category:'legume',         family:'Cucurbitacées',  season:['summer','autumn'],          difficulty:2, sow:'avr–mai',   plant:'mai–juin', harvest:'sept–oct',  space:'100 cm', companions:['Maïs','Haricot'],                     waterEvery:3,  tip:'Excellente courge de conservation. Gardez au frais et au sec après récolte.' },
+  { id:'chili',           name:'Piment',             sci:'Capsicum frutescens',           icon:'🌶️', category:'legume',         family:'Solanacées',     season:['summer'],                   difficulty:2, sow:'fév–mars',  plant:'mai–juin', harvest:'juil–oct',  space:'40 cm',  companions:['Tomate','Basilic'],                    waterEvery:2,  tip:'Plus le sol est sec et stressé, plus le piment sera fort.' },
+  { id:'sweet-potato',    name:'Patate douce',       sci:'Ipomoea batatas',               icon:'🍠', category:'legume',         family:'Convolvulacées', season:['summer'],                   difficulty:3, sow:'—',         plant:'mai–juin', harvest:'sept–oct',  space:'40 cm',  companions:['Courge','Maïs'],                       waterEvery:3,  tip:'Plantez en butées en sol léger et chaud. Récoltez avant les premiers gels.' },
+  { id:'gherkin',         name:'Cornichon',          sci:'Cucumis sativus',               icon:'🥒', category:'legume',         family:'Cucurbitacées',  season:['summer'],                   difficulty:1, sow:'mai',       plant:'mai–juin', harvest:'juil–sept', space:'50 cm',  companions:['Haricot','Radis','Laitue'],            waterEvery:2,  tip:'Récoltez souvent à 5–7 cm de long pour maintenir la production.' },
+  { id:'red-cabbage',     name:'Chou rouge',         sci:'Brassica oleracea capitata',    icon:'🔴', category:'legume',         family:'Brassicacées',   season:['spring','autumn'],          difficulty:2, sow:'mars–avr',  plant:'mai–juin', harvest:'août–nov',  space:'50 cm',  companions:['Aneth','Camomille'],                   waterEvery:3,  tip:'Se conserve plusieurs mois en cave. Surveiller la piéride du chou.' },
+  { id:'cabbage',         name:'Chou pommé',         sci:'Brassica oleracea capitata',    icon:'🥬', category:'legume',         family:'Brassicacées',   season:['spring','autumn','winter'], difficulty:2, sow:'mars–avr',  plant:'mai–juil', harvest:'sept–mars', space:'50 cm',  companions:['Aneth','Céleri'],                      waterEvery:3,  tip:'Binez souvent et buttez les pieds pour une bonne tenue des pommes.' },
+  { id:'beans',           name:'Haricots',           sci:'Phaseolus vulgaris',            icon:'🫘', category:'legume',         family:'Fabacées',       season:['summer'],                   difficulty:1, sow:'mai–juin',  plant:'—',        harvest:'juil–sept', space:'15 cm',  companions:['Maïs','Courge','Carotte'],             waterEvery:2,  tip:"N'arrosez pas les fleurs pour éviter la chute. Récoltez régulièrement." },
+  { id:'watermelon',      name:'Pastèque',           sci:'Citrullus lanatus',             icon:'🍉', category:'fruit',          family:'Cucurbitacées',  season:['summer'],                   difficulty:3, sow:'avr–mai',   plant:'mai–juin', harvest:'août–sept', space:'150 cm', companions:['Radis','Laitue'],                     waterEvery:3,  tip:"Sol chaud et bien drainé. Tapez le fruit : un son creux indique la maturité." },
+  { id:'melon',           name:'Melon',              sci:'Cucumis melo',                  icon:'🍈', category:'fruit',          family:'Cucurbitacées',  season:['summer'],                   difficulty:3, sow:'avr',       plant:'mai–juin', harvest:'juil–sept', space:'100 cm', companions:['Radis','Maïs'],                       waterEvery:2,  tip:"Pincez la tige principale après la 4ᵉ feuille. Réduisez l'arrosage à maturité." },
+  // ── Arbres fruitiers ──────────────────────────────────────────
+  { id:'mirabelle',       name:'Mirabelle',          sci:'Prunus domestica syriaca',      icon:'🟡', category:'arbre-fruitier', family:'Rosacées',       season:['summer'],                   difficulty:1, sow:'—',         plant:'nov–mars', harvest:'juil–août', space:'4 m',    companions:['Reine Claude','Prunellier'],           waterEvery:7,  tip:'Taille en gobelet. Récolte à la main dès que les fruits se détachent facilement.' },
+  { id:'reine-claude',    name:'Reine Claude',       sci:'Prunus domestica',              icon:'🍏', category:'arbre-fruitier', family:'Rosacées',       season:['summer'],                   difficulty:2, sow:'—',         plant:'nov–mars', harvest:'août–sept', space:'5 m',    companions:['Mirabelle','Prunellier'],              waterEvery:7,  tip:'Préfère un sol profond et bien drainé. Taille minimale pour conserver la saveur.' },
+  { id:'quetsche',        name:'Quetsche (Coutch)',  sci:'Prunus domestica',              icon:'🍇', category:'arbre-fruitier', family:'Rosacées',       season:['summer','autumn'],          difficulty:1, sow:'—',         plant:'nov–mars', harvest:'août–oct',  space:'4–5 m',  companions:['Mirabelle','Reine Claude'],            waterEvery:7,  tip:'Variété rustique et très productive. Excellente pour confitures et eau-de-vie.' },
+  { id:'apple',           name:'Pomme',              sci:'Malus domestica',               icon:'🍎', category:'arbre-fruitier', family:'Rosacées',       season:['autumn'],                   difficulty:2, sow:'—',         plant:'nov–mars', harvest:'août–nov',  space:'5–8 m',  companions:['Capucine','Ciboulette','Pissenlit'],   waterEvery:10, tip:'Taille en hiver dormant. Traitez à la bouillie bordelaise avant le débourrement.' },
+  { id:'pear',            name:'Poire',              sci:'Pyrus communis',                icon:'🍐', category:'arbre-fruitier', family:'Rosacées',       season:['autumn'],                   difficulty:2, sow:'—',         plant:'nov–mars', harvest:'août–oct',  space:'5–8 m',  companions:['Ail','Ciboulette'],                    waterEvery:10, tip:'Sensible au feu bactérien. Taille en palmette pour de bonnes récoltes.' },
+  { id:'cherry',          name:'Cerise',             sci:'Prunus avium',                  icon:'🍒', category:'arbre-fruitier', family:'Rosacées',       season:['summer'],                   difficulty:2, sow:'—',         plant:'nov–mars', harvest:'juin–juil', space:'8 m',    companions:['Ciboulette','Pissenlit'],              waterEvery:7,  tip:'Couvrez d\'un filet avant maturité pour protéger des oiseaux.' },
+  { id:'peach',           name:'Pêche',              sci:'Prunus persica',                icon:'🍑', category:'arbre-fruitier', family:'Rosacées',       season:['summer'],                   difficulty:3, sow:'—',         plant:'nov–mars', harvest:'juil–sept', space:'4–5 m',  companions:['Ail','Basilic'],                       waterEvery:5,  tip:'Très sensible à la cloque. Traitement cuivre obligatoire au gonflement des bourgeons.' },
+  { id:'nectarine',       name:'Nectarine',          sci:'Prunus persica var. nucipersica',icon:'🍑', category:'arbre-fruitier', family:'Rosacées',      season:['summer'],                   difficulty:3, sow:'—',         plant:'nov–mars', harvest:'juil–sept', space:'4–5 m',  companions:['Ail','Basilic'],                       waterEvery:5,  tip:'Même sensibilité à la cloque que le pêcher. Traitez dès le gonflement des bourgeons.' },
+  { id:'apricot',         name:'Abricot',            sci:'Prunus armeniaca',              icon:'🍊', category:'arbre-fruitier', family:'Rosacées',       season:['summer'],                   difficulty:3, sow:'—',         plant:'nov–mars', harvest:'juin–août', space:'5 m',    companions:['Lavande','Ail'],                       waterEvery:7,  tip:'Fleurit tôt — protégez à la floraison contre les gelées tardives. Sol calcaire apprécié.' },
 ];
+
+/* ============================================================
+   MILESTONES (système de progression débutant)
+   ============================================================ */
+const MILESTONES = [
+  { id:'first_plant',  label:'Première plante',    icon:'🌱', xp:15,  req: s => s.beds.flatMap(b=>b.cells||[]).filter(Boolean).length >= 1 },
+  { id:'first_task',   label:'À l\'action !',       icon:'✅', xp:10,  req: s => (s.tasks||[]).some(t=>t.done) },
+  { id:'first_note',   label:'Observateur',          icon:'📝', xp:10,  req: s => (s.journal||[]).length >= 1 },
+  { id:'plants_3',     label:'Mini jardin',          icon:'🌼', xp:20,  req: s => s.beds.flatMap(b=>b.cells||[]).filter(Boolean).length >= 3 },
+  { id:'diversity_5',  label:'Diversité',            icon:'🌈', xp:25,  req: s => new Set(s.beds.flatMap(b=>b.cells||[]).filter(Boolean).map(c=>c.plant)).size >= 5 },
+  { id:'xp_100',       label:'Curieux',              icon:'⭐', xp:0,   req: s => (s.profile?.xp||0) >= 100 },
+  { id:'xp_300',       label:'Main verte',           icon:'🌿', xp:0,   req: s => (s.profile?.xp||0) >= 300 },
+  { id:'streak_7',     label:'Régularité',           icon:'🔥', xp:20,  req: s => (s.streak||0) >= 7 },
+  { id:'guide_done',   label:'Bon élève',            icon:'📚', xp:30,  req: s => (s.profile?.guideSeen||[]).length >= 5 },
+  { id:'trees_planted',label:'Arboriculteur',        icon:'🌳', xp:20,  req: s => s.beds.flatMap(b=>b.cells||[]).filter(Boolean).some(c => { const p = CATALOG.find(x=>x.id===c.plant); return p?.category==='arbre-fruitier'; }) },
+];
+
+const XP_EVENTS = { task_done:5, plant_added:10, journal_entry:8, harvest_done:15, guide_read:5 };
+
+function awardXP(event) {
+  if (!state.profile || state.profile.level !== 'beginner') return;
+  const amount = XP_EVENTS[event] || 0;
+  if (!amount) return;
+  state.profile.xp = (state.profile.xp || 0) + amount;
+  state.profile.stars = Math.floor(state.profile.xp / 100);
+  checkMilestones();
+  saveState();
+  flash(`+${amount} XP ⭐`);
+}
+
+function checkMilestones() {
+  if (!state.profile || state.profile.level !== 'beginner') return;
+  const done = new Set(state.profile.milestones || []);
+  let gained = false;
+  MILESTONES.forEach(m => {
+    if (!done.has(m.id) && m.req(state)) {
+      state.profile.milestones = state.profile.milestones || [];
+      state.profile.milestones.push(m.id);
+      if (m.xp) { state.profile.xp = (state.profile.xp || 0) + m.xp; state.profile.stars = Math.floor(state.profile.xp / 100); }
+      setTimeout(() => flash(`${m.icon} Défi débloqué : ${m.label} !`), gained ? 2500 : 500);
+      gained = true;
+    }
+  });
+}
+
+/* ============================================================
+   GUIDE DU POTAGER
+   ============================================================ */
+const GUIDE_SECTIONS = [
+  { id:'soil',     icon:'🌍', title:'Préparer le sol',        color:'earth',
+    tips:["Amendez avec du compost mûr en automne (3–5 cm en surface).", "pH idéal : 6.0–7.0 pour la plupart des légumes.", "Évitez de trop travailler le sol — les micro-organismes sont vos alliés.", "Paillez pour conserver l'humidité et limiter les mauvaises herbes."] },
+  { id:'sow',      icon:'🌱', title:'Semer & Planter',        color:'green',
+    tips:["Profondeur de semis = 3× le diamètre de la graine.", "Arrosez avant de semer, pas juste après — cela évite de déplacer les graines.", "Repiquez par temps nuageux ou en soirée pour moins de stress.", "Respectez les espacements indiqués dans le catalogue."] },
+  { id:'water',    icon:'💧', title:'Arroser efficacement',   color:'green',
+    tips:["Arrosez au pied, jamais sur le feuillage — réduit les maladies foliaires.", "Tôt le matin ou en soirée pour limiter l'évaporation.", "Un arrosage profond 2×/semaine vaut mieux que 7× superficiel.", "Paillez : cela réduit les besoins en eau de 30 à 50 %."] },
+  { id:'pests',    icon:'🐛', title:'Maladies & Ravageurs',   color:'urgent',
+    tips:["Pucerons : savon noir dilué (10 ml/L), 2 traitements à 3 jours d'intervalle.", "Mildiou : bouillie bordelaise préventive, éviter l'arrosage foliaire.", "Limaces : cendres de bois autour des plants, pièges à bière.", "Observation hebdomadaire = détection précoce = intervention facile."] },
+  { id:'harvest',  icon:'🥕', title:'Récolter au bon moment',  color:'earth',
+    tips:["Tomate : récolte ferme, colorée mais encore légèrement résistante.", "Courgette : à 15–20 cm pour la tendreté. Ne laissez pas grossir.", "Herbes aromatiques : prélevez au max 1/3 du plant pour ne pas l'affaiblir.", "Haricots : récoltez souvent — plus vous récoltez, plus ça produit."] },
+  { id:'maintain', icon:'✂️', title:'Entretien régulier',      color:'green',
+    tips:["Pincez les gourmands des tomates chaque semaine.", "Buttez les poireaux et pommes de terre pour les blanchir.", "Palissez cucurbitacées et haricots grimpants sur des treillis.", "Désherber avant que les mauvaises herbes fleurissent."] },
+  { id:'trees',    icon:'🌳', title:'Arbres fruitiers — Bases',color:'earth',
+    tips:["Plantez en dormance (nov–mars) en sol humide mais non gelé.", "Taille de formation les 3 premières années : choisissez 3–5 branches charpentières.", "Traitement cuivre (bouillie bordelaise) avant le débourrement de printemps.", "Greffage en écusson : juillet–août, sur porte-greffe vigoureux."] },
+];
+
+function renderGuide() {
+  const el = document.getElementById('guide-content');
+  if (!el) return;
+  const isBegin = state.profile && state.profile.level === 'beginner';
+  const seen = new Set(state.profile?.guideSeen || []);
+  el.innerHTML = GUIDE_SECTIONS.map(s => `
+    <div class="guide-card card mb-3" data-gid="${s.id}">
+      <div class="guide-head">
+        <div class="guide-icon guide-icon-${s.color}">${s.icon}</div>
+        <div class="guide-meta">
+          <div class="guide-htitle">${escapeHTML(s.title)}</div>
+          <div class="xsmall muted">${s.tips.length} conseils${seen.has(s.id) ? ' · <span style="color:var(--green-dark)">✓ Lu</span>' : ''}</div>
+        </div>
+        <div class="guide-chevron">›</div>
+      </div>
+      <div class="guide-body" style="display:none">
+        <ul class="guide-list">${s.tips.map(t => `<li>${escapeHTML(t)}</li>`).join('')}</ul>
+        ${isBegin && !seen.has(s.id) ? `<button class="btn primary sm mt-3" data-guide-read="${s.id}">✓ Marquer comme lu (+5 XP)</button>` : ''}
+      </div>
+    </div>`).join('');
+
+  el.querySelectorAll('.guide-card').forEach(card => {
+    card.querySelector('.guide-head').addEventListener('click', () => {
+      const body = card.querySelector('.guide-body');
+      const open = body.style.display !== 'none';
+      body.style.display = open ? 'none' : 'block';
+      card.querySelector('.guide-chevron').textContent = open ? '›' : '∨';
+    });
+  });
+  el.querySelectorAll('[data-guide-read]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.guideRead;
+      if (!state.profile.guideSeen) state.profile.guideSeen = [];
+      if (!state.profile.guideSeen.includes(id)) {
+        state.profile.guideSeen.push(id);
+        awardXP('guide_read');
+        checkMilestones();
+        saveState();
+      }
+      btn.textContent = '✓ Lu'; btn.disabled = true;
+      const meta = btn.closest('.guide-card').querySelector('.xsmall.muted');
+      if (meta) meta.innerHTML = `${GUIDE_SECTIONS.find(s=>s.id===id)?.tips.length||0} conseils · <span style="color:var(--green-dark)">✓ Lu</span>`;
+    });
+  });
+}
+
+/* ============================================================
+   TUTORIEL
+   ============================================================ */
+const TUTORIAL_STEPS = [
+  { sel:'.greet',         title:'Votre tableau de bord',      text:'Vue quotidienne : alertes sur vos plantes, tâches du jour, météo et semaine en un coup d\'œil.' },
+  { sel:'#alerts-list',   title:'Alertes instantanées',       text:'Vos plantes qui ont besoin d\'attention apparaissent ici en priorité. Couleur rouge = urgent.' },
+  { sel:'.stats',         title:'Vos statistiques',           text:'Plantes en terre, arrosages à faire aujourd\'hui, récoltes en attente et votre série de jours actifs.' },
+  { sel:'.fab',           title:'Ajout rapide ⚡',             text:'Le bouton + vous permet d\'ajouter une tâche, une plante ou une note en 3 secondes depuis n\'importe quelle page.' },
+  { sel:'nav.bottom-nav,.sidebar', title:'Navigation',         text:'Accédez à votre jardin, catalogue, guide, calendrier et journal. La serre et le jardin sont bien séparés dans "Jardin".' },
+  { sel:'[data-view="guide"].view', title:'Le Guide du potager', text:'Le guide complet du jardinage — sol, semis, arrosage, ravageurs, récolte et arboriculture — accessible à tout moment.' },
+];
+
+let tutStep = 0;
+
+function startTutorial() {
+  setView('dashboard');
+  tutStep = 0;
+  const ov = document.getElementById('tutorial-overlay');
+  ov.style.display = 'flex';
+  renderTutStep();
+}
+
+function renderTutStep() {
+  const steps = TUTORIAL_STEPS;
+  const s = steps[tutStep];
+  if (!s) { endTutorial(); return; }
+  document.getElementById('tut-num').textContent = tutStep + 1;
+  document.getElementById('tut-total').textContent = steps.length;
+  document.getElementById('tut-title').textContent = s.title;
+  document.getElementById('tut-text').textContent = s.text;
+  document.getElementById('tut-next').textContent = tutStep < steps.length - 1 ? 'Suivant →' : 'Terminer ✓';
+  const hl = document.getElementById('tut-highlight');
+  const card = document.getElementById('tut-card');
+  const sels = s.sel.split(',').map(x=>x.trim());
+  let target = null;
+  for (const sel of sels) {
+    const el = document.querySelector(sel);
+    if (el) { const r = el.getBoundingClientRect(); if (r.width > 0 && r.height > 0) { target = el; break; } }
+  }
+  if (target) {
+    const r = target.getBoundingClientRect(); const pad = 8;
+    hl.style.cssText = `display:block;top:${r.top - pad + window.scrollY}px;left:${r.left - pad}px;width:${r.width + pad*2}px;height:${r.height + pad*2}px`;
+    const spaceBelow = window.innerHeight - r.bottom;
+    if (spaceBelow > 200) { card.style.top = (r.bottom + 20) + 'px'; card.style.bottom = ''; }
+    else { card.style.bottom = (window.innerHeight - r.top + 16) + 'px'; card.style.top = ''; }
+    card.style.left = '50%'; card.style.transform = 'translateX(-50%)'; card.style.position = 'fixed';
+  } else {
+    hl.style.display = 'none';
+    card.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%)';
+  }
+}
+
+function nextTutStep() { tutStep++; if (tutStep >= TUTORIAL_STEPS.length) { endTutorial(); return; } renderTutStep(); }
+
+function endTutorial() {
+  document.getElementById('tutorial-overlay').style.display = 'none';
+  document.getElementById('tut-highlight').style.display = 'none';
+  if (state.profile) { state.profile.tutorialDone = true; saveState(); }
+  flash('Tutoriel terminé — bonne culture ! 🌱');
+}
+
+/* ============================================================
+   QUESTIONNAIRE D'ACCUEIL
+   ============================================================ */
+let surveyData = {};
+
+function renderSurveyStep(step) {
+  document.querySelectorAll('.sv-step').forEach(s => s.classList.toggle('active', +s.dataset.step === step));
+  document.querySelectorAll('.sv-dot').forEach((d, i) => d.classList.toggle('on', i < step));
+}
+
+function selectExperience(level) {
+  surveyData.experience = level;
+  surveyData.level = level === 'lots' ? 'expert' : 'beginner';
+  renderSurveyStep(3);
+}
+
+function selectSpaceType(type) {
+  surveyData.spaceType = type;
+  buildSurveyResult();
+  renderSurveyStep(4);
+}
+
+function buildSurveyResult() {
+  const isBegin = surveyData.level === 'beginner';
+  const spaceLabel = { jardin:'jardin', serre:'serre', both:'jardin et serre' }[surveyData.spaceType] || '';
+  const el = document.getElementById('sv-result-step');
+  if (isBegin) {
+    el.innerHTML = `
+      <div class="center mb-3"><div style="font-size:60px">🎉</div></div>
+      <h2 class="sv-q">Parfait, on s'adapte à vous !</h2>
+      <div class="card mt-3" style="background:var(--green-tint);border:none">
+        <div class="row gap-2">
+          <span style="font-size:28px">🌱</span>
+          <div>
+            <div style="font-weight:800;margin-bottom:4px">Mode Débutant activé</div>
+            <div class="small muted">Guide pas-à-pas · Système d'XP et d'étoiles · Conseils contextuels</div>
+          </div>
+        </div>
+      </div>
+      <div class="card mt-3" style="background:var(--earth-tint);border:none">
+        <div class="row gap-2">
+          <span style="font-size:28px">📚</span>
+          <div class="small">Le <b>Guide du Potager</b> est disponible à tout moment dans le menu — il couvre le sol, les semis, l'arrosage, les ravageurs, la récolte et les fruitiers.</div>
+        </div>
+      </div>
+      <div class="card mt-3" style="border:1px solid var(--line)">
+        <div class="small muted">Espace configuré : <b>${spaceLabel}</b></div>
+      </div>
+      <button class="btn primary sv-cta mt-4" onclick="finishSurvey()">Lancer l'application →</button>`;
+  } else {
+    el.innerHTML = `
+      <div class="center mb-3"><div style="font-size:60px">🏆</div></div>
+      <h2 class="sv-q">Bienvenue, expert !</h2>
+      <div class="card mt-3" style="background:var(--green-tint);border:none">
+        <div class="row gap-2">
+          <span style="font-size:28px">🌿</span>
+          <div>
+            <div style="font-weight:800;margin-bottom:4px">Accès complet déverrouillé</div>
+            <div class="small muted">32 plantes · Catalogue complet · Toutes les fonctionnalités disponibles</div>
+          </div>
+        </div>
+      </div>
+      <div class="card mt-3" style="border:1px solid var(--line)">
+        <div class="small muted">Le Guide reste accessible si besoin depuis le menu 📚<br>Espace : <b>${spaceLabel}</b></div>
+      </div>
+      <button class="btn primary sv-cta mt-4" onclick="finishSurvey()">Accéder à l'application →</button>`;
+  }
+}
+
+function finishSurvey() {
+  state.profile = state.profile || {};
+  Object.assign(state.profile, {
+    surveyed: true,
+    level: surveyData.level,
+    experience: surveyData.experience,
+    spaceType: surveyData.spaceType,
+    xp: 0, stars: 0, milestones: [], tutorialDone: false, guideSeen: []
+  });
+  // Ajuster les parcelles selon l'espace
+  if (surveyData.spaceType === 'jardin') {
+    state.beds = state.beds.filter(b => (b.type||'jardin') === 'jardin');
+  } else if (surveyData.spaceType === 'serre') {
+    state.beds = state.beds.filter(b => b.type === 'serre');
+    if (!state.beds.length) state.beds = [{ id:'b1', name:'Serre', type:'serre', cols:3, rows:2, cells:[null,null,null,null,null,null] }];
+    state.activeBedId = state.beds[0].id;
+  }
+  state.onboarded = true;
+  saveState();
+  closeModal('survey-backdrop');
+  setTimeout(() => startTutorial(), 400);
+}
 
 /* ============================================================
    DEFAULT STATE
    ============================================================ */
 const DEFAULT_STATE = {
+  profile: {
+    surveyed: false,
+    level: null,         // 'beginner' | 'expert'
+    experience: null,    // 'none' | 'some' | 'lots'
+    spaceType: null,     // 'jardin' | 'serre' | 'both'
+    xp: 0,
+    stars: 0,
+    milestones: [],
+    tutorialDone: false,
+    guideSeen: [],
+  },
   beds: [
-    { id:'b1', name:'Parcelle du jardin', cols:4, rows:3, cells:[
+    { id:'b1', name:'Jardin', type:'jardin', cols:4, rows:3, cells:[
       { id:'c1', plant:'tomato',     planted:'2026-05-01', status:'healthy', notes:'Variété : San Marzano. Tuteurée.' },
       { id:'c2', plant:'tomato',     planted:'2026-05-01', status:'warn',    notes:"Feuilles enroulées, manque d'eau peut-être." },
       { id:'c3', plant:'basil',      planted:'2026-05-10', status:'healthy', notes:'Plantée à côté des tomates.' },
@@ -36,7 +333,7 @@ const DEFAULT_STATE = {
       null,
       { id:'c9', plant:'radish',     planted:'2026-05-10', status:'healthy', notes:'Prêts dans ~2 semaines.' }
     ]},
-    { id:'b2', name:'Serre', cols:3, rows:2, cells:[
+    { id:'b2', name:'Serre', type:'serre', cols:3, rows:2, cells:[
       { id:'g1', plant:'pepper',   planted:'2026-04-25', status:'healthy', notes:'' },
       { id:'g2', plant:'eggplant', planted:'2026-04-25', status:'warn',    notes:'Démarrage lent, surveiller les températures nocturnes.' },
       { id:'g3', plant:'pepper',   planted:'2026-04-25', status:'healthy', notes:'' },
@@ -65,8 +362,13 @@ const DEFAULT_STATE = {
     { id:'r3', title:'Semer la laitue',          schedule:'Toutes les 3 semaines', icon:'🌱', on:true },
     { id:'r4', title:'Apport potasse fraisiers', schedule:'Toutes les 2 semaines', icon:'🍓', on:false }
   ],
-  prefs: { digest:true, weather:true, quiet:true, pushAsked:false, pushOn:false },
+  prefs: {
+    digest:true, weather:true, quiet:true, pushAsked:false, pushOn:false,
+    alertMildiou:true, alertTraitement:true, alertParasite:true,
+    alertTaille:true, alertTraitementArbo:true, alertGreffage:true
+  },
   onboarded: false,
+  gardenTab: 'all',
   draft: null,
   streak: 7
 };
@@ -78,7 +380,12 @@ function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return JSON.parse(JSON.stringify(DEFAULT_STATE));
-    return { ...JSON.parse(JSON.stringify(DEFAULT_STATE)), ...JSON.parse(raw) };
+    const def = JSON.parse(JSON.stringify(DEFAULT_STATE));
+    const saved = JSON.parse(raw);
+    const merged = { ...def, ...saved };
+    merged.prefs   = { ...def.prefs,   ...(saved.prefs   || {}) };
+    merged.profile = { ...def.profile, ...(saved.profile || {}) };
+    return merged;
   } catch { return JSON.parse(JSON.stringify(DEFAULT_STATE)); }
 }
 function saveState() {
@@ -172,10 +479,11 @@ function setView(name) {
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.dataset.view === name));
   document.querySelectorAll('[data-nav]').forEach(b => b.classList.toggle('active', b.dataset.nav === name));
   if (name === 'dashboard') renderDashboard();
-  if (name === 'garden') renderGarden();
-  if (name === 'catalog') renderCatalog();
-  if (name === 'calendar') renderCalendar();
-  if (name === 'journal') renderJournal();
+  if (name === 'garden')    renderGarden();
+  if (name === 'catalog')   renderCatalog();
+  if (name === 'guide')     renderGuide();
+  if (name === 'calendar')  renderCalendar();
+  if (name === 'journal')   renderJournal();
   if (name === 'reminders') renderReminders();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -191,6 +499,28 @@ function renderDashboard() {
   const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
   const userName = currentUser ? (currentUser.displayName || '').split(' ')[0] : 'jardinier';
   document.getElementById('greeting').textContent = `${greet}, ${userName || 'jardinier'}`;
+
+  // XP widget (débutants uniquement)
+  const xpWidget = document.getElementById('xp-widget');
+  if (xpWidget) {
+    const isBegin = state.profile && state.profile.level === 'beginner';
+    xpWidget.style.display = isBegin ? '' : 'none';
+    if (isBegin) {
+      const xp = state.profile.xp || 0;
+      const nextPalier = [100, 300, 500, 1000].find(n => n > xp) || 1000;
+      const prevPalier = [0, 100, 300, 500].reverse().find(n => n <= xp) || 0;
+      const pct = Math.min(100, Math.round((xp - prevPalier) / (nextPalier - prevPalier) * 100));
+      document.getElementById('xp-current').textContent = `${xp} XP`;
+      document.getElementById('xp-next-label').textContent = `Prochain palier : ${nextPalier} XP`;
+      const fill = document.getElementById('xp-fill');
+      if (fill) fill.style.width = pct + '%';
+      const stars = state.profile.stars || 0;
+      document.getElementById('xp-level-label').textContent = stars >= 5 ? '🌿 Main verte' : stars >= 2 ? '🌱 En progression' : '🔰 Débutant';
+      const done = new Set(state.profile.milestones || []);
+      const mRow = document.getElementById('milestones-row');
+      if (mRow) mRow.innerHTML = MILESTONES.map(m => `<span class="milestone-badge ${done.has(m.id) ? 'done' : ''}" title="${escapeHTML(m.label)}">${m.icon}</span>`).join('');
+    }
+  }
 
   // Alerts
   const beds = state.beds;
@@ -259,6 +589,7 @@ function bindTaskCheckboxes(scope) {
       const t = state.tasks.find(t => t.id === id);
       if (!t) return;
       t.done = !t.done;
+      if (t.done) { awardXP('task_done'); if (t.kind === 'harvest') awardXP('harvest_done'); checkMilestones(); }
       saveState();
       node.classList.toggle('done', t.done);
       cb.setAttribute('aria-checked', t.done);
@@ -298,14 +629,30 @@ function renderWeekGlance(today) {
    GARDEN
    ============================================================ */
 function renderGarden() {
-  const beds = state.beds;
+  // Onglets Jardin / Serre
+  const gt = state.gardenTab || 'all';
+  document.querySelectorAll('.gtab').forEach(b => b.classList.toggle('active', b.dataset.gt === gt));
+  const titleMap = { all:'Le potager', jardin:'Jardin (plein air)', serre:'Serre (sous abri)' };
+  const titleEl = document.getElementById('garden-title');
+  if (titleEl) titleEl.textContent = titleMap[gt] || 'Le potager';
+
+  // Filtrer les parcelles selon l'onglet
+  const allBeds = state.beds;
+  const beds = gt === 'all' ? allBeds : allBeds.filter(b => (b.type || 'jardin') === gt);
+
+  // Si la parcelle active n'est pas dans le filtre, changer
+  if (beds.length && !beds.find(b => b.id === state.activeBedId)) {
+    state.activeBedId = beds[0].id;
+  }
+
   const bar = document.getElementById('beds-toolbar');
-  bar.innerHTML = beds.map(b => `<button class="bed-tab ${b.id === state.activeBedId ? 'active' : ''}" data-bed="${b.id}">🌿 ${escapeHTML(b.name)}<span class="x">${(b.cells||[]).filter(Boolean).length}/${(b.cols||4)*(b.rows||3)}</span></button>`).join('');
+  const bedIcon = b => b.type === 'serre' ? '🏡' : '🌿';
+  bar.innerHTML = beds.map(b => `<button class="bed-tab ${b.id === state.activeBedId ? 'active' : ''}" data-bed="${b.id}">${bedIcon(b)} ${escapeHTML(b.name)}<span class="x">${(b.cells||[]).filter(Boolean).length}/${(b.cols||4)*(b.rows||3)}</span></button>`).join('');
   bar.querySelectorAll('[data-bed]').forEach(b => b.addEventListener('click', () => { state.activeBedId = b.dataset.bed; saveState(); renderGarden(); }));
 
   const stage = document.getElementById('bed-stage');
   const emptyEl = document.getElementById('garden-empty');
-  const bed = activeBed();
+  const bed = beds.find(b => b.id === state.activeBedId) || beds[0];
   if (!bed) { stage.style.display = 'none'; emptyEl.style.display = ''; return; }
   stage.style.display = '';
   emptyEl.style.display = 'none';
@@ -467,6 +814,8 @@ function openBedModal(bedId) {
   document.getElementById('bed-modal-name').value = bed ? bed.name : '';
   document.getElementById('bed-modal-cols').value = bed ? bed.cols : 4;
   document.getElementById('bed-modal-rows').value = bed ? bed.rows : 3;
+  const typeEl = document.getElementById('bed-modal-type');
+  if (typeEl) typeEl.value = bed ? (bed.type || 'jardin') : (state.gardenTab !== 'all' ? state.gardenTab : 'jardin');
   document.getElementById('bed-modal-save').onclick = () => saveBedModal(bedId);
   openModal('bed-modal-backdrop');
 }
@@ -476,11 +825,13 @@ function saveBedModal(editId) {
   if (!name) { flash('Donnez un nom à la parcelle'); return; }
   const cols = clampInt(document.getElementById('bed-modal-cols').value, 2, 10, 4);
   const rows = clampInt(document.getElementById('bed-modal-rows').value, 2, 10, 3);
+  const typeEl = document.getElementById('bed-modal-type');
+  const type = typeEl ? typeEl.value : 'jardin';
   if (editId) {
     const bed = state.beds.find(b => b.id === editId);
-    if (bed) { bed.name = name; bed.cols = cols; bed.rows = rows; while (bed.cells.length < cols*rows) bed.cells.push(null); bed.cells.length = cols*rows; }
+    if (bed) { bed.name = name; bed.type = type; bed.cols = cols; bed.rows = rows; while (bed.cells.length < cols*rows) bed.cells.push(null); bed.cells.length = cols*rows; }
   } else {
-    const newBed = { id:'b'+Date.now(), name, cols, rows, cells: Array(cols*rows).fill(null) };
+    const newBed = { id:'b'+Date.now(), name, type, cols, rows, cells: Array(cols*rows).fill(null) };
     state.beds.push(newBed);
     state.activeBedId = newBed.id;
   }
@@ -505,27 +856,41 @@ function deleteBed() {
 /* ============================================================
    CATALOG
    ============================================================ */
-let catalogFilter = { q:'', season:'all', difficulty:'all' };
+let catalogFilter = { q:'', category:'all', season:'all', difficulty:'all' };
 
 function renderCatalog() {
   const f = document.getElementById('catalog-filters');
-  const filters = [
-    { k:'season', v:'all', label:'Toutes saisons' },
-    { k:'season', v:'spring', label:'🌷 Printemps' },
-    { k:'season', v:'summer', label:'☀️ Été' },
-    { k:'season', v:'autumn', label:'🍂 Automne' },
-    { k:'season', v:'winter', label:'❄️ Hiver' },
-    { k:'difficulty', v:'all', label:'Tous niveaux' },
-    { k:'difficulty', v:'1', label:'🟢 Facile' },
-    { k:'difficulty', v:'2', label:'🟡 Moyen' },
-    { k:'difficulty', v:'3', label:'🔴 Délicat' }
+  const filterGroups = [
+    { label:'Type', chips:[
+      { k:'category', v:'all',            label:'Toutes catégories' },
+      { k:'category', v:'legume',          label:'🥕 Légumes' },
+      { k:'category', v:'herbe',           label:'🌿 Herbes' },
+      { k:'category', v:'fruit',           label:'🍓 Fruits' },
+      { k:'category', v:'arbre-fruitier',  label:'🌳 Fruitiers' },
+    ]},
+    { label:'Saison', chips:[
+      { k:'season', v:'all',     label:'Toutes saisons' },
+      { k:'season', v:'spring',  label:'🌷 Printemps' },
+      { k:'season', v:'summer',  label:'☀️ Été' },
+      { k:'season', v:'autumn',  label:'🍂 Automne' },
+      { k:'season', v:'winter',  label:'❄️ Hiver' },
+    ]},
+    { label:'Niveau', chips:[
+      { k:'difficulty', v:'all', label:'Tous niveaux' },
+      { k:'difficulty', v:'1',   label:'🟢 Facile' },
+      { k:'difficulty', v:'2',   label:'🟡 Moyen' },
+      { k:'difficulty', v:'3',   label:'🔴 Délicat' },
+    ]},
   ];
-  f.innerHTML = filters.map(x => `<button class="filter-chip ${catalogFilter[x.k] === x.v ? 'active' : ''}" data-k="${x.k}" data-v="${x.v}">${x.label}</button>`).join('');
+  f.innerHTML = filterGroups.map(g =>
+    `<div class="filter-group"><span class="filter-group-label">${g.label}</span>${g.chips.map(x => `<button class="filter-chip ${catalogFilter[x.k] === x.v ? 'active' : ''}" data-k="${x.k}" data-v="${x.v}">${x.label}</button>`).join('')}</div>`
+  ).join('');
   f.querySelectorAll('.filter-chip').forEach(b => b.addEventListener('click', () => { catalogFilter[b.dataset.k] = b.dataset.v; renderCatalog(); }));
 
   const q = catalogFilter.q.trim().toLowerCase();
   const list = CATALOG.filter(p => {
-    if (q && !p.name.toLowerCase().includes(q) && !(p.family||'').toLowerCase().includes(q)) return false;
+    if (q && !p.name.toLowerCase().includes(q) && !(p.family||'').toLowerCase().includes(q) && !(p.sci||'').toLowerCase().includes(q)) return false;
+    if (catalogFilter.category !== 'all' && p.category !== catalogFilter.category) return false;
     if (catalogFilter.season !== 'all' && !(p.season||[]).includes(catalogFilter.season)) return false;
     if (catalogFilter.difficulty !== 'all' && p.difficulty !== +catalogFilter.difficulty) return false;
     return true;
@@ -534,7 +899,7 @@ function renderCatalog() {
   const grid = document.getElementById('catalog-grid');
   if (!list.length) {
     grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="ei">🔍</div><h3>Aucune plante ne correspond</h3><p>Retirez un filtre ou essayez un autre mot-clé.</p><button class="btn primary" id="reset-catalog">Réinitialiser</button></div>`;
-    document.getElementById('reset-catalog').addEventListener('click', () => { catalogFilter = { q:'', season:'all', difficulty:'all' }; document.getElementById('catalog-search').value = ''; renderCatalog(); });
+    document.getElementById('reset-catalog').addEventListener('click', () => { catalogFilter = { q:'', category:'all', season:'all', difficulty:'all' }; document.getElementById('catalog-search').value = ''; renderCatalog(); });
     return;
   }
   grid.innerHTML = list.map(p => `
@@ -559,6 +924,7 @@ function renderCatalog() {
         <div class="r"><b>Espacement</b> ${escapeHTML(p.space||'—')}</div>
       </div>
       <div class="pc-tags">
+        <span class="chip ${categoryColor(p.category)}">${categoryLabel(p.category)}</span>
         ${(p.season||[]).map(s => `<span class="chip green">${seasonLabel(s)}</span>`).join('')}
         ${(p.companions||[]).length ? `<span class="chip earth">🤝 ${escapeHTML((p.companions||[]).slice(0,2).join(', '))}</span>` : ''}
       </div>
@@ -595,6 +961,8 @@ function openAddToBedPicker(plantId) {
       if (emptyIdx === -1) { flash('Parcelle pleine.'); return; }
       bed.cells[emptyIdx] = { id:'c'+Date.now(), plant: plantId, planted: iso(new Date()), status:'healthy', notes:'' };
       saveState();
+      awardXP('plant_added');
+      checkMilestones();
       closeModal('addbed-backdrop');
       flash(`${p ? p.name : plantId} ajoutée dans ${bed.name} ✓`);
       state.activeBedId = bed.id;
@@ -819,6 +1187,7 @@ function saveQuickAdd() {
     const subject = document.querySelector('[data-draft="note-subject"]').value || 'Général';
     state.journal = state.journal || [];
     state.journal.push({ id:'j'+Date.now(), date: iso(new Date()), subject, icon:'🌿', text, tags: tag ? [tag] : [] });
+    awardXP('journal_entry'); checkMilestones();
     flash('Note enregistrée ✓');
   }
   state.draft = null; saveState();
@@ -829,13 +1198,8 @@ function saveQuickAdd() {
 }
 
 /* ============================================================
-   ONBOARDING
+   ONBOARDING (legacy — remplacé par le questionnaire)
    ============================================================ */
-let onbStep = 1;
-function renderOnb() {
-  document.querySelectorAll('.onb-step').forEach(s => s.classList.toggle('active', +s.dataset.step === onbStep));
-  document.querySelectorAll('.onb-progress .pp').forEach((p, i) => p.classList.toggle('on', i < onbStep));
-}
 
 /* ============================================================
    CONFIRM DIALOG
@@ -867,6 +1231,8 @@ function clampInt(v, min, max, def) { const n = parseInt(v,10); if (isNaN(n)) re
 function escapeHTML(s) { return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function capitalize(s) { return (s||'').charAt(0).toUpperCase() + (s||'').slice(1); }
 function seasonLabel(s) { return ({spring:'Printemps', summer:'Été', autumn:'Automne', winter:'Hiver'})[s] || capitalize(s); }
+function categoryLabel(c) { return ({'legume':'Légume','herbe':'Herbe','fruit':'Fruit','arbre-fruitier':'🌳 Fruitier'})[c] || (c||''); }
+function categoryColor(c) { return ({'arbre-fruitier':'earth'})[c] || 'green'; }
 
 function flash(msg) {
   let el = document.getElementById('_toast');
@@ -1016,23 +1382,37 @@ function boot() {
     }
   });
 
-  // Onboarding
-  document.querySelectorAll('[data-onb-next]').forEach(b => b.addEventListener('click', () => { onbStep = Math.min(3, onbStep+1); renderOnb(); }));
-  document.querySelectorAll('[data-onb-prev]').forEach(b => b.addEventListener('click', () => { onbStep = Math.max(1, onbStep-1); renderOnb(); }));
-  document.querySelectorAll('[data-onb-done]').forEach(b => b.addEventListener('click', () => {
-    const name = (document.getElementById('onb-bed-name').value||'').trim() || 'Parcelle du jardin';
-    const cols = clampInt(document.getElementById('onb-cols').value, 2, 8, 4);
-    const rows = clampInt(document.getElementById('onb-rows').value, 2, 8, 3);
-    if (state.beds.length) { state.beds[0].name = name; state.beds[0].cols = cols; state.beds[0].rows = rows; while (state.beds[0].cells.length < cols*rows) state.beds[0].cells.push(null); state.beds[0].cells.length = cols*rows; }
-    state.onboarded = true; saveState(); closeModal('onb-backdrop'); setView('garden');
-  }));
+  // Garden type tabs
+  document.querySelectorAll('.gtab').forEach(b => {
+    b.addEventListener('click', () => {
+      state.gardenTab = b.dataset.gt;
+      saveState();
+      renderGarden();
+    });
+  });
+
+  // Tutorial
+  const tutNext = document.getElementById('tut-next');
+  if (tutNext) tutNext.addEventListener('click', nextTutStep);
+  const tutSkip = document.getElementById('tut-skip');
+  if (tutSkip) tutSkip.addEventListener('click', endTutorial);
+  const restartTut = document.getElementById('guide-restart-tut');
+  if (restartTut) restartTut.addEventListener('click', startTutorial);
+
+  // Guide topbar button
+  const topbarGuide = document.getElementById('topbar-guide');
+  if (topbarGuide) topbarGuide.addEventListener('click', () => setView('guide'));
 
   // Render initial view
   renderDashboard();
   renderGarden();
 
-  // Onboarding check
-  if (!state.onboarded) { onbStep = 1; renderOnb(); openModal('onb-backdrop'); }
+  // Questionnaire (remplace l'ancien onboarding)
+  if (!state.profile || !state.profile.surveyed) {
+    surveyData = {};
+    renderSurveyStep(1);
+    openModal('survey-backdrop');
+  }
 }
 
 /* ============================================================
