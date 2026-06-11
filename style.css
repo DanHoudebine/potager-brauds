@@ -518,7 +518,9 @@ a { color: var(--green-dark); }
 /* ============ Catalog ============ */
 .catalog-controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
 .catalog-controls .search { flex: 1; min-width: 220px; }
-.filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.filters { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.filter-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.filter-group-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-muted); min-width: 52px; flex: none; }
 .filter-chip {
   padding: 6px 12px; border-radius: 999px; background: var(--card); border: 1px solid var(--line);
   font-size: 13px; font-weight: 700; color: var(--ink-muted); white-space: nowrap;
