@@ -1172,3 +1172,61 @@ a { color: var(--green-dark); }
 
 @keyframes badgePop { 0% { transform: scale(.6); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
 .milestone-badge.done { animation: badgePop .4s ease; }
+
+/* ============================================================
+   TAUX DE RÉUSSITE RÉGIONAL
+   ============================================================ */
+.region-score {
+  margin: 10px 0 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  border-left: 3px solid;
+}
+.region-score.region-excellent { background: var(--green-tint);   border-color: var(--green);   }
+.region-score.region-good      { background: var(--warn-tint);    border-color: var(--warn);    }
+.region-score.region-medium    { background: var(--earth-tint);   border-color: var(--earth);   }
+.region-score.region-hard      { background: var(--urgent-tint);  border-color: var(--urgent);  }
+
+.rs-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.rs-label { font-size: 12px; font-weight: 800; }
+.rs-pct   { font-size: 13px; font-weight: 900; font-family: var(--serif); }
+.region-score.region-excellent .rs-label, .region-score.region-excellent .rs-pct { color: var(--green-dark); }
+.region-score.region-good .rs-label,      .region-score.region-good .rs-pct      { color: #8a6418; }
+.region-score.region-medium .rs-label,    .region-score.region-medium .rs-pct    { color: var(--earth-dark); }
+.region-score.region-hard .rs-label,      .region-score.region-hard .rs-pct     { color: var(--urgent); }
+
+.rs-bar  { height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.rs-fill { height: 100%; border-radius: 999px; transition: width .5s ease; }
+.region-score.region-excellent .rs-fill { background: var(--green); }
+.region-score.region-good .rs-fill      { background: var(--warn); }
+.region-score.region-medium .rs-fill    { background: var(--earth); }
+.region-score.region-hard .rs-fill      { background: var(--urgent); }
+
+/* Active region choice in modal */
+.region-choice.active { border-color: var(--green) !important; background: var(--green-tint) !important; }
+
+/* ============================================================
+   TAUX DE RÉUSSITE RÉGIONAL
+   ============================================================ */
+.region-score {
+  margin: 10px 0 12px; padding: 10px 12px;
+  border-radius: var(--radius); border-left: 3px solid;
+}
+.region-score.region-excellent { background: var(--green-tint);  border-color: var(--green); }
+.region-score.region-good      { background: var(--warn-tint);   border-color: var(--warn); }
+.region-score.region-medium    { background: var(--earth-tint);  border-color: var(--earth); }
+.region-score.region-hard      { background: var(--urgent-tint); border-color: var(--urgent); }
+.rs-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.rs-label { font-size: 12px; font-weight: 800; }
+.rs-pct   { font-size: 14px; font-weight: 900; font-family: var(--serif); }
+.region-score.region-excellent .rs-label, .region-score.region-excellent .rs-pct { color: var(--green-dark); }
+.region-score.region-good .rs-label,      .region-score.region-good .rs-pct      { color: #8a6418; }
+.region-score.region-medium .rs-label,    .region-score.region-medium .rs-pct    { color: var(--earth-dark); }
+.region-score.region-hard .rs-label,      .region-score.region-hard .rs-pct      { color: var(--urgent); }
+.rs-bar  { height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.rs-fill { height: 100%; border-radius: 999px; transition: width .5s ease; }
+.region-score.region-excellent .rs-fill { background: var(--green); }
+.region-score.region-good .rs-fill      { background: var(--warn); }
+.region-score.region-medium .rs-fill    { background: var(--earth); }
+.region-score.region-hard .rs-fill      { background: var(--urgent); }
+.region-choice.active { border-color: var(--green) !important; background: var(--green-tint) !important; }
