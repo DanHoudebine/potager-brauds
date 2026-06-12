@@ -1126,3 +1126,49 @@ a { color: var(--green-dark); }
 .push-prompt-active .pb { flex: 1; }
 .push-prompt-active .pt { font-weight: 800; font-size: 15px; color: var(--green-dark); }
 .push-prompt-active .ps { font-size: 13px; color: var(--ink-muted); margin-top: 2px; }
+
+/* ============================================================
+   ÉCHELLE DES PALIERS (widget XP)
+   ============================================================ */
+.xp-levels {
+  display: flex; gap: 8px; margin-top: 14px;
+  overflow-x: auto; padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.xp-levels::-webkit-scrollbar { display: none; }
+.xp-level {
+  flex: 1; min-width: 84px; text-align: center; padding: 10px 6px;
+  border-radius: 14px; border: 1.5px solid var(--line);
+  background: var(--bg-soft); opacity: .55;
+  transition: opacity .2s, border-color .2s, transform .2s;
+}
+.xp-level .xl-icon { font-size: 22px; line-height: 1; }
+.xp-level .xl-name { font-size: 10px; font-weight: 800; margin-top: 4px; line-height: 1.15; }
+.xp-level .xl-xp { font-size: 10px; color: var(--ink-muted); font-weight: 700; margin-top: 2px; }
+.xp-level.past { opacity: 1; background: var(--green-tint); border-color: var(--green-light); }
+.xp-level.current {
+  opacity: 1; background: #fff; border-color: var(--green);
+  transform: scale(1.04);
+  animation: currentGlow 2.5s ease infinite;
+}
+.xp-level.current .xl-xp { color: var(--green-dark); }
+@keyframes currentGlow {
+  0%, 100% { box-shadow: 0 0 0 3px var(--green-tint); }
+  50%      { box-shadow: 0 0 0 7px rgba(91,145,102,.12); }
+}
+
+/* Animations de progression XP */
+@keyframes xpBump { 0% { transform: scale(1); } 35% { transform: scale(1.05); } 100% { transform: scale(1); } }
+.xp-bar.bump { animation: xpBump .45s ease; }
+
+.xp-fill { position: relative; overflow: hidden; }
+.xp-fill::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(110deg, transparent 25%, rgba(255,255,255,.5) 50%, transparent 75%);
+  transform: translateX(-100%);
+  animation: xpShine 3s ease-in-out infinite;
+}
+@keyframes xpShine { 0% { transform: translateX(-100%); } 55%, 100% { transform: translateX(100%); } }
+
+@keyframes badgePop { 0% { transform: scale(.6); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
+.milestone-badge.done { animation: badgePop .4s ease; }

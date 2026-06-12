@@ -59,6 +59,15 @@ const MILESTONES = [
 
 const XP_EVENTS = { task_done:5, plant_added:10, journal_entry:8, harvest_done:15, guide_read:5 };
 
+// Paliers de progression — affichés dans le widget XP pour motiver
+const LEVELS = [
+  { xp:0,    icon:'🔰', label:'Débutant' },
+  { xp:100,  icon:'🌱', label:'Apprenti' },
+  { xp:300,  icon:'🌿', label:'Main verte' },
+  { xp:600,  icon:'🌻', label:'Confirmé' },
+  { xp:1000, icon:'🏆', label:'Maître du potager' },
+];
+
 function awardXP(event) {
   if (!state.profile || state.profile.level !== 'beginner') return;
   const amount = XP_EVENTS[event] || 0;
@@ -67,6 +76,9 @@ function awardXP(event) {
   state.profile.stars = Math.floor(state.profile.xp / 100);
   checkMilestones();
   saveState();
+  renderXPWidget();
+  const bar = document.querySelector('#xp-widget .xp-bar');
+  if (bar) { bar.classList.remove('bump'); void bar.offsetWidth; bar.classList.add('bump'); }
   flash(`+${amount} XP ⭐`);
 }
 
@@ -83,6 +95,44 @@ function checkMilestones() {
       gained = true;
     }
   });
+  if (gained) renderXPWidget();
+}
+
+function renderXPWidget() {
+  const xpWidget = document.getElementById('xp-widget');
+  if (!xpWidget) return;
+  const isBegin = state.profile && state.profile.level === 'beginner';
+  xpWidget.style.display = isBegin ? '' : 'none';
+  if (!isBegin) return;
+
+  const xp = state.profile.xp || 0;
+  let lvlIdx = 0;
+  LEVELS.forEach((l, i) => { if (xp >= l.xp) lvlIdx = i; });
+  const cur = LEVELS[lvlIdx];
+  const next = LEVELS[lvlIdx + 1] || null;
+  const pct = next ? Math.min(100, Math.round((xp - cur.xp) / (next.xp - cur.xp) * 100)) : 100;
+
+  document.getElementById('xp-current').textContent = `${xp} XP`;
+  document.getElementById('xp-next-label').textContent = next ? `Prochain : ${next.icon} ${next.label} à ${next.xp} XP` : '🏆 Niveau maximum atteint !';
+  const fill = document.getElementById('xp-fill');
+  if (fill) fill.style.width = pct + '%';
+  document.getElementById('xp-level-label').textContent = `${cur.icon} ${cur.label}`;
+
+  // Échelle des paliers — donne envie de viser le suivant
+  const ladder = document.getElementById('xp-levels');
+  if (ladder) ladder.innerHTML = LEVELS.map((l, i) => {
+    const cls = i < lvlIdx ? 'past' : i === lvlIdx ? 'current' : '';
+    const xpLabel = i === lvlIdx && next ? `${xp} / ${next.xp} XP` : `${l.xp} XP`;
+    return `<div class="xp-level ${cls}" title="${escapeHTML(l.label)} — dès ${l.xp} XP">
+      <div class="xl-icon">${i < lvlIdx ? '✅' : l.icon}</div>
+      <div class="xl-name">${escapeHTML(l.label)}</div>
+      <div class="xl-xp">${xpLabel}</div>
+    </div>`;
+  }).join('');
+
+  const done = new Set(state.profile.milestones || []);
+  const mRow = document.getElementById('milestones-row');
+  if (mRow) mRow.innerHTML = MILESTONES.map(m => `<span class="milestone-badge ${done.has(m.id) ? 'done' : ''}" title="${escapeHTML(m.label)}">${m.icon}</span>`).join('');
 }
 
 /* ============================================================
@@ -395,7 +445,7 @@ function finishSurvey() {
   if (!state.beds.find(b => b.id === state.activeBedId)) state.activeBedId = state.beds[0].id;
   state.gardenTab = surveyData.spaceType === 'both' ? 'all' : (surveyData.spaceType || 'all');
   state.onboarded = true;
-  saveState();
+  syncGardenTasks();
   closeModal('survey-backdrop');
   setTimeout(() => startTutorial(), 400);
 }
@@ -585,6 +635,43 @@ function setView(name) {
 }
 
 /* ============================================================
+   SYNCHRONISATION JARDIN → TÂCHES / CALENDRIER
+   Le tableau de bord et le calendrier reflètent toujours le
+   contenu réel du jardin :
+   1. Purge des tâches liées à des plantes qui ne sont plus là.
+   2. Génération auto des arrosages (7 jours) selon waterEvery.
+   ============================================================ */
+function syncGardenTasks() {
+  const todayStr = iso(new Date());
+  const present = new Set(state.beds.flatMap(b => (b.cells || []).filter(Boolean).map(c => c.plant)));
+
+  state.tasks = (state.tasks || []).filter(t => {
+    if (t.done) return true;                          // historique conservé
+    if (t.auto && t.date < todayStr) return false;    // arrosage auto expiré
+    if (t.plantId && !present.has(t.plantId)) return false; // plante retirée du jardin
+    return true;
+  });
+
+  const keys = new Set(state.tasks.map(t => `${t.plantId}|${t.kind}|${t.date}`));
+  const today = new Date();
+  state.beds.forEach(bed => (bed.cells || []).filter(Boolean).forEach(cell => {
+    const p = plantById(cell.plant);
+    if (!p || !p.waterEvery) return;
+    const plantedAt = parseISO(cell.planted);
+    for (let i = 0; i < 7; i++) {
+      const d = parseISO(iso(addDays(today, i)));
+      const age = daysBetween(plantedAt, d);
+      if (age <= 0 || age % p.waterEvery !== 0) continue;
+      const key = `${p.id}|water|${iso(d)}`;
+      if (keys.has(key)) continue;
+      keys.add(key);
+      state.tasks.push({ id:'t' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), title:`Arroser : ${p.name}`, kind:'water', date: iso(d), done:false, plantId:p.id, auto:true });
+    }
+  }));
+  saveState();
+}
+
+/* ============================================================
    DASHBOARD
    ============================================================ */
 function renderDashboard() {
@@ -619,26 +706,7 @@ function renderDashboard() {
   updateNavBadges();
 
   // XP widget (débutants uniquement)
-  const xpWidget = document.getElementById('xp-widget');
-  if (xpWidget) {
-    const isBegin = state.profile && state.profile.level === 'beginner';
-    xpWidget.style.display = isBegin ? '' : 'none';
-    if (isBegin) {
-      const xp = state.profile.xp || 0;
-      const nextPalier = [100, 300, 500, 1000].find(n => n > xp) || 1000;
-      const prevPalier = [0, 100, 300, 500].reverse().find(n => n <= xp) || 0;
-      const pct = Math.min(100, Math.round((xp - prevPalier) / (nextPalier - prevPalier) * 100));
-      document.getElementById('xp-current').textContent = `${xp} XP`;
-      document.getElementById('xp-next-label').textContent = `Prochain palier : ${nextPalier} XP`;
-      const fill = document.getElementById('xp-fill');
-      if (fill) fill.style.width = pct + '%';
-      const stars = state.profile.stars || 0;
-      document.getElementById('xp-level-label').textContent = stars >= 5 ? '🌿 Main verte' : stars >= 2 ? '🌱 En progression' : '🔰 Débutant';
-      const done = new Set(state.profile.milestones || []);
-      const mRow = document.getElementById('milestones-row');
-      if (mRow) mRow.innerHTML = MILESTONES.map(m => `<span class="milestone-badge ${done.has(m.id) ? 'done' : ''}" title="${escapeHTML(m.label)}">${m.icon}</span>`).join('');
-    }
-  }
+  renderXPWidget();
 
   // Alerts
   const beds = state.beds;
@@ -924,13 +992,19 @@ function openPlantPanel(idx) {
     </div>
   `;
 
-  document.getElementById('pd-water').onclick = () => { flash('Arrosée ✓'); closePanel(); };
+  document.getElementById('pd-water').onclick = () => {
+    const todayStr = iso(new Date());
+    const t = (state.tasks || []).find(t => !t.done && t.kind === 'water' && t.plantId === cell.plant && t.date <= todayStr);
+    if (t) { t.done = true; saveState(); awardXP('task_done'); checkMilestones(); }
+    flash('Arrosée ✓');
+    closePanel();
+  };
   document.getElementById('pd-remove').onclick = () => {
     confirmDialog({
       title: `Retirer ${p ? p.name : 'cette plante'} ?`,
-      msg: 'La plante sera retirée de cette cellule.',
+      msg: 'La plante sera retirée de cette cellule. Ses tâches en attente seront aussi supprimées.',
       yesLabel: 'Oui, retirer',
-      onYes: () => { bed.cells[idx] = null; saveState(); closePanel(); renderGarden(); }
+      onYes: () => { bed.cells[idx] = null; syncGardenTasks(); closePanel(); renderGarden(); }
     });
   };
 
@@ -974,7 +1048,7 @@ function saveBedModal(editId) {
     state.beds.push(newBed);
     state.activeBedId = newBed.id;
   }
-  saveState(); closeModal('bed-modal-backdrop'); renderGarden();
+  syncGardenTasks(); closeModal('bed-modal-backdrop'); renderGarden();
   flash(editId ? 'Parcelle modifiée ✓' : 'Parcelle créée ✓');
 }
 
@@ -987,7 +1061,7 @@ function deleteBed() {
     onYes: () => {
       state.beds = state.beds.filter(b => b.id !== bed.id);
       state.activeBedId = state.beds[0] ? state.beds[0].id : null;
-      saveState(); renderGarden();
+      syncGardenTasks(); renderGarden();
     }
   });
 }
@@ -1099,7 +1173,7 @@ function openAddToBedPicker(plantId) {
       const emptyIdx = (bed.cells || []).findIndex(c => !c);
       if (emptyIdx === -1) { flash('Parcelle pleine.'); return; }
       bed.cells[emptyIdx] = { id:'c'+Date.now(), plant: plantId, planted: iso(new Date()), status:'healthy', notes:'' };
-      saveState();
+      syncGardenTasks();
       awardXP('plant_added');
       checkMilestones();
       closeModal('addbed-backdrop');
@@ -1329,6 +1403,9 @@ function saveQuickAdd() {
     const emptyIdx = (bed.cells||[]).findIndex(c => !c);
     if (emptyIdx === -1) { flash('Parcelle pleine.'); return; }
     bed.cells[emptyIdx] = { id:'c'+Date.now(), plant: plantId, planted, status:'healthy', notes:'' };
+    syncGardenTasks();
+    awardXP('plant_added');
+    checkMilestones();
     flash(`${plantById(plantId)?.name || plantId} ajoutée ✓`);
   } else if (type === 'note') {
     const text = (document.querySelector('[data-draft="note-text"]').value || '').trim();
@@ -1578,6 +1655,9 @@ function boot() {
   // Guide topbar button
   const topbarGuide = document.getElementById('topbar-guide');
   if (topbarGuide) topbarGuide.addEventListener('click', () => setView('guide'));
+
+  // Synchroniser tâches/calendrier avec le contenu réel du jardin
+  syncGardenTasks();
 
   // Render initial view
   renderDashboard();
