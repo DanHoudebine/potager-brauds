@@ -86,6 +86,74 @@ function checkMilestones() {
 }
 
 /* ============================================================
+   NOTIFICATIONS — Vrais rappels navigateur
+   ============================================================ */
+async function requestNotificationPermission() {
+  if (!('Notification' in window)) return 'unsupported';
+  if (Notification.permission === 'granted') return 'granted';
+  if (Notification.permission === 'denied') return 'denied';
+  const result = await Notification.requestPermission();
+  state.prefs.pushAsked = true;
+  state.prefs.pushOn = result === 'granted';
+  saveState();
+  return result;
+}
+
+async function handleSurveyNotifRequest(btn) {
+  btn.disabled = true;
+  btn.textContent = '⏳ En attente…';
+  const result = await requestNotificationPermission();
+  if (result === 'granted') {
+    btn.textContent = '✓ Notifications activées !';
+    btn.style.background = 'var(--green-dark)';
+    btn.style.borderColor = 'var(--green-dark)';
+  } else if (result === 'denied') {
+    btn.textContent = '✗ Bloquées — modifiez dans Paramètres';
+    btn.style.background = 'var(--urgent)';
+    btn.style.borderColor = 'var(--urgent)';
+  } else if (result === 'unsupported') {
+    btn.textContent = '⚠️ Non supporté sur cet appareil';
+  } else {
+    btn.disabled = false;
+    btn.textContent = '🔔 Activer les notifications';
+  }
+}
+
+function sendNotification(title, body, tag = 'potager') {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  if (!state.prefs || !state.prefs.pushOn) return;
+  const hour = new Date().getHours();
+  if (state.prefs.quiet && (hour < 7 || hour >= 21)) return;
+  try {
+    new Notification(title, { body, icon: 'icon-192.png', badge: 'icon-192.png', tag, vibrate: [200, 100, 200] });
+  } catch {}
+}
+
+function scheduleWateringChecks() {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const todayStr = iso(new Date());
+  const waterTasks = state.tasks.filter(t => t.kind === 'water' && !t.done && t.date === todayStr);
+  if (waterTasks.length && state.prefs.pushOn) {
+    const names = waterTasks.slice(0, 3).map(t => t.title).join(', ');
+    sendNotification('💧 Arrosage du potager', `${waterTasks.length} plante${waterTasks.length > 1 ? 's' : ''} à arroser : ${names}`, 'watering');
+  }
+  const urgentPlants = state.beds.flatMap(b => (b.cells||[]).filter(c => c && c.status === 'urgent'));
+  if (urgentPlants.length && state.prefs.pushOn) {
+    const pnames = urgentPlants.slice(0, 2).map(c => { const p = plantById(c.plant); return p ? p.name : c.plant; }).join(', ');
+    sendNotification('🚨 Alerte au jardin', `${urgentPlants.length} plante${urgentPlants.length > 1 ? 's' : ''} urgente${urgentPlants.length > 1 ? 's' : ''} : ${pnames}`, 'urgent');
+  }
+}
+
+function initNotificationScheduler() {
+  if (!('Notification' in window) || Notification.permission !== 'granted' || !(state.prefs||{}).pushOn) return;
+  const hour = new Date().getHours();
+  if (hour >= 7 && hour < 12) scheduleWateringChecks();
+  setInterval(() => {
+    if (new Date().getHours() === 7) scheduleWateringChecks();
+  }, 3600000);
+}
+
+/* ============================================================
    GUIDE DU POTAGER
    ============================================================ */
 const GUIDE_SECTIONS = [
@@ -260,6 +328,16 @@ function buildSurveyResult() {
       <div class="card mt-3" style="border:1px solid var(--line)">
         <div class="small muted">Espace configuré : <b>${spaceLabel}</b></div>
       </div>
+      <div class="card mt-3 sv-notif-card">
+        <div class="row gap-2">
+          <span style="font-size:28px">🔔</span>
+          <div style="flex:1">
+            <div style="font-weight:800;margin-bottom:4px">Activer les rappels</div>
+            <div class="small muted">Arrosages, maladies et alertes — ne ratez plus rien.</div>
+          </div>
+        </div>
+        <button class="btn primary mt-3" style="width:100%" onclick="handleSurveyNotifRequest(this)">🔔 Activer les notifications</button>
+      </div>
       <button class="btn primary sv-cta mt-4" onclick="finishSurvey()">Lancer l'application →</button>`;
   } else {
     el.innerHTML = `
@@ -276,6 +354,16 @@ function buildSurveyResult() {
       </div>
       <div class="card mt-3" style="border:1px solid var(--line)">
         <div class="small muted">Le Guide reste accessible si besoin depuis le menu 📚<br>Espace : <b>${spaceLabel}</b></div>
+      </div>
+      <div class="card mt-3 sv-notif-card">
+        <div class="row gap-2">
+          <span style="font-size:28px">🔔</span>
+          <div style="flex:1">
+            <div style="font-weight:800;margin-bottom:4px">Activer les rappels</div>
+            <div class="small muted">Arrosages, alertes maladies et taille des fruitiers.</div>
+          </div>
+        </div>
+        <button class="btn primary mt-3" style="width:100%" onclick="handleSurveyNotifRequest(this)">🔔 Activer les notifications</button>
       </div>
       <button class="btn primary sv-cta mt-4" onclick="finishSurvey()">Accéder à l'application →</button>`;
   }
@@ -504,9 +592,31 @@ function renderDashboard() {
   const fmt = today.toLocaleDateString('fr-FR', { weekday:'long', month:'long', day:'numeric' });
   document.getElementById('today-date').textContent = fmt;
   const hour = today.getHours();
-  const greet = hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
-  const userName = currentUser ? (currentUser.displayName || '').split(' ')[0] : 'jardinier';
-  document.getElementById('greeting').textContent = `${greet}, ${userName || 'jardinier'}`;
+  const greet = hour < 6 ? 'Bonne nuit' : hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
+  const userName = currentUser ? (currentUser.displayName || '').split(' ')[0] : '';
+  document.getElementById('greeting').textContent = userName ? `${greet}, ${userName} 👋` : `${greet} 👋`;
+
+  // Hero deco — adapté à l'heure / saison
+  const heroDecoEl = document.getElementById('hero-deco');
+  if (heroDecoEl) {
+    const deco = hour < 7 ? '🌙' : hour < 12 ? '☀️' : hour < 18 ? '🌻' : '🌿';
+    heroDecoEl.textContent = deco;
+  }
+
+  // Contextual subtitle
+  const urgentCount = state.beds.flatMap(b => (b.cells||[]).filter(c => c && c.status === 'urgent')).length;
+  const greetSubEl = document.getElementById('greet-sub');
+  if (greetSubEl) {
+    if (urgentCount > 0) {
+      greetSubEl.textContent = `🚨 ${urgentCount} plante${urgentCount > 1 ? 's' : ''} nécessite${urgentCount > 1 ? 'nt' : ''} votre attention !`;
+    } else if ((state.streak || 0) >= 7) {
+      greetSubEl.textContent = `🔥 ${state.streak} jours de suite — continuez comme ça !`;
+    } else {
+      greetSubEl.textContent = 'Tout va bien dans votre potager. 🌱';
+    }
+  }
+
+  updateNavBadges();
 
   // XP widget (débutants uniquement)
   const xpWidget = document.getElementById('xp-widget');
@@ -658,6 +768,8 @@ function renderGarden() {
   bar.innerHTML = beds.map(b => `<button class="bed-tab ${b.id === state.activeBedId ? 'active' : ''}" data-bed="${b.id}">${bedIcon(b)} ${escapeHTML(b.name)}<span class="x">${(b.cells||[]).filter(Boolean).length}/${(b.cols||4)*(b.rows||3)}</span></button>`).join('');
   bar.querySelectorAll('[data-bed]').forEach(b => b.addEventListener('click', () => { state.activeBedId = b.dataset.bed; saveState(); renderGarden(); }));
 
+  updateNavBadges();
+
   const stage = document.getElementById('bed-stage');
   const emptyEl = document.getElementById('garden-empty');
   const bed = beds.find(b => b.id === state.activeBedId) || beds[0];
@@ -678,13 +790,19 @@ function renderGarden() {
   grid.innerHTML = bed.cells.map((c, i) => {
     if (c) {
       const p = plantById(c.plant);
+      const age = daysBetween(parseISO(c.planted), new Date());
+      const hbadge = c.status === 'urgent' ? '🚨' : c.status === 'warn' ? '⚠️' : '🌿';
       return `<div class="cell has-plant" draggable="true" data-idx="${i}" data-cell="${c.id}">
-        <span class="status-dot" style="background:${statusColor(c.status)}"></span>
-        <div class="pi">${p ? p.icon : '❓'}</div>
-        <div class="pn">${p ? p.name : '?'}</div>
+        <span class="cell-status-bar" style="background:${statusColor(c.status)}"></span>
+        <div class="cell-emoji">${p ? p.icon : '❓'}</div>
+        <div class="cell-name">${p ? p.name : '?'}</div>
+        <div class="cell-footer">
+          <span class="cell-days">${age}j</span>
+          <span class="cell-hbadge">${hbadge}</span>
+        </div>
       </div>`;
     }
-    return `<div class="cell" data-idx="${i}"><span class="empty-plus">+</span></div>`;
+    return `<div class="cell" data-idx="${i}"><div class="cell-empty-inner"><span class="cell-plus">+</span><span class="cell-plus-label">Planter</span></div></div>`;
   }).join('');
 
   grid.querySelectorAll('.cell').forEach(node => {
@@ -719,6 +837,19 @@ function renderGarden() {
 }
 
 function statusColor(s) { return s === 'urgent' ? 'var(--urgent)' : s === 'warn' ? 'var(--warn)' : 'var(--healthy)'; }
+
+function updateNavBadges() {
+  const urgentCount = state.beds.flatMap(b => (b.cells||[]).filter(c => c && c.status === 'urgent')).length;
+  const wrap = document.querySelector('[data-nav="garden"] .nav-badge-wrap');
+  if (!wrap) return;
+  let badge = wrap.querySelector('.nav-badge');
+  if (urgentCount > 0) {
+    if (!badge) { badge = document.createElement('span'); badge.className = 'nav-badge'; wrap.appendChild(badge); }
+    badge.textContent = urgentCount;
+  } else if (badge) {
+    badge.remove();
+  }
+}
 
 function openPlantPanel(idx) {
   const bed = activeBed();
@@ -1079,10 +1210,21 @@ function renderJournal() {
    ============================================================ */
 function renderReminders() {
   const wrap = document.getElementById('push-prompt-wrap');
-  if (!state.prefs.pushAsked) {
-    wrap.innerHTML = `<div class="push-prompt"><span class="pi">🔔</span><div class="pb"><div class="pt">Activer les notifications push</div><div class="small">Alertes gel, ravageurs et résumé quotidien — ne ratez aucun moment clé.</div></div><button class="btn primary sm" id="push-enable">Activer</button><button class="btn ghost sm" id="push-skip">Plus tard</button></div>`;
-    document.getElementById('push-enable').onclick = () => { state.prefs.pushAsked = true; state.prefs.pushOn = true; saveState(); flash('Notifications activées ✓'); renderReminders(); };
+  const notifGranted = 'Notification' in window && Notification.permission === 'granted';
+  const notifDenied = 'Notification' in window && Notification.permission === 'denied';
+  if (!state.prefs.pushAsked && !notifGranted) {
+    wrap.innerHTML = `<div class="push-prompt-active"><span class="pi">🔔</span><div class="pb"><div class="pt">Activer les notifications</div><div class="ps">Arrosage, gel, ravageurs — soyez alerté au bon moment.</div></div></div><div class="row gap-2 mb-4"><button class="btn primary" id="push-enable" style="flex:1">Activer</button><button class="btn ghost" id="push-skip">Plus tard</button></div>`;
+    document.getElementById('push-enable').onclick = async () => {
+      const result = await requestNotificationPermission();
+      if (result === 'granted') { flash('Notifications activées ✓'); initNotificationScheduler(); }
+      else if (result === 'denied') flash('Bloquées — vérifiez les paramètres du navigateur');
+      renderReminders();
+    };
     document.getElementById('push-skip').onclick = () => { state.prefs.pushAsked = true; saveState(); renderReminders(); };
+  } else if (notifDenied) {
+    wrap.innerHTML = `<div class="push-prompt" style="background:var(--urgent-tint);border-color:#f0bdb9;color:var(--urgent)"><span class="pi">🔕</span><div class="pb"><div class="pt">Notifications bloquées</div><div class="small">Autorisez-les dans les paramètres de votre navigateur.</div></div></div>`;
+  } else if (notifGranted) {
+    wrap.innerHTML = `<div class="push-prompt" style="border-color:#c6e1bd"><span class="pi">✓</span><div class="pb"><div class="pt" style="color:var(--green-dark)">Notifications actives</div><div class="small muted">Vous recevrez les rappels arrosage et alertes maladies.</div></div></div>`;
   } else wrap.innerHTML = '';
 
   const list = document.getElementById('reminders-list');
@@ -1440,6 +1582,9 @@ function boot() {
   // Render initial view
   renderDashboard();
   renderGarden();
+
+  // Start notification scheduler if permission already granted
+  initNotificationScheduler();
 
   // Questionnaire (remplace l'ancien onboarding)
   if (!state.profile || !state.profile.surveyed) {
