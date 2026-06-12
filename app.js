@@ -337,10 +337,11 @@ function renderGuide() {
    TUTORIEL
    ============================================================ */
 const TUTORIAL_STEPS = [
-  { sel:'.greet',         title:'Votre tableau de bord',      text:'Vue quotidienne : alertes sur vos plantes, tâches du jour, météo et semaine en un coup d\'œil.' },
-  { sel:'#alerts-list',   title:'Alertes instantanées',       text:'Vos plantes qui ont besoin d\'attention apparaissent ici en priorité. Couleur rouge = urgent.' },
-  { sel:'.stats',         title:'Vos statistiques',           text:'Plantes en terre, arrosages à faire aujourd\'hui, récoltes en attente et votre série de jours actifs.' },
-  { sel:'.fab',           title:'Ajout rapide ⚡',             text:'Le bouton + vous permet d\'ajouter une tâche, une plante ou une note en 3 secondes depuis n\'importe quelle page.' },
+  { sel:'.greet,.hero-card', title:'Votre tableau de bord',   text:'Vue quotidienne : alertes sur vos plantes, tâches du jour, météo et semaine en un coup d\'œil.' },
+  { sel:'#alerts-list',      title:'Alertes instantanées',    text:'Vos plantes qui ont besoin d\'attention apparaissent ici en priorité. Couleur rouge = urgent.' },
+  { sel:'.stats',            title:'Vos statistiques',        text:'Plantes en terre, arrosages à faire aujourd\'hui, récoltes en attente et votre série de jours actifs.' },
+  { sel:'.fab',              title:'Ajout rapide ⚡',          text:'Le bouton + vous permet d\'ajouter une tâche, une plante ou une note en 3 secondes depuis n\'importe quelle page.' },
+  { sel:'[data-nav="catalog"]', title:'📍 Taux de réussite par région', text:'Le catalogue affiche la compatibilité climatique de chaque plante pour votre région — de "Excellent" à "Difficile". Configurez ou changez votre région depuis le bandeau en haut du catalogue.' },
   { sel:'nav.bottom-nav,.sidebar', title:'Navigation',         text:'Accédez à votre jardin, catalogue, guide, calendrier et journal. La serre et le jardin sont bien séparés dans "Jardin".' },
   { sel:'[data-view="guide"].view', title:'Le Guide du potager', text:'Le guide complet du jardinage — sol, semis, arrosage, ravageurs, récolte et arboriculture — accessible à tout moment.' },
 ];
@@ -1150,7 +1151,36 @@ function deleteBed() {
    ============================================================ */
 let catalogFilter = { q:'', category:'all', season:'all', difficulty:'all' };
 
+function renderRegionPrompt() {
+  const el = document.getElementById('region-catalog-prompt');
+  if (!el) return;
+  const rid = state.profile?.region;
+  const r = rid ? REGIONS.find(x => x.id === rid) : null;
+  if (!r) {
+    el.innerHTML = `<div class="region-prompt-banner">
+      <span class="rpb-icon">📍</span>
+      <div class="rpb-body">
+        <div class="rpb-title">Configurez votre région</div>
+        <div class="rpb-sub">Affichez le taux de réussite de chaque plante pour votre climat.</div>
+      </div>
+      <button class="btn primary sm" id="rpb-set">Configurer →</button>
+    </div>`;
+    document.getElementById('rpb-set').onclick = openRegionModal;
+  } else {
+    el.innerHTML = `<div class="region-prompt-banner region-prompt-set">
+      <span class="rpb-icon">${r.emoji}</span>
+      <div class="rpb-body">
+        <div class="rpb-title">${escapeHTML(r.label)}</div>
+        <div class="rpb-sub">Les taux de réussite sont affichés pour votre région.</div>
+      </div>
+      <button class="btn ghost sm" id="rpb-change">Changer</button>
+    </div>`;
+    document.getElementById('rpb-change').onclick = openRegionModal;
+  }
+}
+
 function renderCatalog() {
+  renderRegionPrompt();
   const f = document.getElementById('catalog-filters');
   const filterGroups = [
     { label:'Type', chips:[
