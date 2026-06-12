@@ -1206,6 +1206,31 @@ a { color: var(--green-dark); }
 .region-choice.active { border-color: var(--green) !important; background: var(--green-tint) !important; }
 
 /* ============================================================
+   BANDEAU RÉGION (haut du catalogue)
+   ============================================================ */
+.region-prompt-banner {
+  display: flex; align-items: center; gap: 14px;
+  background: linear-gradient(135deg, var(--green-tint) 0%, rgba(255,255,255,.55) 100%);
+  border: 1.5px solid var(--green-light);
+  border-radius: var(--radius); padding: 14px 16px;
+  margin-bottom: 14px;
+  animation: fadeSlideIn .3s ease both;
+}
+.region-prompt-set {
+  background: var(--bg-soft);
+  border-color: var(--line);
+}
+.rpb-icon { font-size: 26px; flex: none; }
+.rpb-body { flex: 1; min-width: 0; }
+.rpb-title { font-weight: 800; font-size: 14px; }
+.rpb-sub   { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
+@media (max-width: 899px) {
+  .region-prompt-banner { padding: 12px 14px; gap: 10px; }
+  .rpb-icon { font-size: 22px; }
+  .rpb-title { font-size: 13px; }
+}
+
+/* ============================================================
    TAUX DE RÉUSSITE RÉGIONAL
    ============================================================ */
 .region-score {
