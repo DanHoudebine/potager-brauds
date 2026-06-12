@@ -543,7 +543,7 @@
   <div class="modal sv-modal">
 
     <div class="sv-progress" id="sv-progress">
-      <div class="sv-dot on"></div><div class="sv-dot"></div><div class="sv-dot"></div><div class="sv-dot"></div>
+      <div class="sv-dot on"></div><div class="sv-dot"></div><div class="sv-dot"></div><div class="sv-dot"></div><div class="sv-dot"></div>
     </div>
 
     <!-- Étape 1 : Bienvenue -->
@@ -602,8 +602,51 @@
       </div>
     </div>
 
-    <!-- Étape 4 : Résultat (rempli dynamiquement) -->
-    <div class="sv-step" data-step="4" id="sv-result-step"></div>
+    <!-- Étape 4 : Région -->
+    <div class="sv-step" data-step="4">
+      <h2 class="sv-q">Dans quelle région jardinez-vous ?</h2>
+      <p class="muted small mb-4">Le taux de réussite de chaque plante sera affiché pour votre région.</p>
+      <div class="sv-choices">
+        <button class="sv-choice" onclick="selectRegion('nord')">
+          <div class="sv-ci">🌧️</div>
+          <div class="sv-cd"><div class="sv-ct">Nord &amp; Bretagne</div><div class="sv-cs">Frais, pluvieux, hivers doux</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+        <button class="sv-choice" onclick="selectRegion('idf')">
+          <div class="sv-ci">☁️</div>
+          <div class="sv-cd"><div class="sv-ct">Île-de-France &amp; Centre</div><div class="sv-cs">Tempéré, variable, été chaud</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+        <button class="sv-choice" onclick="selectRegion('ocean')">
+          <div class="sv-ci">🌊</div>
+          <div class="sv-cd"><div class="sv-ct">Grand Ouest &amp; Atlantique</div><div class="sv-cs">Océanique, doux, humide</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+        <button class="sv-choice" onclick="selectRegion('sudouest')">
+          <div class="sv-ci">☀️</div>
+          <div class="sv-cd"><div class="sv-ct">Sud-Ouest &amp; Occitanie</div><div class="sv-cs">Chaud et humide en été</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+        <button class="sv-choice" onclick="selectRegion('med')">
+          <div class="sv-ci">🌞</div>
+          <div class="sv-cd"><div class="sv-ct">Méditerranée &amp; PACA</div><div class="sv-cs">Très chaud et sec l'été</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+        <button class="sv-choice" onclick="selectRegion('est')">
+          <div class="sv-ci">🌡️</div>
+          <div class="sv-cd"><div class="sv-ct">Est &amp; Rhône-Alpes</div><div class="sv-cs">Continental, hivers froids</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+        <button class="sv-choice" onclick="selectRegion('montagne')">
+          <div class="sv-ci">⛰️</div>
+          <div class="sv-cd"><div class="sv-ct">Montagne</div><div class="sv-cs">Été court, gel possible tardif</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Étape 5 : Résultat (rempli dynamiquement) -->
+    <div class="sv-step" data-step="5" id="sv-result-step"></div>
 
   </div>
 </div>
@@ -662,6 +705,11 @@
       <span class="ai">⬇️</span>
       <div style="flex:1"><div class="at">Exporter mes données</div><div class="as">Téléchargez un fichier JSON de votre jardin</div></div>
     </button>
+    <button class="acc-row" id="acc-region">
+      <span class="ai">🗺️</span>
+      <div style="flex:1"><div class="at">Ma région</div><div class="as" id="acc-region-label">Non renseignée</div></div>
+      <span style="color:var(--ink-soft);font-size:18px">›</span>
+    </button>
     <button class="acc-row" id="acc-replay-tutorial">
       <span class="ai">🎓</span>
       <div style="flex:1"><div class="at">Revoir le tutoriel</div><div class="as">Relancer la visite guidée de l'application</div></div>
@@ -714,6 +762,18 @@
       <button class="btn ghost" id="reminder-modal-cancel">Annuler</button>
       <button class="btn primary" id="reminder-modal-save">Enregistrer</button>
     </div>
+  </div>
+</div>
+
+<!-- ===== REGION MODAL ===== -->
+<div class="modal-backdrop" id="region-modal-backdrop">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-head">
+      <h2>Ma région</h2>
+      <button class="close" id="region-modal-close" aria-label="Fermer">✕</button>
+    </div>
+    <p class="muted small mb-4">Personnalise le taux de réussite de chaque plante dans votre catalogue.</p>
+    <div id="region-modal-choices" style="display:flex;flex-direction:column;gap:8px"></div>
   </div>
 </div>
 
