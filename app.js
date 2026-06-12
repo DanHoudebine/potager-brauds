@@ -290,14 +290,22 @@ function finishSurvey() {
     spaceType: surveyData.spaceType,
     xp: 0, stars: 0, milestones: [], tutorialDone: false, guideSeen: []
   });
-  // Ajuster les parcelles selon l'espace
+  // Ajuster les parcelles selon l'espace.
+  // Sécurité : ne jamais supprimer une parcelle qui contient des plantes.
+  const hasPlants = b => (b.cells || []).some(Boolean);
   if (surveyData.spaceType === 'jardin') {
-    state.beds = state.beds.filter(b => (b.type||'jardin') === 'jardin');
+    state.beds = state.beds.filter(b => (b.type||'jardin') === 'jardin' || hasPlants(b));
   } else if (surveyData.spaceType === 'serre') {
-    state.beds = state.beds.filter(b => b.type === 'serre');
-    if (!state.beds.length) state.beds = [{ id:'b1', name:'Serre', type:'serre', cols:3, rows:2, cells:[null,null,null,null,null,null] }];
-    state.activeBedId = state.beds[0].id;
+    state.beds = state.beds.filter(b => b.type === 'serre' || hasPlants(b));
+    if (!state.beds.some(b => b.type === 'serre')) {
+      state.beds.push({ id:'b'+Date.now(), name:'Serre', type:'serre', cols:3, rows:2, cells:Array(6).fill(null) });
+    }
   }
+  if (!state.beds.length) {
+    state.beds = [{ id:'b'+Date.now(), name:'Jardin', type:'jardin', cols:4, rows:3, cells:Array(12).fill(null) }];
+  }
+  if (!state.beds.find(b => b.id === state.activeBedId)) state.activeBedId = state.beds[0].id;
+  state.gardenTab = surveyData.spaceType === 'both' ? 'all' : (surveyData.spaceType || 'all');
   state.onboarded = true;
   saveState();
   closeModal('survey-backdrop');
@@ -1370,14 +1378,40 @@ function boot() {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'potager-export.json'; a.click();
     flash('Export téléchargé ✓');
   });
+  document.getElementById('acc-replay-tutorial').addEventListener('click', () => {
+    closeModal('acc-backdrop');
+    startTutorial();
+  });
+  document.getElementById('acc-reset').addEventListener('click', () => {
+    confirmDialog({
+      title: 'Tout réinitialiser ?',
+      msg: 'Plantes, tâches, journal, progression et questionnaire : tout sera effacé définitivement. L\'application redémarrera comme à la première visite.',
+      yesLabel: 'Oui, tout effacer',
+      onYes: async () => {
+        try { localStorage.removeItem(STORAGE_KEY); } catch {}
+        try {
+          if ('serviceWorker' in navigator) {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(regs.map(r => r.unregister()));
+          }
+          if (window.caches) {
+            const keys = await caches.keys();
+            await Promise.all(keys.map(k => caches.delete(k)));
+          }
+        } catch {}
+        location.reload();
+      }
+    });
+  });
 
-  // Click-outside to close modals
-  document.querySelectorAll('.modal-backdrop').forEach(bd => bd.addEventListener('click', e => { if (e.target === bd) { bd.classList.remove('open'); document.body.style.overflow = ''; } }));
+  // Click-outside to close modals (sauf questionnaire et auth : obligatoires)
+  const PROTECTED_MODALS = ['survey-backdrop', 'auth-backdrop'];
+  document.querySelectorAll('.modal-backdrop').forEach(bd => bd.addEventListener('click', e => { if (e.target === bd && !PROTECTED_MODALS.includes(bd.id)) { bd.classList.remove('open'); document.body.style.overflow = ''; } }));
 
   // ESC
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
-      document.querySelectorAll('.modal-backdrop.open').forEach(m => { m.classList.remove('open'); document.body.style.overflow = ''; });
+      document.querySelectorAll('.modal-backdrop.open').forEach(m => { if (!PROTECTED_MODALS.includes(m.id)) { m.classList.remove('open'); document.body.style.overflow = ''; } });
       closePanel();
     }
   });
@@ -1441,5 +1475,11 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     // No Firebase — show auth modal with local option
     openModal('auth-backdrop');
+  }
+
+  // Service worker : version network-first — les mises à jour de l'app
+  // sont récupérées immédiatement, le cache ne sert que hors-ligne.
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
   }
 });
