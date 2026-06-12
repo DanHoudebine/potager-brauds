@@ -970,3 +970,159 @@ a { color: var(--green-dark); }
   .sv-modal { padding: 20px 16px; }
   .sv-choice { padding: 14px 12px; }
 }
+
+/* ============================================================
+   HERO CARD (Dashboard greeting)
+   ============================================================ */
+.hero-card {
+  background: linear-gradient(135deg, #3a6b48 0%, var(--green) 55%, #7dbf78 100%);
+  border-radius: var(--radius-xl);
+  padding: 24px 20px 22px;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 18px;
+  box-shadow: 0 8px 24px rgba(58,107,72,.22), 0 2px 6px rgba(58,107,72,.12);
+}
+.hero-deco {
+  position: absolute; right: -4px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 80px; opacity: 0.18;
+  pointer-events: none; user-select: none;
+}
+.hero-date {
+  font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+  font-weight: 700; color: rgba(255,255,255,.65); margin-bottom: 6px;
+}
+.hero-title {
+  font-size: 30px; color: #fff; font-family: var(--serif);
+  font-weight: 700; line-height: 1.15; margin: 0;
+}
+.hero-sub { font-size: 14px; color: rgba(255,255,255,.78); margin: 6px 0 0; }
+@media (min-width: 900px) {
+  .hero-card { padding: 32px 28px; }
+  .hero-title { font-size: 38px; }
+  .hero-deco { font-size: 100px; }
+}
+@media (max-width: 899px) {
+  .hero-card { padding: 18px 16px 16px; border-radius: var(--radius-lg); margin-bottom: 14px; }
+  .hero-title { font-size: 24px; }
+  .hero-deco { font-size: 62px; right: 0; }
+}
+
+/* ============================================================
+   COLORED STAT CARDS
+   ============================================================ */
+.stat-plants { border-top: 3px solid var(--green); }
+.stat-water  { border-top: 3px solid #4a8fc8; }
+.stat-harvest { border-top: 3px solid var(--earth); }
+.stat-streak { border-top: 3px solid var(--warn); }
+.stat-plants .v { color: var(--green-dark); }
+.stat-water .v  { color: #2c5f86; }
+.stat-harvest .v { color: var(--earth-dark); }
+.stat-streak .v { color: #8a6418; }
+
+/* ============================================================
+   ENHANCED GARDEN CELLS
+   ============================================================ */
+.cell-status-bar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 4px; border-radius: 0 0 12px 12px;
+}
+.cell.has-plant {
+  display: flex !important;
+  flex-direction: column; align-items: center; justify-content: center;
+  padding: 6px 4px 8px !important;
+}
+.cell-emoji { font-size: 28px; line-height: 1; }
+@media (min-width: 720px) { .cell-emoji { font-size: 34px; } }
+.cell-name {
+  font-size: 10px; font-weight: 800; color: var(--ink);
+  margin-top: 3px; line-height: 1.1;
+  max-width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  text-align: center;
+}
+.cell-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; margin-top: 3px; padding: 0 4px;
+}
+.cell-days { font-size: 9px; color: var(--ink-muted); font-weight: 700; }
+.cell-hbadge { font-size: 10px; line-height: 1; }
+.cell-empty-inner { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.cell-plus { font-size: 20px; color: rgba(90,63,28,.35); font-weight: 300; display: block; }
+.cell-plus-label {
+  font-size: 9px; font-weight: 700; color: rgba(90,63,28,.3);
+  text-transform: uppercase; letter-spacing: .06em; display: block; line-height: 1;
+}
+.cell:hover .cell-plus { color: var(--green); }
+.cell:hover .cell-plus-label { color: var(--green-dark); }
+.cell:active { transform: scale(.94) !important; }
+@media (hover: hover) {
+  .cell.has-plant:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(90,63,28,.18), inset 0 -2px 0 rgba(90,63,28,.06) !important;
+  }
+}
+@media (max-width: 899px) {
+  .cell-emoji { font-size: 24px; }
+  .cell-name { font-size: 9px; }
+  .cell-days { font-size: 8px; }
+}
+
+/* ============================================================
+   BOTTOM NAV BADGE
+   ============================================================ */
+.nav-badge-wrap { position: relative; display: inline-block; }
+.nav-badge {
+  position: absolute; top: -5px; right: -7px;
+  background: var(--urgent); color: #fff;
+  font-size: 9px; font-weight: 900; min-width: 16px; height: 16px;
+  border-radius: 999px; display: grid; place-items: center;
+  padding: 0 3px; line-height: 1;
+  box-shadow: 0 0 0 2px rgba(249,246,240,.9);
+  pointer-events: none; z-index: 2;
+}
+
+/* ============================================================
+   ALERT PULSE + URGENCY ANIMATIONS
+   ============================================================ */
+@keyframes urgentPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(194,84,80,.25), 0 1px 2px rgba(60,50,30,.04); }
+  60% { box-shadow: 0 0 0 8px rgba(194,84,80,.0), 0 1px 2px rgba(60,50,30,.04); }
+}
+.alert.urgent { animation: urgentPulse 2.2s ease infinite; }
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-card { animation: fadeSlideIn .3s ease both; }
+.stats { animation: fadeSlideIn .35s .05s ease both; }
+.alerts { animation: fadeSlideIn .35s .10s ease both; }
+
+/* ============================================================
+   NOTIFICATION CARD IN SURVEY
+   ============================================================ */
+.sv-notif-card {
+  border: 2px solid var(--green) !important;
+  background: linear-gradient(135deg, var(--green-tint), rgba(255,255,255,.6)) !important;
+}
+
+/* ============================================================
+   STREAK FIRE (fun effect)
+   ============================================================ */
+.streak-fire { color: var(--warn); font-weight: 900; }
+
+/* ============================================================
+   PUSH PROMPT — updated style
+   ============================================================ */
+.push-prompt-active {
+  background: linear-gradient(135deg, var(--green-tint), rgba(255,255,255,.5));
+  border: 2px solid var(--green); border-radius: var(--radius);
+  padding: 16px; margin-bottom: 16px;
+  display: flex; gap: 12px; align-items: center;
+  animation: fadeSlideIn .3s ease both;
+}
+.push-prompt-active .pi { font-size: 28px; flex: none; }
+.push-prompt-active .pb { flex: 1; }
+.push-prompt-active .pt { font-weight: 800; font-size: 15px; color: var(--green-dark); }
+.push-prompt-active .ps { font-size: 13px; color: var(--ink-muted); margin-top: 2px; }
