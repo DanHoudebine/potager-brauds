@@ -17,6 +17,11 @@ node_modules/
 # Build output
 dist/
 build/
+www/
+
+# Capacitor native projects (generated, not versioned)
+android/
+ios/
 
 # OS files
 .DS_Store

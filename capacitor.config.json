@@ -1,0 +1,14 @@
+{
+  "appId": "com.potagerdesbrauds.app",
+  "appName": "Le Potager des Brauds",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "smallIcon": "ic_stat_icon",
+      "iconColor": "#3a6b48"
+    }
+  }
+}

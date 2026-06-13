@@ -1,0 +1,19 @@
+{
+  "name": "potager-des-brauds",
+  "version": "1.0.0",
+  "description": "Le Potager des Brauds - Application de jardinage",
+  "scripts": {
+    "build": "node build.js",
+    "cap:sync": "npm run build && npx cap sync",
+    "cap:android": "npm run build && npx cap sync && npx cap open android",
+    "cap:run": "npm run build && npx cap sync && npx cap run android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/local-notifications": "^6.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.0.0"
+  }
+}
