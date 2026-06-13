@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f9f6f0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Potager">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="manifest" href="manifest.json">
+  <title>Le Potager des Brauds</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- ============ Sidebar (desktop) ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">🌱</div>
+      <div>
+        <div class="brand-name">Potager</div>
+        <div class="brand-sub">des Brauds</div>
+      </div>
+    </div>
+    <button class="nav-item active" data-nav="dashboard"><span class="nav-icon">🏡</span> Tableau de bord</button>
+    <button class="nav-item" data-nav="garden"><span class="nav-icon">🌿</span> Mon jardin</button>
+    <button class="nav-item" data-nav="catalog"><span class="nav-icon">📖</span> Catalogue</button>
+    <button class="nav-item" data-nav="guide"><span class="nav-icon">📚</span> Guide</button>
+    <button class="nav-item" data-nav="calendar"><span class="nav-icon">🗓️</span> Calendrier</button>
+    <button class="nav-item" data-nav="journal"><span class="nav-icon">📓</span> Journal</button>
+    <button class="nav-item" data-nav="reminders"><span class="nav-icon">🔔</span> Rappels</button>
+    <div class="nav-foot">
+      <button class="account-chip" id="account-chip-desktop">
+        <span class="ava" id="ava-desktop">?</span>
+        <div class="ac-body">
+          <div class="ac-name" id="acc-name-desktop">Non connecté</div>
+          <div class="ac-state" id="acc-state-desktop">Mode local</div>
+        </div>
+        <span class="ac-arrow">›</span>
+      </button>
+      <div class="row gap-2 xsmall muted" style="padding:0 4px">
+        <span class="dot healthy"></span> Tout pousse bien
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============ Main ============ -->
+  <main class="main">
+
+    <!-- Mobile top bar -->
+    <div class="topbar">
+      <div class="row gap-2">
+        <div class="brand-mark" style="width:34px;height:34px;font-size:19px;border-radius:10px">🌱</div>
+        <div>
+          <div class="brand-name" style="font-size:18px;line-height:1">Potager</div>
+          <div class="brand-sub" style="font-size:10px">des Brauds</div>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="topbar-search" aria-label="Rechercher">🔍</button>
+        <button class="icon-btn" id="topbar-guide" aria-label="Guide" data-nav="guide">📚</button>
+        <button class="icon-btn" id="topbar-bell" aria-label="Rappels" data-nav="reminders">🔔</button>
+        <button class="icon-btn" id="topbar-account" aria-label="Mon compte" style="padding:0;overflow:hidden">
+          <span class="ava" id="ava-mobile" style="width:100%;height:100%;border-radius:12px;display:grid;place-items:center;font-size:13px;font-weight:800;background:linear-gradient(160deg,var(--green-light),var(--green));color:#fff">?</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== VUE 1 : TABLEAU DE BORD ===== -->
+    <section class="view active" data-view="dashboard">
+      <div class="hero-card">
+        <div class="hero-deco" id="hero-deco">🌻</div>
+        <div class="hero-body">
+          <div class="hero-date" id="today-date">—</div>
+          <h1 class="hero-title" id="greeting">Bonjour</h1>
+          <p class="hero-sub" id="greet-sub">Bienvenue dans votre potager.</p>
+        </div>
+      </div>
+
+      <div class="alerts" id="alerts-list"></div>
+
+      <div class="stats">
+        <div class="stat stat-plants"><div class="ic">🌱</div><div class="v" id="stat-plants">—</div><div class="k">Plantes</div></div>
+        <div class="stat stat-water"><div class="ic">💧</div><div class="v" id="stat-water">—</div><div class="k">À arroser</div></div>
+        <div class="stat stat-harvest"><div class="ic">🥕</div><div class="v" id="stat-harvest">—</div><div class="k">À récolter</div></div>
+        <div class="stat stat-streak"><div class="ic">🔥</div><div class="v" id="stat-streak">—</div><div class="k">Série</div></div>
+      </div>
+
+      <!-- Widget XP — visible pour les débutants uniquement -->
+      <div id="xp-widget" class="card mt-4" style="display:none">
+        <div class="card-title">
+          <h3>⭐ Ma progression</h3>
+          <span class="meta" id="xp-level-label">Débutant</span>
+        </div>
+        <div class="xp-bar-wrap">
+          <div class="xp-bar"><div class="xp-fill" id="xp-fill"></div></div>
+          <div class="row between" style="margin-top:5px">
+            <span class="xsmall muted" id="xp-current">0 XP</span>
+            <span class="xsmall muted" id="xp-next-label">Prochain palier</span>
+          </div>
+        </div>
+        <div class="xp-levels" id="xp-levels"></div>
+        <div class="xsmall muted mt-3" style="font-weight:800;text-transform:uppercase;letter-spacing:.06em">Défis</div>
+        <div class="milestones-row mt-2" id="milestones-row"></div>
+        <div class="mt-3 xsmall muted">Gagnez des XP en plantant, en complétant des tâches et en lisant le guide.</div>
+      </div>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="card-title">
+            <h3>Tâches du jour</h3>
+            <span class="meta" id="tasks-meta">0 sur 0</span>
+          </div>
+          <div id="tasks-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <h3>Météo</h3>
+            <span class="meta">Conditions du jardin</span>
+          </div>
+          <div class="weather-main">
+            <div class="wi">⛅</div>
+            <div>
+              <div class="temp">19°<small>C</small></div>
+              <div class="desc">Partiellement nuageux</div>
+            </div>
+          </div>
+          <div class="forecast">
+            <div class="day"><div class="d">Dim</div><div class="ic">☀️</div><div class="t">22° <small>13°</small></div></div>
+            <div class="day"><div class="d">Lun</div><div class="ic">🌦️</div><div class="t">17° <small>11°</small></div></div>
+            <div class="day"><div class="d">Mar</div><div class="ic">⛅</div><div class="t">20° <small>12°</small></div></div>
+          </div>
+          <div class="mt-3 xsmall muted">Pas de risque de gel cette semaine ✓</div>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-title">
+          <h3>La semaine en un coup d'œil</h3>
+          <button class="btn ghost sm" data-nav="calendar">Ouvrir le calendrier →</button>
+        </div>
+        <div id="week-glance" class="row" style="overflow-x:auto;gap:10px;padding-bottom:6px"></div>
+      </div>
+    </section>
+
+    <!-- ===== VUE 2 : MON JARDIN ===== -->
+    <section class="view" data-view="garden">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Mon jardin</div>
+          <h1 id="garden-title">Le potager</h1>
+          <div class="sub">Glissez les plantes pour les réorganiser. Touchez pour les détails.</div>
+        </div>
+      </div>
+
+      <!-- Onglets Jardin / Serre -->
+      <div class="garden-tabs" id="garden-type-tabs">
+        <button class="gtab active" data-gt="all">🌍 Tout</button>
+        <button class="gtab" data-gt="jardin">🌿 Jardin</button>
+        <button class="gtab" data-gt="serre">🏡 Serre</button>
+      </div>
+
+      <div class="beds-toolbar" id="beds-toolbar"></div>
+
+      <div class="bed-stage" id="bed-stage" style="display:none">
+        <div class="bed-info">
+          <div>
+            <div class="name" id="bed-name">—</div>
+            <div class="sub" id="bed-sub">—</div>
+          </div>
+          <div class="row gap-2">
+            <button class="btn sm" id="rename-bed">✏️ Renommer</button>
+            <button class="btn sm danger" id="delete-bed">🗑️ Supprimer</button>
+          </div>
+        </div>
+        <div class="bed-grid-wrap"><div class="bed-grid" id="bed-grid"></div></div>
+      </div>
+
+      <div class="empty" id="garden-empty">
+        <div class="ei">🪴</div>
+        <h3>Aucune parcelle</h3>
+        <p>Créez votre première parcelle pour commencer à planter.</p>
+        <button class="btn primary" id="empty-add-bed-btn">Créer une parcelle</button>
+      </div>
+
+      <div style="margin-top:14px;text-align:center">
+        <button class="btn" id="add-bed-btn">+ Ajouter une parcelle</button>
+      </div>
+    </section>
+
+    <!-- ===== VUE 3 : CATALOGUE ===== -->
+    <section class="view" data-view="catalog">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Catalogue de plantes</div>
+          <h1>Parcourir &amp; planter</h1>
+          <div class="sub">Légumes, herbes, fruits et arbres fruitiers — filtrez par type, saison ou niveau.</div>
+        </div>
+      </div>
+      <div class="catalog-controls">
+        <div class="search"><input class="input" id="catalog-search" placeholder="Rechercher tomate, basilic…"></div>
+      </div>
+      <div id="region-catalog-prompt"></div>
+      <div class="filters" id="catalog-filters"></div>
+      <div class="grid grid-3" id="catalog-grid"></div>
+    </section>
+
+    <!-- ===== VUE 4 : CALENDRIER ===== -->
+    <section class="view" data-view="calendar">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Calendrier</div>
+          <h1>À venir</h1>
+          <div class="sub">Les points colorés indiquent arrosages, semis et récoltes.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="cal-head">
+          <div class="row gap-2">
+            <button class="icon-btn" id="cal-prev" aria-label="Mois précédent">‹</button>
+            <button class="icon-btn" id="cal-next" aria-label="Mois suivant">›</button>
+          </div>
+          <div class="cal-month" id="cal-month">—</div>
+          <button class="btn sm" id="cal-today">Aujourd'hui</button>
+        </div>
+        <div class="cal-filters" id="cal-filters">
+          <button class="filter-chip active" data-cf="all">Tout</button>
+          <button class="filter-chip" data-cf="water">💧 Arrosage</button>
+          <button class="filter-chip" data-cf="sow">🌱 Semis</button>
+          <button class="filter-chip" data-cf="harvest">🥕 Récolte</button>
+          <button class="filter-chip" data-cf="treat">🛡️ Traitements</button>
+        </div>
+        <div class="cal-grid" id="cal-grid"></div>
+        <div class="cal-legend">
+          <span class="lg"><span class="d-dot" style="background:#4a8fc8"></span> Arrosage</span>
+          <span class="lg"><span class="d-dot" style="background:var(--green)"></span> Semis</span>
+          <span class="lg"><span class="d-dot" style="background:var(--earth)"></span> Récolte</span>
+          <span class="lg"><span class="d-dot" style="background:var(--urgent)"></span> Traitements</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== VUE 5 : JOURNAL ===== -->
+    <section class="view" data-view="journal">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Journal</div>
+          <h1>Notes du jardin</h1>
+          <div class="sub">Notez vos observations et suivez la croissance.</div>
+        </div>
+        <button class="btn primary" id="new-note-btn">+ Nouvelle note</button>
+      </div>
+      <div class="filters" id="journal-filters">
+        <button class="filter-chip active" data-jf="all">Tout</button>
+        <button class="filter-chip" data-jf="harvest">#récolte</button>
+        <button class="filter-chip" data-jf="pest">#ravageur</button>
+        <button class="filter-chip" data-jf="weather">#météo</button>
+        <button class="filter-chip" data-jf="experiment">#essai</button>
+      </div>
+      <div class="journal-list" id="journal-list"></div>
+    </section>
+
+    <!-- ===== VUE 6 : RAPPELS ===== -->
+    <section class="view" data-view="reminders">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Rappels</div>
+          <h1>Notifications</h1>
+          <div class="sub">Réglez une fois. Potager vous prévient au bon moment.</div>
+        </div>
+        <button class="btn primary" id="new-reminder-btn">+ Nouveau rappel</button>
+      </div>
+
+      <div id="push-prompt-wrap"></div>
+
+      <div class="card">
+        <div class="card-title"><h3>Rappels récurrents</h3></div>
+        <div id="reminders-list"></div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-title">
+          <div>
+            <h3>🍃 Maladies &amp; Traitements</h3>
+            <div class="small muted" style="margin-top:2px">Surveiller et traiter vos cultures</div>
+          </div>
+        </div>
+        <div class="reminder">
+          <div class="ri">🍂</div>
+          <div class="rb"><div class="rt">Mildiou et maladies foliaires</div><div class="rs">Alerte hebdo mai–août si conditions à risque</div></div>
+          <div class="toggle" data-pref="alertMildiou"></div>
+        </div>
+        <div class="reminder">
+          <div class="ri">💊</div>
+          <div class="rb"><div class="rt">Traitements préventifs &amp; curatifs</div><div class="rs">Rappel selon le calendrier de traitement</div></div>
+          <div class="toggle" data-pref="alertTraitement"></div>
+        </div>
+        <div class="reminder">
+          <div class="ri">🐛</div>
+          <div class="rb"><div class="rt">Ravageurs &amp; parasites</div><div class="rs">Surveillance pucerons, doryphores, limaces…</div></div>
+          <div class="toggle" data-pref="alertParasite"></div>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-title">
+          <div>
+            <h3>🌳 Arboriculture Fruitière</h3>
+            <div class="small muted" style="margin-top:2px">Taille, greffage et soins des fruitiers</div>
+          </div>
+        </div>
+        <div class="reminder">
+          <div class="ri">✂️</div>
+          <div class="rb"><div class="rt">Taille des fruitiers</div><div class="rs">Janvier–Février (repos végétatif)</div></div>
+          <div class="toggle" data-pref="alertTaille"></div>
+        </div>
+        <div class="reminder">
+          <div class="ri">🛡️</div>
+          <div class="rb"><div class="rt">Traitement bouillie bordelaise</div><div class="rs">Avant le débourrement (mars)</div></div>
+          <div class="toggle" data-pref="alertTraitementArbo"></div>
+        </div>
+        <div class="reminder">
+          <div class="ri">🌿</div>
+          <div class="rb"><div class="rt">Greffage (écusson, en fente, anglaise)</div><div class="rs">Juillet–Août pour le greffage en écusson</div></div>
+          <div class="toggle" data-pref="alertGreffage"></div>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-title"><h3>Préférences de notification</h3></div>
+        <div class="reminder">
+          <div class="ri">📨</div>
+          <div class="rb"><div class="rt">Résumé du matin</div><div class="rs">Récapitulatif des tâches à 7h00</div></div>
+          <div class="toggle on" data-pref="digest"></div>
+        </div>
+        <div class="reminder">
+          <div class="ri">🌧️</div>
+          <div class="rb"><div class="rt">Alertes météo</div><div class="rs">Gel, canicules, orages</div></div>
+          <div class="toggle on" data-pref="weather"></div>
+        </div>
+        <div class="reminder">
+          <div class="ri">🌙</div>
+          <div class="rb"><div class="rt">Heures silencieuses (21h – 7h)</div><div class="rs">Pas de notifications la nuit</div></div>
+          <div class="toggle on" data-pref="quiet"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== VUE 7 : GUIDE ===== -->
+    <section class="view" data-view="guide">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Guide du Potager</div>
+          <h1>Apprendre &amp; Progresser</h1>
+          <div class="sub">Le guide complet pour réussir votre potager, disponible à tout moment.</div>
+        </div>
+        <button class="btn ghost sm" id="guide-restart-tut">🎓 Tutoriel</button>
+      </div>
+      <div id="guide-content"></div>
+    </section>
+
+  </main>
+</div><!-- /app -->
+
+<!-- ===== BOTTOM NAV (mobile) ===== -->
+<nav class="bottom-nav">
+  <button class="tab active" data-nav="dashboard"><span class="ti">🏡</span><span class="tab-label">Accueil</span></button>
+  <button class="tab" data-nav="garden"><span class="nav-badge-wrap"><span class="ti">🌿</span></span><span class="tab-label">Jardin</span></button>
+  <button class="tab" data-nav="catalog"><span class="ti">📖</span><span class="tab-label">Catalogue</span></button>
+  <button class="tab" data-nav="guide"><span class="ti">📚</span><span class="tab-label">Guide</span></button>
+  <button class="tab" data-nav="journal"><span class="ti">📓</span><span class="tab-label">Journal</span></button>
+</nav>
+
+<!-- ===== FAB ===== -->
+<button class="fab" id="fab" aria-label="Ajout rapide">+</button>
+
+<!-- ===== PLANT DETAIL PANEL ===== -->
+<div class="panel-backdrop" id="panel-backdrop"></div>
+<aside class="panel" id="plant-panel" aria-hidden="true">
+  <div class="panel-handle"></div>
+  <div class="panel-head">
+    <div>
+      <div class="eyebrow muted">Détails de la plante</div>
+      <div class="row gap-2" style="margin-top:4px">
+        <span class="dot" id="pd-status"></span>
+        <b id="pd-bed-name">—</b>
+      </div>
+    </div>
+    <button class="close" id="panel-close" aria-label="Fermer">✕</button>
+  </div>
+  <div class="panel-body" id="panel-body"></div>
+</aside>
+
+<!-- ===== QUICK ADD MODAL ===== -->
+<div class="modal-backdrop" id="quickadd-backdrop">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <div>
+        <h2>Ajout rapide</h2>
+        <div class="muted small">Que souhaitez-vous ajouter ?</div>
+      </div>
+      <div class="row gap-2">
+        <span class="draft-pill" id="qa-draft" style="display:none"><span class="ddot"></span> Brouillon</span>
+        <button class="close" id="qa-close" aria-label="Fermer">✕</button>
+      </div>
+    </div>
+    <div class="qa-types">
+      <button class="qa-type active" data-qa="task"><span class="qai">✅</span> Tâche</button>
+      <button class="qa-type" data-qa="plant"><span class="qai">🌱</span> Plante</button>
+      <button class="qa-type" data-qa="note"><span class="qai">📝</span> Note</button>
+    </div>
+    <!-- Task form -->
+    <div class="qa-form" data-qa-form="task">
+      <div class="field mb-2">
+        <label>Quelle est la tâche ?</label>
+        <input class="input" data-draft="task-title" placeholder="ex. Arroser les tomates">
+      </div>
+      <div class="grid grid-2">
+        <div class="field"><label>Type</label>
+          <select class="select" data-draft="task-kind">
+            <option value="water">💧 Arrosage</option>
+            <option value="sow">🌱 Semis</option>
+            <option value="harvest">🥕 Récolte</option>
+            <option value="treat">🛡️ Traitement</option>
+            <option value="other">📌 Autre</option>
+          </select>
+        </div>
+        <div class="field"><label>Quand</label>
+          <input class="input" type="date" data-draft="task-date">
+        </div>
+      </div>
+    </div>
+    <!-- Plant form -->
+    <div class="qa-form" data-qa-form="plant" style="display:none">
+      <div class="field mb-2">
+        <label>Choisir dans le catalogue</label>
+        <select class="select" data-draft="plant-id" id="qa-plant-select"></select>
+      </div>
+      <div class="grid grid-2">
+        <div class="field"><label>Ajouter à la parcelle</label>
+          <select class="select" data-draft="plant-bed" id="qa-bed-select"></select>
+        </div>
+        <div class="field"><label>Planté le</label>
+          <input class="input" type="date" data-draft="plant-date">
+        </div>
+      </div>
+    </div>
+    <!-- Note form -->
+    <div class="qa-form" data-qa-form="note" style="display:none">
+      <div class="field mb-2">
+        <label>Qu'avez-vous observé ?</label>
+        <textarea class="textarea" data-draft="note-text" placeholder="Pucerons repérés sur les poireaux…"></textarea>
+      </div>
+      <div class="grid grid-2">
+        <div class="field"><label>Étiquette</label>
+          <select class="select" data-draft="note-tag">
+            <option value="">Aucune</option>
+            <option value="harvest">#récolte</option>
+            <option value="pest">#ravageur</option>
+            <option value="weather">#météo</option>
+            <option value="experiment">#essai</option>
+          </select>
+        </div>
+        <div class="field"><label>Concerne</label>
+          <select class="select" data-draft="note-subject" id="qa-note-subject"><option value="">Général</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="row between mt-4">
+      <button class="btn ghost" id="qa-clear-draft">Effacer brouillon</button>
+      <div class="row gap-2">
+        <button class="btn" id="qa-cancel">Annuler</button>
+        <button class="btn primary" id="qa-save">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CONFIRM MODAL ===== -->
+<div class="modal-backdrop" id="confirm-backdrop">
+  <div class="modal" role="alertdialog" style="max-width:420px">
+    <div class="modal-head">
+      <h2 id="confirm-title">Êtes-vous sûr·e ?</h2>
+      <button class="close" data-confirm-no aria-label="Fermer">✕</button>
+    </div>
+    <p class="muted" id="confirm-msg">Cette action est irréversible.</p>
+    <div class="confirm-actions">
+      <button class="btn" data-confirm-no>Annuler</button>
+      <button class="btn primary" id="confirm-yes" style="background:var(--urgent);border-color:var(--urgent)">Oui, supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== BED PICKER (depuis catalogue) ===== -->
+<div class="modal-backdrop" id="addbed-backdrop">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-head">
+      <h2>Placer la plante</h2>
+      <button class="close" id="addbed-close" aria-label="Fermer">✕</button>
+    </div>
+    <div class="muted small mb-4" id="addbed-msg">Choisissez l'emplacement.</div>
+    <div id="addbed-grid"></div>
+  </div>
+</div>
+
+<!-- ===== BED MODAL ===== -->
+<div class="modal-backdrop" id="bed-modal-backdrop">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-head">
+      <h2 id="bed-modal-title">Nouvelle parcelle</h2>
+      <button class="close" id="bed-modal-close" aria-label="Fermer">✕</button>
+    </div>
+    <div class="field mb-2">
+      <label>Nom de la parcelle</label>
+      <input class="input" id="bed-modal-name" placeholder="Ex. Parcelle du jardin">
+    </div>
+    <div class="field mb-2">
+      <label>Type</label>
+      <select class="select" id="bed-modal-type">
+        <option value="jardin">🌿 Jardin (plein air)</option>
+        <option value="serre">🏡 Serre (sous abri)</option>
+      </select>
+    </div>
+    <div class="grid grid-2">
+      <div class="field"><label>Colonnes</label><input class="input" type="number" id="bed-modal-cols" value="4" min="2" max="10"></div>
+      <div class="field"><label>Rangées</label><input class="input" type="number" id="bed-modal-rows" value="3" min="2" max="10"></div>
+    </div>
+    <div class="row between mt-4">
+      <button class="btn ghost" id="bed-modal-cancel">Annuler</button>
+      <button class="btn primary" id="bed-modal-save">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUESTIONNAIRE D'ACCUEIL ===== -->
+<div class="modal-backdrop" id="survey-backdrop">
+  <div class="modal sv-modal">
+
+    <div class="sv-progress" id="sv-progress">
+      <div class="sv-dot on"></div><div class="sv-dot"></div><div class="sv-dot"></div><div class="sv-dot"></div><div class="sv-dot"></div>
+    </div>
+
+    <!-- Étape 1 : Bienvenue -->
+    <div class="sv-step active" data-step="1">
+      <div class="center mb-4">
+        <div class="sv-hero">🌱</div>
+        <h2 class="sv-title">Bienvenue dans Potager</h2>
+        <p class="muted mt-3" style="font-size:15px;line-height:1.6">Votre assistant pour le jardin des Brauds. 3 questions rapides pour personnaliser votre expérience.</p>
+      </div>
+      <button class="btn primary sv-cta" onclick="renderSurveyStep(2)">Commencer →</button>
+    </div>
+
+    <!-- Étape 2 : Expérience -->
+    <div class="sv-step" data-step="2">
+      <h2 class="sv-q">Votre expérience en jardinage ?</h2>
+      <p class="muted small mb-4">L'interface s'adapte à votre niveau.</p>
+      <div class="sv-choices">
+        <button class="sv-choice" onclick="selectExperience('none')">
+          <div class="sv-ci">🌱</div>
+          <div class="sv-cd"><div class="sv-ct">Débutant</div><div class="sv-cs">Je commence, j'ai besoin de guidance</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+        <button class="sv-choice" onclick="selectExperience('some')">
+          <div class="sv-ci">🌿</div>
+          <div class="sv-cd"><div class="sv-ct">Intermédiaire</div><div class="sv-cs">Quelques saisons d'expérience</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+        <button class="sv-choice" onclick="selectExperience('lots')">
+          <div class="sv-ci">🏆</div>
+          <div class="sv-cd"><div class="sv-ct">Expert</div><div class="sv-cs">Plusieurs années, j'ai mes habitudes</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Étape 3 : Espace -->
+    <div class="sv-step" data-step="3">
+      <h2 class="sv-q">Quel espace avez-vous ?</h2>
+      <p class="muted small mb-4">Nous séparerons jardin et serre dans l'application.</p>
+      <div class="sv-choices">
+        <button class="sv-choice" onclick="selectSpaceType('jardin')">
+          <div class="sv-ci">🌿</div>
+          <div class="sv-cd"><div class="sv-ct">Jardin uniquement</div><div class="sv-cs">Potager en plein air</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+        <button class="sv-choice" onclick="selectSpaceType('serre')">
+          <div class="sv-ci">🏡</div>
+          <div class="sv-cd"><div class="sv-ct">Serre uniquement</div><div class="sv-cs">Culture sous abri</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+        <button class="sv-choice" onclick="selectSpaceType('both')">
+          <div class="sv-ci">🌍</div>
+          <div class="sv-cd"><div class="sv-ct">Les deux</div><div class="sv-cs">Jardin extérieur + serre</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Étape 4 : Région -->
+    <div class="sv-step" data-step="4">
+      <h2 class="sv-q">Dans quelle région jardinez-vous ?</h2>
+      <p class="muted small mb-4">Le taux de réussite de chaque plante sera affiché pour votre région.</p>
+      <div class="sv-choices">
+        <button class="sv-choice" onclick="selectRegion('nord')">
+          <div class="sv-ci">🌧️</div>
+          <div class="sv-cd"><div class="sv-ct">Nord &amp; Bretagne</div><div class="sv-cs">Frais, pluvieux, hivers doux</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+        <button class="sv-choice" onclick="selectRegion('idf')">
+          <div class="sv-ci">☁️</div>
+          <div class="sv-cd"><div class="sv-ct">Île-de-France &amp; Centre</div><div class="sv-cs">Tempéré, variable, été chaud</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+        <button class="sv-choice" onclick="selectRegion('ocean')">
+          <div class="sv-ci">🌊</div>
+          <div class="sv-cd"><div class="sv-ct">Grand Ouest &amp; Atlantique</div><div class="sv-cs">Océanique, doux, humide</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+        <button class="sv-choice" onclick="selectRegion('sudouest')">
+          <div class="sv-ci">☀️</div>
+          <div class="sv-cd"><div class="sv-ct">Sud-Ouest &amp; Occitanie</div><div class="sv-cs">Chaud et humide en été</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+        <button class="sv-choice" onclick="selectRegion('med')">
+          <div class="sv-ci">🌞</div>
+          <div class="sv-cd"><div class="sv-ct">Méditerranée &amp; PACA</div><div class="sv-cs">Très chaud et sec l'été</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+        <button class="sv-choice" onclick="selectRegion('est')">
+          <div class="sv-ci">🌡️</div>
+          <div class="sv-cd"><div class="sv-ct">Est &amp; Rhône-Alpes</div><div class="sv-cs">Continental, hivers froids</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+        <button class="sv-choice" onclick="selectRegion('montagne')">
+          <div class="sv-ci">⛰️</div>
+          <div class="sv-cd"><div class="sv-ct">Montagne</div><div class="sv-cs">Été court, gel possible tardif</div></div>
+          <div class="sv-arrow">›</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Étape 5 : Résultat (rempli dynamiquement) -->
+    <div class="sv-step" data-step="5" id="sv-result-step"></div>
+
+  </div>
+</div>
+
+<!-- ===== TUTORIAL OVERLAY ===== -->
+<div id="tutorial-overlay" class="tut-overlay">
+  <div id="tut-highlight" class="tut-highlight"></div>
+  <div id="tut-card" class="tut-card">
+    <div class="tut-counter">Étape <span id="tut-num">1</span> / <span id="tut-total">6</span></div>
+    <h3 id="tut-title" class="mt-2">Titre</h3>
+    <p id="tut-text" class="muted small mt-2">Texte</p>
+    <div class="row between mt-4">
+      <button class="btn ghost sm" id="tut-skip">Ignorer</button>
+      <button class="btn primary" id="tut-next">Suivant →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== AUTH MODAL ===== -->
+<div class="modal-backdrop" id="auth-backdrop">
+  <div class="modal" style="max-width:440px">
+    <div class="auth-hero">
+      <div class="auth-logo">🌱</div>
+      <h2>Le Potager des Brauds</h2>
+      <div class="sub">Connectez-vous pour synchroniser votre jardin.</div>
+    </div>
+    <div class="auth-notice" id="auth-firebase-warning" style="display:none">
+      <span>⚙️</span>
+      <div><b>Firebase non configuré</b> — mode local activé automatiquement.</div>
+    </div>
+    <div class="auth-error" id="auth-error"></div>
+    <button class="gbtn" id="google-signin"><span class="gicon"></span> Continuer avec Google</button>
+    <div class="auth-divider">ou</div>
+    <div class="auth-skip">
+      <button id="auth-skip">Continuer sans compte (mode local)</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ACCOUNT MODAL ===== -->
+<div class="modal-backdrop" id="acc-backdrop">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-head">
+      <h2>Mon compte</h2>
+      <button class="close" id="acc-close" aria-label="Fermer">✕</button>
+    </div>
+    <div class="row gap-2 mb-4" style="padding:12px;background:var(--bg-soft);border-radius:14px">
+      <span class="ava" id="ava-menu" style="width:44px;height:44px;border-radius:50%;background:linear-gradient(160deg,var(--green-light),var(--green));display:grid;place-items:center;color:#fff;font-weight:800;background-size:cover;background-position:center">?</span>
+      <div style="min-width:0;flex:1">
+        <div style="font-weight:800" id="acc-menu-name">—</div>
+        <div class="xsmall muted" id="acc-menu-email">—</div>
+      </div>
+      <span class="sync-badge local" id="acc-sync-badge">Local</span>
+    </div>
+    <button class="acc-row" id="acc-export">
+      <span class="ai">⬇️</span>
+      <div style="flex:1"><div class="at">Exporter mes données</div><div class="as">Téléchargez un fichier JSON de votre jardin</div></div>
+    </button>
+    <button class="acc-row" id="acc-region">
+      <span class="ai">🗺️</span>
+      <div style="flex:1"><div class="at">Ma région</div><div class="as" id="acc-region-label">Non renseignée</div></div>
+      <span style="color:var(--ink-soft);font-size:18px">›</span>
+    </button>
+    <button class="acc-row" id="acc-replay-tutorial">
+      <span class="ai">🎓</span>
+      <div style="flex:1"><div class="at">Revoir le tutoriel</div><div class="as">Relancer la visite guidée de l'application</div></div>
+    </button>
+    <button class="acc-row" id="acc-reset" style="color:var(--urgent)">
+      <span class="ai">🧹</span>
+      <div style="flex:1"><div class="at">Repartir de zéro</div><div class="as">Tout effacer : plantes, tâches, progression, questionnaire</div></div>
+    </button>
+    <button class="acc-row" id="acc-signout" style="color:var(--urgent)">
+      <span class="ai">🚪</span>
+      <div style="flex:1"><div class="at">Se déconnecter</div><div class="as">Retour à l'écran de connexion</div></div>
+    </button>
+  </div>
+</div>
+
+<!-- ===== REMINDER MODAL ===== -->
+<div class="modal-backdrop" id="reminder-modal-backdrop">
+  <div class="modal" style="max-width:460px">
+    <div class="modal-head">
+      <h2>Nouveau rappel</h2>
+      <button class="close" id="reminder-modal-close" aria-label="Fermer">✕</button>
+    </div>
+    <div class="field mb-2">
+      <label>Titre du rappel</label>
+      <input class="input" id="reminder-title" placeholder="Ex. Arroser les tomates">
+    </div>
+    <div class="field mb-2">
+      <label>Fréquence</label>
+      <select class="select" id="reminder-freq">
+        <option>Tous les jours</option>
+        <option>Tous les 2 jours</option>
+        <option>Tous les 3 jours</option>
+        <option>Une fois par semaine</option>
+        <option>Toutes les 2 semaines</option>
+      </select>
+    </div>
+    <div class="field mb-2">
+      <label>Icône</label>
+      <select class="select" id="reminder-icon">
+        <option value="💧">💧 Arrosage</option>
+        <option value="🌱">🌱 Semis</option>
+        <option value="🥕">🥕 Récolte</option>
+        <option value="🛡️">🛡️ Traitement</option>
+        <option value="🐛">🐛 Surveillance</option>
+        <option value="🌿">🌿 Entretien</option>
+        <option value="📌">📌 Autre</option>
+      </select>
+    </div>
+    <div class="row between mt-4">
+      <button class="btn ghost" id="reminder-modal-cancel">Annuler</button>
+      <button class="btn primary" id="reminder-modal-save">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== REGION MODAL ===== -->
+<div class="modal-backdrop" id="region-modal-backdrop">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-head">
+      <h2>Ma région</h2>
+      <button class="close" id="region-modal-close" aria-label="Fermer">✕</button>
+    </div>
+    <p class="muted small mb-4">Personnalise le taux de réussite de chaque plante dans votre catalogue.</p>
+    <div id="region-modal-choices" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+</div>
+
+<!-- Firebase SDK (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
