@@ -42,6 +42,54 @@ const CATALOG = [
 ];
 
 /* ============================================================
+   RÉGIONS CLIMATIQUES & TAUX DE RÉUSSITE PAR PLANTE
+   ============================================================ */
+const REGIONS = [
+  { id:'nord',     emoji:'🌧️', label:'Nord & Bretagne',         desc:'Frais, pluvieux, hivers doux' },
+  { id:'idf',      emoji:'☁️',  label:'Île-de-France & Centre',  desc:'Tempéré, variable, été chaud' },
+  { id:'ocean',    emoji:'🌊',  label:'Grand Ouest & Atlantique', desc:'Océanique, doux, humide' },
+  { id:'sudouest', emoji:'☀️',  label:'Sud-Ouest & Occitanie',   desc:'Chaud et humide en été' },
+  { id:'med',      emoji:'🌞',  label:'Méditerranée & PACA',     desc:'Très chaud et sec l\'été' },
+  { id:'est',      emoji:'🌡️', label:'Est & Rhône-Alpes',       desc:'Continental, hivers froids' },
+  { id:'montagne', emoji:'⛰️',  label:'Montagne',                desc:'Été court, gel possible tardif' },
+];
+
+const REGION_DATA = {
+  tomato:              { nord:65, idf:75, ocean:78, sudouest:90, med:95, est:78, montagne:50 },
+  basil:               { nord:55, idf:68, ocean:72, sudouest:88, med:95, est:70, montagne:38 },
+  lettuce:             { nord:85, idf:88, ocean:88, sudouest:80, med:72, est:85, montagne:78 },
+  carrot:              { nord:88, idf:90, ocean:88, sudouest:85, med:78, est:88, montagne:80 },
+  zucchini:            { nord:68, idf:80, ocean:82, sudouest:92, med:90, est:80, montagne:58 },
+  leek:                { nord:92, idf:88, ocean:88, sudouest:82, med:70, est:85, montagne:82 },
+  strawberry:          { nord:82, idf:85, ocean:85, sudouest:85, med:80, est:82, montagne:72 },
+  radish:              { nord:88, idf:90, ocean:90, sudouest:85, med:78, est:88, montagne:82 },
+  pepper:              { nord:52, idf:65, ocean:68, sudouest:88, med:95, est:68, montagne:38 },
+  eggplant:            { nord:48, idf:60, ocean:65, sudouest:85, med:95, est:62, montagne:32 },
+  pea:                 { nord:85, idf:85, ocean:88, sudouest:80, med:70, est:82, montagne:78 },
+  pumpkin:             { nord:65, idf:78, ocean:80, sudouest:88, med:88, est:78, montagne:55 },
+  'squash-spaghetti':  { nord:62, idf:75, ocean:78, sudouest:88, med:88, est:75, montagne:52 },
+  butternut:           { nord:60, idf:72, ocean:75, sudouest:90, med:92, est:75, montagne:50 },
+  'pumpkin-marron':    { nord:60, idf:72, ocean:75, sudouest:88, med:88, est:75, montagne:50 },
+  chili:               { nord:48, idf:60, ocean:65, sudouest:85, med:95, est:65, montagne:35 },
+  'sweet-potato':      { nord:38, idf:52, ocean:58, sudouest:82, med:92, est:55, montagne:28 },
+  gherkin:             { nord:60, idf:72, ocean:75, sudouest:88, med:90, est:72, montagne:50 },
+  'red-cabbage':       { nord:90, idf:88, ocean:85, sudouest:80, med:70, est:85, montagne:80 },
+  cabbage:             { nord:92, idf:88, ocean:88, sudouest:80, med:68, est:85, montagne:82 },
+  beans:               { nord:68, idf:78, ocean:82, sudouest:88, med:90, est:80, montagne:58 },
+  watermelon:          { nord:32, idf:45, ocean:50, sudouest:75, med:95, est:52, montagne:18 },
+  melon:               { nord:38, idf:52, ocean:58, sudouest:82, med:95, est:58, montagne:22 },
+  mirabelle:           { nord:70, idf:80, ocean:75, sudouest:85, med:78, est:92, montagne:62 },
+  'reine-claude':      { nord:68, idf:78, ocean:75, sudouest:88, med:80, est:90, montagne:60 },
+  quetsche:            { nord:72, idf:80, ocean:78, sudouest:85, med:75, est:92, montagne:68 },
+  apple:               { nord:82, idf:85, ocean:82, sudouest:80, med:65, est:88, montagne:72 },
+  pear:                { nord:78, idf:82, ocean:80, sudouest:82, med:70, est:85, montagne:68 },
+  cherry:              { nord:72, idf:78, ocean:75, sudouest:82, med:88, est:85, montagne:65 },
+  peach:               { nord:42, idf:58, ocean:62, sudouest:82, med:95, est:72, montagne:42 },
+  nectarine:           { nord:38, idf:55, ocean:58, sudouest:80, med:95, est:68, montagne:38 },
+  apricot:             { nord:38, idf:52, ocean:55, sudouest:78, med:95, est:65, montagne:35 },
+};
+
+/* ============================================================
    MILESTONES (système de progression débutant)
    ============================================================ */
 const MILESTONES = [
@@ -59,6 +107,15 @@ const MILESTONES = [
 
 const XP_EVENTS = { task_done:5, plant_added:10, journal_entry:8, harvest_done:15, guide_read:5 };
 
+// Paliers de progression — affichés dans le widget XP pour motiver
+const LEVELS = [
+  { xp:0,    icon:'🔰', label:'Débutant' },
+  { xp:100,  icon:'🌱', label:'Apprenti' },
+  { xp:300,  icon:'🌿', label:'Main verte' },
+  { xp:600,  icon:'🌻', label:'Confirmé' },
+  { xp:1000, icon:'🏆', label:'Maître du potager' },
+];
+
 function awardXP(event) {
   if (!state.profile || state.profile.level !== 'beginner') return;
   const amount = XP_EVENTS[event] || 0;
@@ -67,6 +124,9 @@ function awardXP(event) {
   state.profile.stars = Math.floor(state.profile.xp / 100);
   checkMilestones();
   saveState();
+  renderXPWidget();
+  const bar = document.querySelector('#xp-widget .xp-bar');
+  if (bar) { bar.classList.remove('bump'); void bar.offsetWidth; bar.classList.add('bump'); }
   flash(`+${amount} XP ⭐`);
 }
 
@@ -83,6 +143,44 @@ function checkMilestones() {
       gained = true;
     }
   });
+  if (gained) renderXPWidget();
+}
+
+function renderXPWidget() {
+  const xpWidget = document.getElementById('xp-widget');
+  if (!xpWidget) return;
+  const isBegin = state.profile && state.profile.level === 'beginner';
+  xpWidget.style.display = isBegin ? '' : 'none';
+  if (!isBegin) return;
+
+  const xp = state.profile.xp || 0;
+  let lvlIdx = 0;
+  LEVELS.forEach((l, i) => { if (xp >= l.xp) lvlIdx = i; });
+  const cur = LEVELS[lvlIdx];
+  const next = LEVELS[lvlIdx + 1] || null;
+  const pct = next ? Math.min(100, Math.round((xp - cur.xp) / (next.xp - cur.xp) * 100)) : 100;
+
+  document.getElementById('xp-current').textContent = `${xp} XP`;
+  document.getElementById('xp-next-label').textContent = next ? `Prochain : ${next.icon} ${next.label} à ${next.xp} XP` : '🏆 Niveau maximum atteint !';
+  const fill = document.getElementById('xp-fill');
+  if (fill) fill.style.width = pct + '%';
+  document.getElementById('xp-level-label').textContent = `${cur.icon} ${cur.label}`;
+
+  // Échelle des paliers — donne envie de viser le suivant
+  const ladder = document.getElementById('xp-levels');
+  if (ladder) ladder.innerHTML = LEVELS.map((l, i) => {
+    const cls = i < lvlIdx ? 'past' : i === lvlIdx ? 'current' : '';
+    const xpLabel = i === lvlIdx && next ? `${xp} / ${next.xp} XP` : `${l.xp} XP`;
+    return `<div class="xp-level ${cls}" title="${escapeHTML(l.label)} — dès ${l.xp} XP">
+      <div class="xl-icon">${i < lvlIdx ? '✅' : l.icon}</div>
+      <div class="xl-name">${escapeHTML(l.label)}</div>
+      <div class="xl-xp">${xpLabel}</div>
+    </div>`;
+  }).join('');
+
+  const done = new Set(state.profile.milestones || []);
+  const mRow = document.getElementById('milestones-row');
+  if (mRow) mRow.innerHTML = MILESTONES.map(m => `<span class="milestone-badge ${done.has(m.id) ? 'done' : ''}" title="${escapeHTML(m.label)}">${m.icon}</span>`).join('');
 }
 
 /* ============================================================
@@ -156,22 +254,92 @@ function initNotificationScheduler() {
 /* ============================================================
    GUIDE DU POTAGER
    ============================================================ */
+/* Compagnonnage : pour chaque légume, les bons voisins (✓) et ceux à éviter (✗).
+   Les noms reprennent ceux du catalogue quand c'est possible. */
+const COMPANION_DATA = [
+  { icon:'🍅', plant:'Tomate',     good:['Basilic','Œillet d\'Inde','Carotte','Persil','Oignon','Ail','Capucine'], avoid:['Pomme de terre','Chou','Fenouil','Concombre'] },
+  { icon:'🥕', plant:'Carotte',    good:['Oignon','Poireau','Radis','Laitue','Tomate','Romarin'],                avoid:['Aneth','Persil','Betterave'] },
+  { icon:'🥬', plant:'Laitue',     good:['Carotte','Radis','Fraisier','Concombre','Betterave'],                 avoid:['Persil','Tournesol'] },
+  { icon:'🥒', plant:'Courgette',  good:['Capucine','Maïs','Haricot','Œillet d\'Inde','Bourrache'],             avoid:['Pomme de terre','Concombre'] },
+  { icon:'🧅', plant:'Oignon / Poireau', good:['Carotte','Betterave','Laitue','Fraisier','Tomate'],            avoid:['Pois','Haricot','Chou'] },
+  { icon:'🫘', plant:'Haricot',    good:['Maïs','Courge','Carotte','Concombre','Capucine'],                     avoid:['Oignon','Ail','Poireau','Fenouil'] },
+  { icon:'🟢', plant:'Petit pois', good:['Carotte','Radis','Concombre','Maïs','Navet'],                         avoid:['Oignon','Ail','Échalote'] },
+  { icon:'🥬', plant:'Chou',       good:['Aneth','Camomille','Céleri','Bourrache','Capucine','Romarin'],        avoid:['Tomate','Fraisier','Oignon'] },
+  { icon:'🍓', plant:'Fraisier',   good:['Laitue','Épinard','Bourrache','Ail','Haricot'],                       avoid:['Chou','Tomate'] },
+  { icon:'🥔', plant:'Pomme de terre', good:['Haricot','Maïs','Chou','Capucine','Œillet d\'Inde'],              avoid:['Tomate','Courge','Concombre'] },
+  { icon:'🌶️', plant:'Poivron / Piment', good:['Basilic','Tomate','Carotte','Oignon'],                         avoid:['Haricot','Fenouil'] },
+  { icon:'🟠', plant:'Radis',      good:['Laitue','Carotte','Petit pois','Concombre','Épinard'],                avoid:['Hysope'] },
+  { icon:'🎃', plant:'Courge / Citrouille', good:['Maïs','Haricot','Capucine','Bourrache'],                     avoid:['Pomme de terre'] },
+  { icon:'🌿', plant:'Basilic',    good:['Tomate','Poivron','Aubergine','Courgette'],                           avoid:['Concombre','Rue'] },
+];
+
+/* Fleurs et aromatiques alliées du potager (compagnonnage utile partout). */
+const COMPANION_FLOWERS = [
+  { icon:'🌼', name:"Œillet d'Inde", role:"Repousse nématodes et pucerons. À semer entre tomates, choux, pommes de terre." },
+  { icon:'🌺', name:'Capucine',      role:"Plante-piège à pucerons : ils s'y concentrent et épargnent les légumes." },
+  { icon:'💙', name:'Bourrache',     role:"Attire les pollinisateurs, éloigne la piéride du chou et les limaces." },
+  { icon:'🟡', name:'Souci (calendula)', role:"Attire syrphes et coccinelles, prédateurs des pucerons." },
+  { icon:'💜', name:'Lavande',       role:"Éloigne pucerons et fourmis, attire abeilles. Idéale en bordure." },
+];
+
 const GUIDE_SECTIONS = [
   { id:'soil',     icon:'🌍', title:'Préparer le sol',        color:'earth',
-    tips:["Amendez avec du compost mûr en automne (3–5 cm en surface).", "pH idéal : 6.0–7.0 pour la plupart des légumes.", "Évitez de trop travailler le sol — les micro-organismes sont vos alliés.", "Paillez pour conserver l'humidité et limiter les mauvaises herbes."] },
+    tips:["Amendez avec du compost mûr en automne (3–5 cm en surface).", "pH idéal : 6.0–7.0 pour la plupart des légumes — testez-le avec un kit du commerce.", "Évitez de trop travailler le sol — les micro-organismes sont vos alliés.", "Paillez pour conserver l'humidité et limiter les mauvaises herbes.", "Un sol qui s'émiette entre les doigts sans coller est bien structuré.", "En sol lourd (argileux), ajoutez sable et compost ; en sol sableux, du compost et de la matière organique."] },
+  { id:'companion', icon:'🤝', title:'Compagnonnage : quoi planter ensemble', color:'green', type:'companion',
+    tips:["Associez des familles complémentaires : une plante protège ou nourrit l'autre.", "Alternez plantes hautes et basses pour optimiser lumière et espace.", "Les fleurs (œillet d'Inde, capucine, bourrache) attirent pollinisateurs et auxiliaires.", "Ne regroupez pas des plantes de la même famille : mêmes maladies, mêmes ravageurs."] },
   { id:'sow',      icon:'🌱', title:'Semer & Planter',        color:'green',
-    tips:["Profondeur de semis = 3× le diamètre de la graine.", "Arrosez avant de semer, pas juste après — cela évite de déplacer les graines.", "Repiquez par temps nuageux ou en soirée pour moins de stress.", "Respectez les espacements indiqués dans le catalogue."] },
+    tips:["Profondeur de semis = 3× le diamètre de la graine.", "Arrosez avant de semer, pas juste après — cela évite de déplacer les graines.", "Repiquez par temps nuageux ou en soirée pour moins de stress.", "Respectez les espacements indiqués dans le catalogue.", "Semez les petites graines (carotte, laitue) en surface, à peine recouvertes.", "Échelonnez les semis de radis et laitue toutes les 3 semaines pour récolter en continu."] },
   { id:'water',    icon:'💧', title:'Arroser efficacement',   color:'green',
-    tips:["Arrosez au pied, jamais sur le feuillage — réduit les maladies foliaires.", "Tôt le matin ou en soirée pour limiter l'évaporation.", "Un arrosage profond 2×/semaine vaut mieux que 7× superficiel.", "Paillez : cela réduit les besoins en eau de 30 à 50 %."] },
+    tips:["Arrosez au pied, jamais sur le feuillage — réduit les maladies foliaires.", "Tôt le matin ou en soirée pour limiter l'évaporation.", "Un arrosage profond 2×/semaine vaut mieux que 7× superficiel.", "Paillez : cela réduit les besoins en eau de 30 à 50 %.", "Enfoncez un doigt dans la terre : arrosez seulement si c'est sec à 3 cm.", "Récupérez l'eau de pluie — elle est à température et sans calcaire."] },
   { id:'pests',    icon:'🐛', title:'Maladies & Ravageurs',   color:'urgent',
-    tips:["Pucerons : savon noir dilué (10 ml/L), 2 traitements à 3 jours d'intervalle.", "Mildiou : bouillie bordelaise préventive, éviter l'arrosage foliaire.", "Limaces : cendres de bois autour des plants, pièges à bière.", "Observation hebdomadaire = détection précoce = intervention facile."] },
+    tips:["Pucerons : savon noir dilué (10 ml/L), 2 traitements à 3 jours d'intervalle.", "Mildiou : bouillie bordelaise préventive, éviter l'arrosage foliaire.", "Limaces : cendres de bois autour des plants, pièges à bière.", "Observation hebdomadaire = détection précoce = intervention facile.", "Favorisez les coccinelles et syrphes : ils dévorent les pucerons.", "Le purin d'ortie dilué (10 %) renforce les défenses des plantes."] },
+  { id:'companions-aux', icon:'🐞', title:'Auxiliaires & biodiversité', color:'green',
+    tips:["Coccinelle : une larve dévore jusqu'à 150 pucerons par jour.", "Hérisson et crapaud régulent limaces et insectes — laissez-leur un abri.", "Installez un hôtel à insectes et un point d'eau pour fixer les auxiliaires.", "Laissez une zone enherbée ou des fleurs sauvages en bordure du potager.", "Évitez tout insecticide à large spectre : il tue aussi vos alliés."] },
+  { id:'rotation', icon:'🔄', title:'Rotation des cultures',   color:'earth',
+    tips:["Ne cultivez pas la même famille au même endroit avant 3–4 ans.", "Ordre type : légumes-feuilles → légumes-fruits → légumes-racines → légumineuses.", "Les légumineuses (pois, haricots) enrichissent le sol en azote : faites-les suivre par des gourmandes (choux, courges).", "Notez chaque année l'emplacement des familles pour ne pas vous tromper.", "La rotation casse le cycle des maladies et ravageurs du sol."] },
   { id:'harvest',  icon:'🥕', title:'Récolter au bon moment',  color:'earth',
-    tips:["Tomate : récolte ferme, colorée mais encore légèrement résistante.", "Courgette : à 15–20 cm pour la tendreté. Ne laissez pas grossir.", "Herbes aromatiques : prélevez au max 1/3 du plant pour ne pas l'affaiblir.", "Haricots : récoltez souvent — plus vous récoltez, plus ça produit."] },
+    tips:["Tomate : récolte ferme, colorée mais encore légèrement résistante.", "Courgette : à 15–20 cm pour la tendreté. Ne laissez pas grossir.", "Herbes aromatiques : prélevez au max 1/3 du plant pour ne pas l'affaiblir.", "Haricots : récoltez souvent — plus vous récoltez, plus ça produit.", "Récoltez le matin : les légumes sont gorgés d'eau et plus croquants.", "Courges de conservation : récoltez avant les gelées, pédoncule bien sec."] },
   { id:'maintain', icon:'✂️', title:'Entretien régulier',      color:'green',
-    tips:["Pincez les gourmands des tomates chaque semaine.", "Buttez les poireaux et pommes de terre pour les blanchir.", "Palissez cucurbitacées et haricots grimpants sur des treillis.", "Désherber avant que les mauvaises herbes fleurissent."] },
+    tips:["Pincez les gourmands des tomates chaque semaine.", "Buttez les poireaux et pommes de terre pour les blanchir.", "Palissez cucurbitacées et haricots grimpants sur des treillis.", "Désherbez avant que les mauvaises herbes fleurissent.", "Binez régulièrement : « un binage vaut deux arrosages ».", "Retirez les feuilles jaunies ou malades pour limiter la propagation."] },
   { id:'trees',    icon:'🌳', title:'Arbres fruitiers — Bases',color:'earth',
-    tips:["Plantez en dormance (nov–mars) en sol humide mais non gelé.", "Taille de formation les 3 premières années : choisissez 3–5 branches charpentières.", "Traitement cuivre (bouillie bordelaise) avant le débourrement de printemps.", "Greffage en écusson : juillet–août, sur porte-greffe vigoureux."] },
+    tips:["Plantez en dormance (nov–mars) en sol humide mais non gelé.", "Taille de formation les 3 premières années : choisissez 3–5 branches charpentières.", "Traitement cuivre (bouillie bordelaise) avant le débourrement de printemps.", "Greffage en écusson : juillet–août, sur porte-greffe vigoureux.", "Pour les pruniers (mirabelle, quetsche, reine-claude) : taille minimale, juste l'aération.", "Pêcher et nectarinier : traitez contre la cloque dès le gonflement des bourgeons."] },
 ];
+
+function regionScore(plantId) {
+  const rid = state.profile?.region;
+  if (!rid) return null;
+  return REGION_DATA[plantId]?.[rid] ?? null;
+}
+function regionScoreClass(s) { return s >= 85 ? 'excellent' : s >= 70 ? 'good' : s >= 55 ? 'medium' : 'hard'; }
+function regionScoreLabel(s) { return s >= 85 ? 'Excellent' : s >= 70 ? 'Bon' : s >= 55 ? 'Moyen' : 'Difficile'; }
+function regionScoreHTML(score) {
+  const cls = regionScoreClass(score);
+  const lbl = regionScoreLabel(score);
+  return `<div class="region-score region-${cls}">
+    <div class="rs-head"><span class="rs-label">${lbl} dans votre région</span><span class="rs-pct">${score}%</span></div>
+    <div class="rs-bar"><div class="rs-fill" style="width:${score}%"></div></div>
+  </div>`;
+}
+
+function companionGridHTML() {
+  const rows = COMPANION_DATA.map(c => `
+    <div class="comp-row">
+      <div class="comp-veg"><span class="comp-veg-icon">${c.icon}</span><span class="comp-veg-name">${escapeHTML(c.plant)}</span></div>
+      <div class="comp-lists">
+        <div class="comp-line"><span class="comp-tag comp-tag-good">✓ avec</span>${c.good.map(x=>`<span class="comp-chip comp-chip-good">${escapeHTML(x)}</span>`).join('')}</div>
+        <div class="comp-line"><span class="comp-tag comp-tag-bad">✗ éviter</span>${c.avoid.map(x=>`<span class="comp-chip comp-chip-bad">${escapeHTML(x)}</span>`).join('')}</div>
+      </div>
+    </div>`).join('');
+  const flowers = COMPANION_FLOWERS.map(f => `
+    <div class="comp-flower">
+      <span class="comp-flower-icon">${f.icon}</span>
+      <div><div class="comp-flower-name">${escapeHTML(f.name)}</div><div class="comp-flower-role">${escapeHTML(f.role)}</div></div>
+    </div>`).join('');
+  return `
+    <div class="comp-grid">${rows}</div>
+    <div class="comp-flowers-title">🌸 Fleurs alliées à glisser partout</div>
+    <div class="comp-flowers">${flowers}</div>`;
+}
 
 function renderGuide() {
   const el = document.getElementById('guide-content');
@@ -184,12 +352,13 @@ function renderGuide() {
         <div class="guide-icon guide-icon-${s.color}">${s.icon}</div>
         <div class="guide-meta">
           <div class="guide-htitle">${escapeHTML(s.title)}</div>
-          <div class="xsmall muted">${s.tips.length} conseils${seen.has(s.id) ? ' · <span style="color:var(--green-dark)">✓ Lu</span>' : ''}</div>
+          <div class="xsmall muted">${s.type === 'companion' ? COMPANION_DATA.length + ' légumes associés' : s.tips.length + ' conseils'}${seen.has(s.id) ? ' · <span style="color:var(--green-dark)">✓ Lu</span>' : ''}</div>
         </div>
         <div class="guide-chevron">›</div>
       </div>
       <div class="guide-body" style="display:none">
         <ul class="guide-list">${s.tips.map(t => `<li>${escapeHTML(t)}</li>`).join('')}</ul>
+        ${s.type === 'companion' ? companionGridHTML() : ''}
         ${isBegin && !seen.has(s.id) ? `<button class="btn primary sm mt-3" data-guide-read="${s.id}">✓ Marquer comme lu (+5 XP)</button>` : ''}
       </div>
     </div>`).join('');
@@ -223,12 +392,13 @@ function renderGuide() {
    TUTORIEL
    ============================================================ */
 const TUTORIAL_STEPS = [
-  { sel:'.greet',         title:'Votre tableau de bord',      text:'Vue quotidienne : alertes sur vos plantes, tâches du jour, météo et semaine en un coup d\'œil.' },
-  { sel:'#alerts-list',   title:'Alertes instantanées',       text:'Vos plantes qui ont besoin d\'attention apparaissent ici en priorité. Couleur rouge = urgent.' },
-  { sel:'.stats',         title:'Vos statistiques',           text:'Plantes en terre, arrosages à faire aujourd\'hui, récoltes en attente et votre série de jours actifs.' },
-  { sel:'.fab',           title:'Ajout rapide ⚡',             text:'Le bouton + vous permet d\'ajouter une tâche, une plante ou une note en 3 secondes depuis n\'importe quelle page.' },
+  { sel:'.greet,.hero-card', title:'Votre tableau de bord',   text:'Vue quotidienne : alertes sur vos plantes, tâches du jour, météo et semaine en un coup d\'œil.' },
+  { sel:'#alerts-list',      title:'Alertes instantanées',    text:'Vos plantes qui ont besoin d\'attention apparaissent ici en priorité. Couleur rouge = urgent.' },
+  { sel:'.stats',            title:'Vos statistiques',        text:'Plantes en terre, arrosages à faire aujourd\'hui, récoltes en attente et votre série de jours actifs.' },
+  { sel:'.fab',              title:'Ajout rapide ⚡',          text:'Le bouton + vous permet d\'ajouter une tâche, une plante ou une note en 3 secondes depuis n\'importe quelle page.' },
+  { sel:'[data-nav="catalog"]', title:'📍 Taux de réussite par région', text:'Le catalogue affiche la compatibilité climatique de chaque plante pour votre région — de "Excellent" à "Difficile". Configurez ou changez votre région depuis le bandeau en haut du catalogue.' },
   { sel:'nav.bottom-nav,.sidebar', title:'Navigation',         text:'Accédez à votre jardin, catalogue, guide, calendrier et journal. La serre et le jardin sont bien séparés dans "Jardin".' },
-  { sel:'[data-view="guide"].view', title:'Le Guide du potager', text:'Le guide complet du jardinage — sol, semis, arrosage, ravageurs, récolte et arboriculture — accessible à tout moment.' },
+  { sel:'[data-view="guide"].view', title:'Le Guide du potager', text:'Le guide complet — sol, compagnonnage (quoi planter ensemble), semis, arrosage, ravageurs, rotation, récolte et arboriculture — accessible à tout moment.' },
 ];
 
 let tutStep = 0;
@@ -250,6 +420,7 @@ function renderTutStep() {
   document.getElementById('tut-title').textContent = s.title;
   document.getElementById('tut-text').textContent = s.text;
   document.getElementById('tut-next').textContent = tutStep < steps.length - 1 ? 'Suivant →' : 'Terminer ✓';
+  const ov = document.getElementById('tutorial-overlay');
   const hl = document.getElementById('tut-highlight');
   const card = document.getElementById('tut-card');
   const sels = s.sel.split(',').map(x=>x.trim());
@@ -259,13 +430,28 @@ function renderTutStep() {
     if (el) { const r = el.getBoundingClientRect(); if (r.width > 0 && r.height > 0) { target = el; break; } }
   }
   if (target) {
+    // Amène la cible dans le viewport si elle dépasse (sauf éléments fixes : fab, nav), puis mesure
+    const pos = getComputedStyle(target).position;
+    const isFixed = pos === 'fixed' || pos === 'sticky';
+    const r0 = target.getBoundingClientRect();
+    if (!isFixed && (r0.top < 80 || r0.bottom > window.innerHeight - 80)) {
+      target.scrollIntoView({ block: 'center', behavior: 'auto' });
+    }
     const r = target.getBoundingClientRect(); const pad = 8;
-    hl.style.cssText = `display:block;top:${r.top - pad + window.scrollY}px;left:${r.left - pad}px;width:${r.width + pad*2}px;height:${r.height + pad*2}px`;
+    // Le highlight est position:absolute dans un overlay fixed → coordonnées viewport, sans scrollY.
+    ov.style.background = 'transparent';
+    hl.style.display = 'block';
+    hl.style.top = (r.top - pad) + 'px';
+    hl.style.left = (r.left - pad) + 'px';
+    hl.style.width = (r.width + pad * 2) + 'px';
+    hl.style.height = (r.height + pad * 2) + 'px';
     const spaceBelow = window.innerHeight - r.bottom;
-    if (spaceBelow > 200) { card.style.top = (r.bottom + 20) + 'px'; card.style.bottom = ''; }
+    if (spaceBelow > 220) { card.style.top = (r.bottom + 18) + 'px'; card.style.bottom = ''; }
     else { card.style.bottom = (window.innerHeight - r.top + 16) + 'px'; card.style.top = ''; }
     card.style.left = '50%'; card.style.transform = 'translateX(-50%)'; card.style.position = 'fixed';
   } else {
+    // Pas de cible visible → l'overlay assure lui-même l'assombrissement
+    ov.style.background = 'rgba(0,0,0,.6)';
     hl.style.display = 'none';
     card.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%)';
   }
@@ -298,8 +484,13 @@ function selectExperience(level) {
 
 function selectSpaceType(type) {
   surveyData.spaceType = type;
-  buildSurveyResult();
   renderSurveyStep(4);
+}
+
+function selectRegion(id) {
+  surveyData.region = id;
+  buildSurveyResult();
+  renderSurveyStep(5);
 }
 
 function buildSurveyResult() {
@@ -326,7 +517,8 @@ function buildSurveyResult() {
         </div>
       </div>
       <div class="card mt-3" style="border:1px solid var(--line)">
-        <div class="small muted">Espace configuré : <b>${spaceLabel}</b></div>
+        <div class="small muted">Espace : <b>${spaceLabel}</b></div>
+        ${surveyData.region ? `<div class="small muted mt-2">Région : <b>${REGIONS.find(r=>r.id===surveyData.region)?.emoji} ${REGIONS.find(r=>r.id===surveyData.region)?.label}</b></div>` : ''}
       </div>
       <div class="card mt-3 sv-notif-card">
         <div class="row gap-2">
@@ -353,7 +545,7 @@ function buildSurveyResult() {
         </div>
       </div>
       <div class="card mt-3" style="border:1px solid var(--line)">
-        <div class="small muted">Le Guide reste accessible si besoin depuis le menu 📚<br>Espace : <b>${spaceLabel}</b></div>
+        <div class="small muted">Le Guide reste accessible si besoin depuis le menu 📚<br>Espace : <b>${spaceLabel}</b>${surveyData.region ? `<br>Région : <b>${REGIONS.find(r=>r.id===surveyData.region)?.emoji} ${REGIONS.find(r=>r.id===surveyData.region)?.label}</b>` : ''}</div>
       </div>
       <div class="card mt-3 sv-notif-card">
         <div class="row gap-2">
@@ -376,6 +568,7 @@ function finishSurvey() {
     level: surveyData.level,
     experience: surveyData.experience,
     spaceType: surveyData.spaceType,
+    region: surveyData.region || null,
     xp: 0, stars: 0, milestones: [], tutorialDone: false, guideSeen: []
   });
   // Ajuster les parcelles selon l'espace.
@@ -395,7 +588,7 @@ function finishSurvey() {
   if (!state.beds.find(b => b.id === state.activeBedId)) state.activeBedId = state.beds[0].id;
   state.gardenTab = surveyData.spaceType === 'both' ? 'all' : (surveyData.spaceType || 'all');
   state.onboarded = true;
-  saveState();
+  syncGardenTasks();
   closeModal('survey-backdrop');
   setTimeout(() => startTutorial(), 400);
 }
@@ -414,6 +607,7 @@ const DEFAULT_STATE = {
     milestones: [],
     tutorialDone: false,
     guideSeen: [],
+    region: null,
   },
   beds: [
     { id:'b1', name:'Jardin', type:'jardin', cols:4, rows:3, cells:[
@@ -526,6 +720,12 @@ function updateAccountUI() {
   if (menuEmail) menuEmail.textContent = email;
   const badge = document.getElementById('acc-sync-badge');
   if (badge) { badge.textContent = currentUser ? '☁ Synchro' : 'Local'; badge.className = 'sync-badge' + (currentUser ? '' : ' local'); }
+  const regionLbl = document.getElementById('acc-region-label');
+  if (regionLbl) {
+    const rid = state.profile?.region;
+    const r = rid ? REGIONS.find(x => x.id === rid) : null;
+    regionLbl.textContent = r ? `${r.emoji} ${r.label}` : 'Non renseignée — touchez pour configurer';
+  }
 }
 
 function enterApp() {
@@ -585,6 +785,43 @@ function setView(name) {
 }
 
 /* ============================================================
+   SYNCHRONISATION JARDIN → TÂCHES / CALENDRIER
+   Le tableau de bord et le calendrier reflètent toujours le
+   contenu réel du jardin :
+   1. Purge des tâches liées à des plantes qui ne sont plus là.
+   2. Génération auto des arrosages (7 jours) selon waterEvery.
+   ============================================================ */
+function syncGardenTasks() {
+  const todayStr = iso(new Date());
+  const present = new Set(state.beds.flatMap(b => (b.cells || []).filter(Boolean).map(c => c.plant)));
+
+  state.tasks = (state.tasks || []).filter(t => {
+    if (t.done) return true;                          // historique conservé
+    if (t.auto && t.date < todayStr) return false;    // arrosage auto expiré
+    if (t.plantId && !present.has(t.plantId)) return false; // plante retirée du jardin
+    return true;
+  });
+
+  const keys = new Set(state.tasks.map(t => `${t.plantId}|${t.kind}|${t.date}`));
+  const today = new Date();
+  state.beds.forEach(bed => (bed.cells || []).filter(Boolean).forEach(cell => {
+    const p = plantById(cell.plant);
+    if (!p || !p.waterEvery) return;
+    const plantedAt = parseISO(cell.planted);
+    for (let i = 0; i < 7; i++) {
+      const d = parseISO(iso(addDays(today, i)));
+      const age = daysBetween(plantedAt, d);
+      if (age <= 0 || age % p.waterEvery !== 0) continue;
+      const key = `${p.id}|water|${iso(d)}`;
+      if (keys.has(key)) continue;
+      keys.add(key);
+      state.tasks.push({ id:'t' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), title:`Arroser : ${p.name}`, kind:'water', date: iso(d), done:false, plantId:p.id, auto:true });
+    }
+  }));
+  saveState();
+}
+
+/* ============================================================
    DASHBOARD
    ============================================================ */
 function renderDashboard() {
@@ -619,26 +856,7 @@ function renderDashboard() {
   updateNavBadges();
 
   // XP widget (débutants uniquement)
-  const xpWidget = document.getElementById('xp-widget');
-  if (xpWidget) {
-    const isBegin = state.profile && state.profile.level === 'beginner';
-    xpWidget.style.display = isBegin ? '' : 'none';
-    if (isBegin) {
-      const xp = state.profile.xp || 0;
-      const nextPalier = [100, 300, 500, 1000].find(n => n > xp) || 1000;
-      const prevPalier = [0, 100, 300, 500].reverse().find(n => n <= xp) || 0;
-      const pct = Math.min(100, Math.round((xp - prevPalier) / (nextPalier - prevPalier) * 100));
-      document.getElementById('xp-current').textContent = `${xp} XP`;
-      document.getElementById('xp-next-label').textContent = `Prochain palier : ${nextPalier} XP`;
-      const fill = document.getElementById('xp-fill');
-      if (fill) fill.style.width = pct + '%';
-      const stars = state.profile.stars || 0;
-      document.getElementById('xp-level-label').textContent = stars >= 5 ? '🌿 Main verte' : stars >= 2 ? '🌱 En progression' : '🔰 Débutant';
-      const done = new Set(state.profile.milestones || []);
-      const mRow = document.getElementById('milestones-row');
-      if (mRow) mRow.innerHTML = MILESTONES.map(m => `<span class="milestone-badge ${done.has(m.id) ? 'done' : ''}" title="${escapeHTML(m.label)}">${m.icon}</span>`).join('');
-    }
-  }
+  renderXPWidget();
 
   // Alerts
   const beds = state.beds;
@@ -901,6 +1119,7 @@ function openPlantPanel(idx) {
       ${cell.notes ? `<div class="card mt-3"><div class="small"><b>Vos notes :</b> ${escapeHTML(cell.notes)}</div></div>` : ''}
     </div>` : ''}
 
+    ${(() => { const sc = regionScore(cell.plant); return sc !== null ? `<div class="pd-section"><h4>Compatibilité régionale</h4>${regionScoreHTML(sc)}</div>` : ''; })()}
     ${companions.length ? `<div class="pd-section">
       <h4>Bons voisinages</h4>
       <div class="row gap-2" style="flex-wrap:wrap">
@@ -924,13 +1143,19 @@ function openPlantPanel(idx) {
     </div>
   `;
 
-  document.getElementById('pd-water').onclick = () => { flash('Arrosée ✓'); closePanel(); };
+  document.getElementById('pd-water').onclick = () => {
+    const todayStr = iso(new Date());
+    const t = (state.tasks || []).find(t => !t.done && t.kind === 'water' && t.plantId === cell.plant && t.date <= todayStr);
+    if (t) { t.done = true; saveState(); awardXP('task_done'); checkMilestones(); }
+    flash('Arrosée ✓');
+    closePanel();
+  };
   document.getElementById('pd-remove').onclick = () => {
     confirmDialog({
       title: `Retirer ${p ? p.name : 'cette plante'} ?`,
-      msg: 'La plante sera retirée de cette cellule.',
+      msg: 'La plante sera retirée de cette cellule. Ses tâches en attente seront aussi supprimées.',
       yesLabel: 'Oui, retirer',
-      onYes: () => { bed.cells[idx] = null; saveState(); closePanel(); renderGarden(); }
+      onYes: () => { bed.cells[idx] = null; syncGardenTasks(); closePanel(); renderGarden(); }
     });
   };
 
@@ -974,7 +1199,7 @@ function saveBedModal(editId) {
     state.beds.push(newBed);
     state.activeBedId = newBed.id;
   }
-  saveState(); closeModal('bed-modal-backdrop'); renderGarden();
+  syncGardenTasks(); closeModal('bed-modal-backdrop'); renderGarden();
   flash(editId ? 'Parcelle modifiée ✓' : 'Parcelle créée ✓');
 }
 
@@ -987,7 +1212,7 @@ function deleteBed() {
     onYes: () => {
       state.beds = state.beds.filter(b => b.id !== bed.id);
       state.activeBedId = state.beds[0] ? state.beds[0].id : null;
-      saveState(); renderGarden();
+      syncGardenTasks(); renderGarden();
     }
   });
 }
@@ -997,7 +1222,36 @@ function deleteBed() {
    ============================================================ */
 let catalogFilter = { q:'', category:'all', season:'all', difficulty:'all' };
 
+function renderRegionPrompt() {
+  const el = document.getElementById('region-catalog-prompt');
+  if (!el) return;
+  const rid = state.profile?.region;
+  const r = rid ? REGIONS.find(x => x.id === rid) : null;
+  if (!r) {
+    el.innerHTML = `<div class="region-prompt-banner">
+      <span class="rpb-icon">📍</span>
+      <div class="rpb-body">
+        <div class="rpb-title">Configurez votre région</div>
+        <div class="rpb-sub">Affichez le taux de réussite de chaque plante pour votre climat.</div>
+      </div>
+      <button class="btn primary sm" id="rpb-set">Configurer →</button>
+    </div>`;
+    document.getElementById('rpb-set').onclick = openRegionModal;
+  } else {
+    el.innerHTML = `<div class="region-prompt-banner region-prompt-set">
+      <span class="rpb-icon">${r.emoji}</span>
+      <div class="rpb-body">
+        <div class="rpb-title">${escapeHTML(r.label)}</div>
+        <div class="rpb-sub">Les taux de réussite sont affichés pour votre région.</div>
+      </div>
+      <button class="btn ghost sm" id="rpb-change">Changer</button>
+    </div>`;
+    document.getElementById('rpb-change').onclick = openRegionModal;
+  }
+}
+
 function renderCatalog() {
+  renderRegionPrompt();
   const f = document.getElementById('catalog-filters');
   const filterGroups = [
     { label:'Type', chips:[
@@ -1067,6 +1321,7 @@ function renderCatalog() {
         ${(p.season||[]).map(s => `<span class="chip green">${seasonLabel(s)}</span>`).join('')}
         ${(p.companions||[]).length ? `<span class="chip earth">🤝 ${escapeHTML((p.companions||[]).slice(0,2).join(', '))}</span>` : ''}
       </div>
+      ${(() => { const sc = regionScore(p.id); return sc !== null ? regionScoreHTML(sc) : ''; })()}
       <div class="pc-actions">
         <button class="btn primary" data-add="${p.id}">+ Ajouter à mon jardin</button>
       </div>
@@ -1099,7 +1354,7 @@ function openAddToBedPicker(plantId) {
       const emptyIdx = (bed.cells || []).findIndex(c => !c);
       if (emptyIdx === -1) { flash('Parcelle pleine.'); return; }
       bed.cells[emptyIdx] = { id:'c'+Date.now(), plant: plantId, planted: iso(new Date()), status:'healthy', notes:'' };
-      saveState();
+      syncGardenTasks();
       awardXP('plant_added');
       checkMilestones();
       closeModal('addbed-backdrop');
@@ -1329,6 +1584,9 @@ function saveQuickAdd() {
     const emptyIdx = (bed.cells||[]).findIndex(c => !c);
     if (emptyIdx === -1) { flash('Parcelle pleine.'); return; }
     bed.cells[emptyIdx] = { id:'c'+Date.now(), plant: plantId, planted, status:'healthy', notes:'' };
+    syncGardenTasks();
+    awardXP('plant_added');
+    checkMilestones();
     flash(`${plantById(plantId)?.name || plantId} ajoutée ✓`);
   } else if (type === 'note') {
     const text = (document.querySelector('[data-draft="note-text"]').value || '').trim();
@@ -1403,6 +1661,33 @@ function flash(msg) {
 function openAccountModal() {
   updateAccountUI();
   openModal('acc-backdrop');
+}
+
+function openRegionModal() {
+  const choices = document.getElementById('region-modal-choices');
+  const cur = state.profile?.region;
+  choices.innerHTML = REGIONS.map(r => `
+    <button class="sv-choice region-choice ${cur === r.id ? 'active' : ''}" data-rid="${r.id}">
+      <div class="sv-ci">${r.emoji}</div>
+      <div class="sv-cd">
+        <div class="sv-ct">${escapeHTML(r.label)}</div>
+        <div class="sv-cs">${escapeHTML(r.desc)}</div>
+      </div>
+      ${cur === r.id ? '<div class="sv-arrow" style="color:var(--green)">✓</div>' : '<div class="sv-arrow">›</div>'}
+    </button>`).join('');
+  choices.querySelectorAll('[data-rid]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (!state.profile) state.profile = {};
+      state.profile.region = btn.dataset.rid;
+      saveState();
+      closeModal('region-modal-backdrop');
+      closeModal('acc-backdrop');
+      flash(`Région mise à jour : ${REGIONS.find(r=>r.id===btn.dataset.rid)?.label} ✓`);
+      const active = document.querySelector('.view.active');
+      if (active) setView(active.dataset.view);
+    });
+  });
+  openModal('region-modal-backdrop');
 }
 
 /* ============================================================
@@ -1520,6 +1805,8 @@ function boot() {
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'potager-export.json'; a.click();
     flash('Export téléchargé ✓');
   });
+  document.getElementById('region-modal-close').addEventListener('click', () => closeModal('region-modal-backdrop'));
+  document.getElementById('acc-region').addEventListener('click', () => { closeModal('acc-backdrop'); openRegionModal(); });
   document.getElementById('acc-replay-tutorial').addEventListener('click', () => {
     closeModal('acc-backdrop');
     startTutorial();
@@ -1578,6 +1865,9 @@ function boot() {
   // Guide topbar button
   const topbarGuide = document.getElementById('topbar-guide');
   if (topbarGuide) topbarGuide.addEventListener('click', () => setView('guide'));
+
+  // Synchroniser tâches/calendrier avec le contenu réel du jardin
+  syncGardenTasks();
 
   // Render initial view
   renderDashboard();
