@@ -254,21 +254,55 @@ function initNotificationScheduler() {
 /* ============================================================
    GUIDE DU POTAGER
    ============================================================ */
+/* Compagnonnage : pour chaque légume, les bons voisins (✓) et ceux à éviter (✗).
+   Les noms reprennent ceux du catalogue quand c'est possible. */
+const COMPANION_DATA = [
+  { icon:'🍅', plant:'Tomate',     good:['Basilic','Œillet d\'Inde','Carotte','Persil','Oignon','Ail','Capucine'], avoid:['Pomme de terre','Chou','Fenouil','Concombre'] },
+  { icon:'🥕', plant:'Carotte',    good:['Oignon','Poireau','Radis','Laitue','Tomate','Romarin'],                avoid:['Aneth','Persil','Betterave'] },
+  { icon:'🥬', plant:'Laitue',     good:['Carotte','Radis','Fraisier','Concombre','Betterave'],                 avoid:['Persil','Tournesol'] },
+  { icon:'🥒', plant:'Courgette',  good:['Capucine','Maïs','Haricot','Œillet d\'Inde','Bourrache'],             avoid:['Pomme de terre','Concombre'] },
+  { icon:'🧅', plant:'Oignon / Poireau', good:['Carotte','Betterave','Laitue','Fraisier','Tomate'],            avoid:['Pois','Haricot','Chou'] },
+  { icon:'🫘', plant:'Haricot',    good:['Maïs','Courge','Carotte','Concombre','Capucine'],                     avoid:['Oignon','Ail','Poireau','Fenouil'] },
+  { icon:'🟢', plant:'Petit pois', good:['Carotte','Radis','Concombre','Maïs','Navet'],                         avoid:['Oignon','Ail','Échalote'] },
+  { icon:'🥬', plant:'Chou',       good:['Aneth','Camomille','Céleri','Bourrache','Capucine','Romarin'],        avoid:['Tomate','Fraisier','Oignon'] },
+  { icon:'🍓', plant:'Fraisier',   good:['Laitue','Épinard','Bourrache','Ail','Haricot'],                       avoid:['Chou','Tomate'] },
+  { icon:'🥔', plant:'Pomme de terre', good:['Haricot','Maïs','Chou','Capucine','Œillet d\'Inde'],              avoid:['Tomate','Courge','Concombre'] },
+  { icon:'🌶️', plant:'Poivron / Piment', good:['Basilic','Tomate','Carotte','Oignon'],                         avoid:['Haricot','Fenouil'] },
+  { icon:'🟠', plant:'Radis',      good:['Laitue','Carotte','Petit pois','Concombre','Épinard'],                avoid:['Hysope'] },
+  { icon:'🎃', plant:'Courge / Citrouille', good:['Maïs','Haricot','Capucine','Bourrache'],                     avoid:['Pomme de terre'] },
+  { icon:'🌿', plant:'Basilic',    good:['Tomate','Poivron','Aubergine','Courgette'],                           avoid:['Concombre','Rue'] },
+];
+
+/* Fleurs et aromatiques alliées du potager (compagnonnage utile partout). */
+const COMPANION_FLOWERS = [
+  { icon:'🌼', name:"Œillet d'Inde", role:"Repousse nématodes et pucerons. À semer entre tomates, choux, pommes de terre." },
+  { icon:'🌺', name:'Capucine',      role:"Plante-piège à pucerons : ils s'y concentrent et épargnent les légumes." },
+  { icon:'💙', name:'Bourrache',     role:"Attire les pollinisateurs, éloigne la piéride du chou et les limaces." },
+  { icon:'🟡', name:'Souci (calendula)', role:"Attire syrphes et coccinelles, prédateurs des pucerons." },
+  { icon:'💜', name:'Lavande',       role:"Éloigne pucerons et fourmis, attire abeilles. Idéale en bordure." },
+];
+
 const GUIDE_SECTIONS = [
   { id:'soil',     icon:'🌍', title:'Préparer le sol',        color:'earth',
-    tips:["Amendez avec du compost mûr en automne (3–5 cm en surface).", "pH idéal : 6.0–7.0 pour la plupart des légumes.", "Évitez de trop travailler le sol — les micro-organismes sont vos alliés.", "Paillez pour conserver l'humidité et limiter les mauvaises herbes."] },
+    tips:["Amendez avec du compost mûr en automne (3–5 cm en surface).", "pH idéal : 6.0–7.0 pour la plupart des légumes — testez-le avec un kit du commerce.", "Évitez de trop travailler le sol — les micro-organismes sont vos alliés.", "Paillez pour conserver l'humidité et limiter les mauvaises herbes.", "Un sol qui s'émiette entre les doigts sans coller est bien structuré.", "En sol lourd (argileux), ajoutez sable et compost ; en sol sableux, du compost et de la matière organique."] },
+  { id:'companion', icon:'🤝', title:'Compagnonnage : quoi planter ensemble', color:'green', type:'companion',
+    tips:["Associez des familles complémentaires : une plante protège ou nourrit l'autre.", "Alternez plantes hautes et basses pour optimiser lumière et espace.", "Les fleurs (œillet d'Inde, capucine, bourrache) attirent pollinisateurs et auxiliaires.", "Ne regroupez pas des plantes de la même famille : mêmes maladies, mêmes ravageurs."] },
   { id:'sow',      icon:'🌱', title:'Semer & Planter',        color:'green',
-    tips:["Profondeur de semis = 3× le diamètre de la graine.", "Arrosez avant de semer, pas juste après — cela évite de déplacer les graines.", "Repiquez par temps nuageux ou en soirée pour moins de stress.", "Respectez les espacements indiqués dans le catalogue."] },
+    tips:["Profondeur de semis = 3× le diamètre de la graine.", "Arrosez avant de semer, pas juste après — cela évite de déplacer les graines.", "Repiquez par temps nuageux ou en soirée pour moins de stress.", "Respectez les espacements indiqués dans le catalogue.", "Semez les petites graines (carotte, laitue) en surface, à peine recouvertes.", "Échelonnez les semis de radis et laitue toutes les 3 semaines pour récolter en continu."] },
   { id:'water',    icon:'💧', title:'Arroser efficacement',   color:'green',
-    tips:["Arrosez au pied, jamais sur le feuillage — réduit les maladies foliaires.", "Tôt le matin ou en soirée pour limiter l'évaporation.", "Un arrosage profond 2×/semaine vaut mieux que 7× superficiel.", "Paillez : cela réduit les besoins en eau de 30 à 50 %."] },
+    tips:["Arrosez au pied, jamais sur le feuillage — réduit les maladies foliaires.", "Tôt le matin ou en soirée pour limiter l'évaporation.", "Un arrosage profond 2×/semaine vaut mieux que 7× superficiel.", "Paillez : cela réduit les besoins en eau de 30 à 50 %.", "Enfoncez un doigt dans la terre : arrosez seulement si c'est sec à 3 cm.", "Récupérez l'eau de pluie — elle est à température et sans calcaire."] },
   { id:'pests',    icon:'🐛', title:'Maladies & Ravageurs',   color:'urgent',
-    tips:["Pucerons : savon noir dilué (10 ml/L), 2 traitements à 3 jours d'intervalle.", "Mildiou : bouillie bordelaise préventive, éviter l'arrosage foliaire.", "Limaces : cendres de bois autour des plants, pièges à bière.", "Observation hebdomadaire = détection précoce = intervention facile."] },
+    tips:["Pucerons : savon noir dilué (10 ml/L), 2 traitements à 3 jours d'intervalle.", "Mildiou : bouillie bordelaise préventive, éviter l'arrosage foliaire.", "Limaces : cendres de bois autour des plants, pièges à bière.", "Observation hebdomadaire = détection précoce = intervention facile.", "Favorisez les coccinelles et syrphes : ils dévorent les pucerons.", "Le purin d'ortie dilué (10 %) renforce les défenses des plantes."] },
+  { id:'companions-aux', icon:'🐞', title:'Auxiliaires & biodiversité', color:'green',
+    tips:["Coccinelle : une larve dévore jusqu'à 150 pucerons par jour.", "Hérisson et crapaud régulent limaces et insectes — laissez-leur un abri.", "Installez un hôtel à insectes et un point d'eau pour fixer les auxiliaires.", "Laissez une zone enherbée ou des fleurs sauvages en bordure du potager.", "Évitez tout insecticide à large spectre : il tue aussi vos alliés."] },
+  { id:'rotation', icon:'🔄', title:'Rotation des cultures',   color:'earth',
+    tips:["Ne cultivez pas la même famille au même endroit avant 3–4 ans.", "Ordre type : légumes-feuilles → légumes-fruits → légumes-racines → légumineuses.", "Les légumineuses (pois, haricots) enrichissent le sol en azote : faites-les suivre par des gourmandes (choux, courges).", "Notez chaque année l'emplacement des familles pour ne pas vous tromper.", "La rotation casse le cycle des maladies et ravageurs du sol."] },
   { id:'harvest',  icon:'🥕', title:'Récolter au bon moment',  color:'earth',
-    tips:["Tomate : récolte ferme, colorée mais encore légèrement résistante.", "Courgette : à 15–20 cm pour la tendreté. Ne laissez pas grossir.", "Herbes aromatiques : prélevez au max 1/3 du plant pour ne pas l'affaiblir.", "Haricots : récoltez souvent — plus vous récoltez, plus ça produit."] },
+    tips:["Tomate : récolte ferme, colorée mais encore légèrement résistante.", "Courgette : à 15–20 cm pour la tendreté. Ne laissez pas grossir.", "Herbes aromatiques : prélevez au max 1/3 du plant pour ne pas l'affaiblir.", "Haricots : récoltez souvent — plus vous récoltez, plus ça produit.", "Récoltez le matin : les légumes sont gorgés d'eau et plus croquants.", "Courges de conservation : récoltez avant les gelées, pédoncule bien sec."] },
   { id:'maintain', icon:'✂️', title:'Entretien régulier',      color:'green',
-    tips:["Pincez les gourmands des tomates chaque semaine.", "Buttez les poireaux et pommes de terre pour les blanchir.", "Palissez cucurbitacées et haricots grimpants sur des treillis.", "Désherber avant que les mauvaises herbes fleurissent."] },
+    tips:["Pincez les gourmands des tomates chaque semaine.", "Buttez les poireaux et pommes de terre pour les blanchir.", "Palissez cucurbitacées et haricots grimpants sur des treillis.", "Désherbez avant que les mauvaises herbes fleurissent.", "Binez régulièrement : « un binage vaut deux arrosages ».", "Retirez les feuilles jaunies ou malades pour limiter la propagation."] },
   { id:'trees',    icon:'🌳', title:'Arbres fruitiers — Bases',color:'earth',
-    tips:["Plantez en dormance (nov–mars) en sol humide mais non gelé.", "Taille de formation les 3 premières années : choisissez 3–5 branches charpentières.", "Traitement cuivre (bouillie bordelaise) avant le débourrement de printemps.", "Greffage en écusson : juillet–août, sur porte-greffe vigoureux."] },
+    tips:["Plantez en dormance (nov–mars) en sol humide mais non gelé.", "Taille de formation les 3 premières années : choisissez 3–5 branches charpentières.", "Traitement cuivre (bouillie bordelaise) avant le débourrement de printemps.", "Greffage en écusson : juillet–août, sur porte-greffe vigoureux.", "Pour les pruniers (mirabelle, quetsche, reine-claude) : taille minimale, juste l'aération.", "Pêcher et nectarinier : traitez contre la cloque dès le gonflement des bourgeons."] },
 ];
 
 function regionScore(plantId) {
@@ -287,6 +321,29 @@ function regionScoreHTML(score) {
   </div>`;
 }
 
+<<<<<<< HEAD
+=======
+function companionGridHTML() {
+  const rows = COMPANION_DATA.map(c => `
+    <div class="comp-row">
+      <div class="comp-veg"><span class="comp-veg-icon">${c.icon}</span><span class="comp-veg-name">${escapeHTML(c.plant)}</span></div>
+      <div class="comp-lists">
+        <div class="comp-line"><span class="comp-tag comp-tag-good">✓ avec</span>${c.good.map(x=>`<span class="comp-chip comp-chip-good">${escapeHTML(x)}</span>`).join('')}</div>
+        <div class="comp-line"><span class="comp-tag comp-tag-bad">✗ éviter</span>${c.avoid.map(x=>`<span class="comp-chip comp-chip-bad">${escapeHTML(x)}</span>`).join('')}</div>
+      </div>
+    </div>`).join('');
+  const flowers = COMPANION_FLOWERS.map(f => `
+    <div class="comp-flower">
+      <span class="comp-flower-icon">${f.icon}</span>
+      <div><div class="comp-flower-name">${escapeHTML(f.name)}</div><div class="comp-flower-role">${escapeHTML(f.role)}</div></div>
+    </div>`).join('');
+  return `
+    <div class="comp-grid">${rows}</div>
+    <div class="comp-flowers-title">🌸 Fleurs alliées à glisser partout</div>
+    <div class="comp-flowers">${flowers}</div>`;
+}
+
+>>>>>>> 3de00b2843520ade4187c01673d039e3bfe40e8f
 function renderGuide() {
   const el = document.getElementById('guide-content');
   if (!el) return;
@@ -298,12 +355,13 @@ function renderGuide() {
         <div class="guide-icon guide-icon-${s.color}">${s.icon}</div>
         <div class="guide-meta">
           <div class="guide-htitle">${escapeHTML(s.title)}</div>
-          <div class="xsmall muted">${s.tips.length} conseils${seen.has(s.id) ? ' · <span style="color:var(--green-dark)">✓ Lu</span>' : ''}</div>
+          <div class="xsmall muted">${s.type === 'companion' ? COMPANION_DATA.length + ' légumes associés' : s.tips.length + ' conseils'}${seen.has(s.id) ? ' · <span style="color:var(--green-dark)">✓ Lu</span>' : ''}</div>
         </div>
         <div class="guide-chevron">›</div>
       </div>
       <div class="guide-body" style="display:none">
         <ul class="guide-list">${s.tips.map(t => `<li>${escapeHTML(t)}</li>`).join('')}</ul>
+        ${s.type === 'companion' ? companionGridHTML() : ''}
         ${isBegin && !seen.has(s.id) ? `<button class="btn primary sm mt-3" data-guide-read="${s.id}">✓ Marquer comme lu (+5 XP)</button>` : ''}
       </div>
     </div>`).join('');
@@ -343,7 +401,7 @@ const TUTORIAL_STEPS = [
   { sel:'.fab',              title:'Ajout rapide ⚡',          text:'Le bouton + vous permet d\'ajouter une tâche, une plante ou une note en 3 secondes depuis n\'importe quelle page.' },
   { sel:'[data-nav="catalog"]', title:'📍 Taux de réussite par région', text:'Le catalogue affiche la compatibilité climatique de chaque plante pour votre région — de "Excellent" à "Difficile". Configurez ou changez votre région depuis le bandeau en haut du catalogue.' },
   { sel:'nav.bottom-nav,.sidebar', title:'Navigation',         text:'Accédez à votre jardin, catalogue, guide, calendrier et journal. La serre et le jardin sont bien séparés dans "Jardin".' },
-  { sel:'[data-view="guide"].view', title:'Le Guide du potager', text:'Le guide complet du jardinage — sol, semis, arrosage, ravageurs, récolte et arboriculture — accessible à tout moment.' },
+  { sel:'[data-view="guide"].view', title:'Le Guide du potager', text:'Le guide complet — sol, compagnonnage (quoi planter ensemble), semis, arrosage, ravageurs, rotation, récolte et arboriculture — accessible à tout moment.' },
 ];
 
 let tutStep = 0;
@@ -365,6 +423,7 @@ function renderTutStep() {
   document.getElementById('tut-title').textContent = s.title;
   document.getElementById('tut-text').textContent = s.text;
   document.getElementById('tut-next').textContent = tutStep < steps.length - 1 ? 'Suivant →' : 'Terminer ✓';
+  const ov = document.getElementById('tutorial-overlay');
   const hl = document.getElementById('tut-highlight');
   const card = document.getElementById('tut-card');
   const sels = s.sel.split(',').map(x=>x.trim());
@@ -374,13 +433,28 @@ function renderTutStep() {
     if (el) { const r = el.getBoundingClientRect(); if (r.width > 0 && r.height > 0) { target = el; break; } }
   }
   if (target) {
+    // Amène la cible dans le viewport si elle dépasse (sauf éléments fixes : fab, nav), puis mesure
+    const pos = getComputedStyle(target).position;
+    const isFixed = pos === 'fixed' || pos === 'sticky';
+    const r0 = target.getBoundingClientRect();
+    if (!isFixed && (r0.top < 80 || r0.bottom > window.innerHeight - 80)) {
+      target.scrollIntoView({ block: 'center', behavior: 'auto' });
+    }
     const r = target.getBoundingClientRect(); const pad = 8;
-    hl.style.cssText = `display:block;top:${r.top - pad + window.scrollY}px;left:${r.left - pad}px;width:${r.width + pad*2}px;height:${r.height + pad*2}px`;
+    // Le highlight est position:absolute dans un overlay fixed → coordonnées viewport, sans scrollY.
+    ov.style.background = 'transparent';
+    hl.style.display = 'block';
+    hl.style.top = (r.top - pad) + 'px';
+    hl.style.left = (r.left - pad) + 'px';
+    hl.style.width = (r.width + pad * 2) + 'px';
+    hl.style.height = (r.height + pad * 2) + 'px';
     const spaceBelow = window.innerHeight - r.bottom;
-    if (spaceBelow > 200) { card.style.top = (r.bottom + 20) + 'px'; card.style.bottom = ''; }
+    if (spaceBelow > 220) { card.style.top = (r.bottom + 18) + 'px'; card.style.bottom = ''; }
     else { card.style.bottom = (window.innerHeight - r.top + 16) + 'px'; card.style.top = ''; }
     card.style.left = '50%'; card.style.transform = 'translateX(-50%)'; card.style.position = 'fixed';
   } else {
+    // Pas de cible visible → l'overlay assure lui-même l'assombrissement
+    ov.style.background = 'rgba(0,0,0,.6)';
     hl.style.display = 'none';
     card.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%)';
   }
