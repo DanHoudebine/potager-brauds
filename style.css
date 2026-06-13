@@ -1126,3 +1126,132 @@ a { color: var(--green-dark); }
 .push-prompt-active .pb { flex: 1; }
 .push-prompt-active .pt { font-weight: 800; font-size: 15px; color: var(--green-dark); }
 .push-prompt-active .ps { font-size: 13px; color: var(--ink-muted); margin-top: 2px; }
+
+/* ============================================================
+   ÉCHELLE DES PALIERS (widget XP)
+   ============================================================ */
+.xp-levels {
+  display: flex; gap: 8px; margin-top: 14px;
+  overflow-x: auto; padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.xp-levels::-webkit-scrollbar { display: none; }
+.xp-level {
+  flex: 1; min-width: 84px; text-align: center; padding: 10px 6px;
+  border-radius: 14px; border: 1.5px solid var(--line);
+  background: var(--bg-soft); opacity: .55;
+  transition: opacity .2s, border-color .2s, transform .2s;
+}
+.xp-level .xl-icon { font-size: 22px; line-height: 1; }
+.xp-level .xl-name { font-size: 10px; font-weight: 800; margin-top: 4px; line-height: 1.15; }
+.xp-level .xl-xp { font-size: 10px; color: var(--ink-muted); font-weight: 700; margin-top: 2px; }
+.xp-level.past { opacity: 1; background: var(--green-tint); border-color: var(--green-light); }
+.xp-level.current {
+  opacity: 1; background: #fff; border-color: var(--green);
+  transform: scale(1.04);
+  animation: currentGlow 2.5s ease infinite;
+}
+.xp-level.current .xl-xp { color: var(--green-dark); }
+@keyframes currentGlow {
+  0%, 100% { box-shadow: 0 0 0 3px var(--green-tint); }
+  50%      { box-shadow: 0 0 0 7px rgba(91,145,102,.12); }
+}
+
+/* Animations de progression XP */
+@keyframes xpBump { 0% { transform: scale(1); } 35% { transform: scale(1.05); } 100% { transform: scale(1); } }
+.xp-bar.bump { animation: xpBump .45s ease; }
+
+.xp-fill { position: relative; overflow: hidden; }
+.xp-fill::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(110deg, transparent 25%, rgba(255,255,255,.5) 50%, transparent 75%);
+  transform: translateX(-100%);
+  animation: xpShine 3s ease-in-out infinite;
+}
+@keyframes xpShine { 0% { transform: translateX(-100%); } 55%, 100% { transform: translateX(100%); } }
+
+@keyframes badgePop { 0% { transform: scale(.6); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
+.milestone-badge.done { animation: badgePop .4s ease; }
+
+/* ============================================================
+   TAUX DE RÉUSSITE RÉGIONAL
+   ============================================================ */
+.region-score {
+  margin: 10px 0 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  border-left: 3px solid;
+}
+.region-score.region-excellent { background: var(--green-tint);   border-color: var(--green);   }
+.region-score.region-good      { background: var(--warn-tint);    border-color: var(--warn);    }
+.region-score.region-medium    { background: var(--earth-tint);   border-color: var(--earth);   }
+.region-score.region-hard      { background: var(--urgent-tint);  border-color: var(--urgent);  }
+
+.rs-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.rs-label { font-size: 12px; font-weight: 800; }
+.rs-pct   { font-size: 13px; font-weight: 900; font-family: var(--serif); }
+.region-score.region-excellent .rs-label, .region-score.region-excellent .rs-pct { color: var(--green-dark); }
+.region-score.region-good .rs-label,      .region-score.region-good .rs-pct      { color: #8a6418; }
+.region-score.region-medium .rs-label,    .region-score.region-medium .rs-pct    { color: var(--earth-dark); }
+.region-score.region-hard .rs-label,      .region-score.region-hard .rs-pct     { color: var(--urgent); }
+
+.rs-bar  { height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.rs-fill { height: 100%; border-radius: 999px; transition: width .5s ease; }
+.region-score.region-excellent .rs-fill { background: var(--green); }
+.region-score.region-good .rs-fill      { background: var(--warn); }
+.region-score.region-medium .rs-fill    { background: var(--earth); }
+.region-score.region-hard .rs-fill      { background: var(--urgent); }
+
+/* Active region choice in modal */
+.region-choice.active { border-color: var(--green) !important; background: var(--green-tint) !important; }
+
+/* ============================================================
+   BANDEAU RÉGION (haut du catalogue)
+   ============================================================ */
+.region-prompt-banner {
+  display: flex; align-items: center; gap: 14px;
+  background: linear-gradient(135deg, var(--green-tint) 0%, rgba(255,255,255,.55) 100%);
+  border: 1.5px solid var(--green-light);
+  border-radius: var(--radius); padding: 14px 16px;
+  margin-bottom: 14px;
+  animation: fadeSlideIn .3s ease both;
+}
+.region-prompt-set {
+  background: var(--bg-soft);
+  border-color: var(--line);
+}
+.rpb-icon { font-size: 26px; flex: none; }
+.rpb-body { flex: 1; min-width: 0; }
+.rpb-title { font-weight: 800; font-size: 14px; }
+.rpb-sub   { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
+@media (max-width: 899px) {
+  .region-prompt-banner { padding: 12px 14px; gap: 10px; }
+  .rpb-icon { font-size: 22px; }
+  .rpb-title { font-size: 13px; }
+}
+
+/* ============================================================
+   TAUX DE RÉUSSITE RÉGIONAL
+   ============================================================ */
+.region-score {
+  margin: 10px 0 12px; padding: 10px 12px;
+  border-radius: var(--radius); border-left: 3px solid;
+}
+.region-score.region-excellent { background: var(--green-tint);  border-color: var(--green); }
+.region-score.region-good      { background: var(--warn-tint);   border-color: var(--warn); }
+.region-score.region-medium    { background: var(--earth-tint);  border-color: var(--earth); }
+.region-score.region-hard      { background: var(--urgent-tint); border-color: var(--urgent); }
+.rs-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.rs-label { font-size: 12px; font-weight: 800; }
+.rs-pct   { font-size: 14px; font-weight: 900; font-family: var(--serif); }
+.region-score.region-excellent .rs-label, .region-score.region-excellent .rs-pct { color: var(--green-dark); }
+.region-score.region-good .rs-label,      .region-score.region-good .rs-pct      { color: #8a6418; }
+.region-score.region-medium .rs-label,    .region-score.region-medium .rs-pct    { color: var(--earth-dark); }
+.region-score.region-hard .rs-label,      .region-score.region-hard .rs-pct      { color: var(--urgent); }
+.rs-bar  { height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
+.rs-fill { height: 100%; border-radius: 999px; transition: width .5s ease; }
+.region-score.region-excellent .rs-fill { background: var(--green); }
+.region-score.region-good .rs-fill      { background: var(--warn); }
+.region-score.region-medium .rs-fill    { background: var(--earth); }
+.region-score.region-hard .rs-fill      { background: var(--urgent); }
+.region-choice.active { border-color: var(--green) !important; background: var(--green-tint) !important; }

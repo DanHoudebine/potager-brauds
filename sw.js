@@ -4,7 +4,7 @@
 // IMPORTANT : incrémenter CACHE_NAME à chaque mise à jour de l'app
 // pour invalider les caches des anciens service workers.
 
-const CACHE_NAME = 'potager-v3';
+const CACHE_NAME = 'potager-v6';
 
 // Fichiers à mettre en cache pour fonctionnement hors-ligne
 const ASSETS = [
