@@ -883,14 +883,14 @@ a { color: var(--green-dark); }
    ============================================================ */
 .tut-overlay {
   display: none; position: fixed; inset: 0; z-index: 500;
-  background: rgba(0,0,0,.55); backdrop-filter: blur(2px);
+  background: transparent;
   align-items: flex-start; justify-content: center;
 }
 .tut-highlight {
   position: absolute; display: none;
   border: 3px solid var(--green); border-radius: 16px;
-  box-shadow: 0 0 0 4px rgba(91,145,102,.25), 0 0 0 9999px rgba(0,0,0,.55);
-  transition: all .25s;
+  box-shadow: 0 0 0 4px rgba(91,145,102,.30), 0 0 0 9999px rgba(0,0,0,.62);
+  transition: top .28s ease, left .28s ease, width .28s ease, height .28s ease;
   pointer-events: none;
 }
 .tut-card {
@@ -944,6 +944,36 @@ a { color: var(--green-dark); }
 .guide-list { margin: 0; padding-left: 20px; }
 .guide-list li { margin-bottom: 10px; line-height: 1.5; font-size: 14px; }
 .guide-list li:last-child { margin-bottom: 0; }
+
+/* Compagnonnage */
+.comp-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+.comp-row {
+  border: 1px solid var(--line); border-radius: 14px;
+  padding: 12px; background: var(--bg-soft);
+}
+.comp-veg { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.comp-veg-icon { font-size: 20px; }
+.comp-veg-name { font-weight: 700; font-size: 14px; }
+.comp-lists { display: flex; flex-direction: column; gap: 6px; }
+.comp-line { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; }
+.comp-tag {
+  font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .03em;
+  padding: 2px 7px; border-radius: 8px; flex: none;
+}
+.comp-tag-good { color: var(--green-dark); background: var(--green-tint); }
+.comp-tag-bad  { color: #b23b3b; background: var(--urgent-tint); }
+.comp-chip {
+  font-size: 12px; padding: 3px 9px; border-radius: 999px;
+  border: 1px solid var(--line);
+}
+.comp-chip-good { background: var(--green-tint); border-color: var(--green-light); color: var(--green-dark); }
+.comp-chip-bad  { background: var(--urgent-tint); border-color: rgba(178,59,59,.35); color: #b23b3b; }
+.comp-flowers-title { font-weight: 700; font-size: 14px; margin: 18px 0 10px; }
+.comp-flowers { display: flex; flex-direction: column; gap: 10px; }
+.comp-flower { display: flex; align-items: flex-start; gap: 10px; }
+.comp-flower-icon { font-size: 22px; flex: none; line-height: 1.2; }
+.comp-flower-name { font-weight: 700; font-size: 13.5px; }
+.comp-flower-role { font-size: 13px; color: var(--ink-muted); line-height: 1.45; }
 
 /* ============================================================
    ANDROID / MOBILE OPTIMISATIONS
