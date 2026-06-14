@@ -74,27 +74,42 @@ const WEATHER_CODES = {
 async function fetchWeather() {
   if (!state.prefs.weather) return;
   const now = Date.now();
-  if (state.weather && state.weather.fetched && now - state.weather.fetched < 3600000) return; // cache 1h
-  if (!navigator.geolocation) return;
-  navigator.geolocation.getCurrentPosition(async pos => {
-    try {
-      const { latitude: lat, longitude: lon } = pos.coords;
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&current=temperature_2m,precipitation,weathercode,windspeed_10m&timezone=auto`;
-      const res = await fetch(url);
-      if (!res.ok) return;
-      const data = await res.json();
-      const cur = data.current;
-      state.weather = {
-        fetched: now, lat, lon,
-        temp: Math.round(cur.temperature_2m),
-        rain: cur.precipitation,
-        code: cur.weathercode,
-        wind: Math.round(cur.windspeed_10m),
-      };
-      saveState();
-      renderWeatherWidget();
-    } catch {}
-  }, () => {}, { timeout: 5000 });
+  if (state.weather && state.weather.fetched && now - state.weather.fetched < 3600000) return;
+
+  try {
+    let lat, lon;
+
+    if (window.Capacitor?.isNativePlatform?.()) {
+      const { Geolocation } = window.Capacitor.Plugins;
+      const perm = await Geolocation.requestPermissions();
+      if (perm.location !== 'granted' && perm.coarseLocation !== 'granted') return;
+      const pos = await Geolocation.getCurrentPosition({ timeout: 5000, enableHighAccuracy: false });
+      lat = pos.coords.latitude;
+      lon = pos.coords.longitude;
+    } else {
+      if (!navigator.geolocation) return;
+      const pos = await new Promise((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 })
+      );
+      lat = pos.coords.latitude;
+      lon = pos.coords.longitude;
+    }
+
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&current=temperature_2m,precipitation,weathercode,windspeed_10m&timezone=auto`;
+    const res = await fetch(url);
+    if (!res.ok) return;
+    const data = await res.json();
+    const cur = data.current;
+    state.weather = {
+      fetched: now, lat, lon,
+      temp: Math.round(cur.temperature_2m),
+      rain: cur.precipitation,
+      code: cur.weathercode,
+      wind: Math.round(cur.windspeed_10m),
+    };
+    saveState();
+    renderWeatherWidget();
+  } catch {}
 }
 
 function renderWeatherWidget() {
@@ -462,23 +477,28 @@ async function sendNotification(title, body, tag = 'potager') {
   } catch {}
 }
 
+function notifEnabled() {
+  if (window.Capacitor?.isNativePlatform?.()) return !!(state.prefs||{}).pushOn;
+  return ('Notification' in window) && Notification.permission === 'granted' && !!(state.prefs||{}).pushOn;
+}
+
 function scheduleWateringChecks() {
-  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  if (!notifEnabled()) return;
   const todayStr = iso(new Date());
   const waterTasks = state.tasks.filter(t => t.kind === 'water' && !t.done && t.date === todayStr);
-  if (waterTasks.length && state.prefs.pushOn) {
+  if (waterTasks.length) {
     const names = waterTasks.slice(0, 3).map(t => t.title).join(', ');
     sendNotification('💧 Arrosage du potager', `${waterTasks.length} plante${waterTasks.length > 1 ? 's' : ''} à arroser : ${names}`, 'watering');
   }
   const urgentPlants = state.beds.flatMap(b => (b.cells||[]).filter(c => c && c.status === 'urgent'));
-  if (urgentPlants.length && state.prefs.pushOn) {
+  if (urgentPlants.length) {
     const pnames = urgentPlants.slice(0, 2).map(c => { const p = plantById(c.plant); return p ? p.name : c.plant; }).join(', ');
     sendNotification('🚨 Alerte au jardin', `${urgentPlants.length} plante${urgentPlants.length > 1 ? 's' : ''} urgente${urgentPlants.length > 1 ? 's' : ''} : ${pnames}`, 'urgent');
   }
 }
 
 function initNotificationScheduler() {
-  if (!('Notification' in window) || Notification.permission !== 'granted' || !(state.prefs||{}).pushOn) return;
+  if (!notifEnabled()) return;
   const hour = new Date().getHours();
   if (hour >= 7 && hour < 12) scheduleWateringChecks();
   setInterval(() => {
