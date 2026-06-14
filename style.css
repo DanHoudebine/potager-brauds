@@ -48,6 +48,32 @@
   :root { --sidebar-w: 248px; --bottom-h: 0px; }
 }
 
+/* ============================================================
+   THÈME SOMBRE
+   ============================================================ */
+[data-theme="dark"] {
+  --bg: #141a12;
+  --bg-soft: #1b2318;
+  --card: #1f2b1c;
+  --ink: #e4edd6;
+  --ink-muted: #8ea882;
+  --ink-soft: #5a7054;
+  --line: #2b3a26;
+  --line-soft: #233020;
+  --green-tint: #1a2e1e;
+  --earth-tint: #2a1f12;
+  --warn-tint: #2d2210;
+  --urgent-tint: #2d1515;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.2), 0 1px 3px rgba(0,0,0,.15);
+  --shadow: 0 2px 6px rgba(0,0,0,.25), 0 6px 18px rgba(0,0,0,.2);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,.4), 0 4px 10px rgba(0,0,0,.25);
+}
+[data-theme="dark"] body { background: var(--bg); }
+[data-theme="dark"] .hero-card { background: linear-gradient(135deg, #1a3a24 0%, #24472c 60%, #2d5c38 100%); }
+[data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea {
+  background: var(--bg-soft); color: var(--ink); border-color: var(--line);
+}
+
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 html { -webkit-text-size-adjust: 100%; }
@@ -902,6 +928,19 @@ a { color: var(--green-dark); }
 .tut-counter { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-muted); }
 
 /* ============================================================
+   MÉTÉO WIDGET
+   ============================================================ */
+#weather-widget {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 14px 18px; margin-bottom: 16px;
+}
+.wx-main { display: flex; align-items: center; gap: 12px; }
+.wx-icon { font-size: 32px; flex: none; }
+.wx-temp { font-size: 17px; font-weight: 800; color: var(--ink); }
+.wx-label { font-weight: 400; font-size: 14px; color: var(--ink-muted); }
+.wx-advice { font-size: 13px; color: var(--ink-muted); margin-top: 3px; }
+
+/* ============================================================
    XP WIDGET & MILESTONES
    ============================================================ */
 .xp-bar-wrap { margin-top: 8px; }
@@ -1285,3 +1324,59 @@ a { color: var(--green-dark); }
 .region-score.region-medium .rs-fill    { background: var(--earth); }
 .region-score.region-hard .rs-fill      { background: var(--urgent); }
 .region-choice.active { border-color: var(--green) !important; background: var(--green-tint) !important; }
+
+/* ============================================================
+   VARIÉTÉS — catalogue et panel
+   ============================================================ */
+.cat-varieties {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 5px;
+  margin: 8px 0 4px;
+}
+.cat-var-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-muted); flex: none; }
+.cat-var-chip {
+  font-size: 12px; padding: 2px 8px; border-radius: 999px;
+  background: var(--bg-soft); border: 1px solid var(--line);
+  color: var(--ink-muted);
+}
+
+/* ============================================================
+   SYMPTOM FINDER
+   ============================================================ */
+.sf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sf-item {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 16px 10px; border-radius: var(--radius); cursor: pointer;
+  background: var(--bg-soft); border: 1.5px solid var(--line);
+  transition: border-color .15s, background .15s;
+}
+.sf-item:hover { border-color: var(--green); background: var(--green-tint); }
+.sf-icon { font-size: 30px; }
+.sf-label { font-size: 13px; font-weight: 700; text-align: center; line-height: 1.3; }
+.sf-result-head { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
+.sf-cause {
+  border: 1px solid var(--line); border-radius: 14px;
+  padding: 12px 14px; margin-bottom: 10px; background: var(--bg-soft);
+}
+.sf-cause-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.sf-sev { font-size: 12px; font-weight: 800; }
+.sf-signs { font-size: 13px; color: var(--ink-muted); margin-bottom: 5px; }
+.sf-treat { font-size: 13px; color: var(--green-dark); font-weight: 600; }
+
+/* ============================================================
+   SHOPPING LIST
+   ============================================================ */
+.sl-section { margin-bottom: 20px; }
+.sl-title { font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-muted); margin-bottom: 10px; }
+.sl-suggest { font-size: 13.5px; padding: 6px 0; border-bottom: 1px solid var(--line-soft); color: var(--ink-muted); }
+.sl-item { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--line-soft); }
+.sl-check { display: flex; align-items: center; gap: 8px; flex: 1; cursor: pointer; font-size: 14px; }
+.sl-check input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--green); cursor: pointer; }
+.sl-done .sl-check span { text-decoration: line-through; color: var(--ink-muted); }
+
+/* ============================================================
+   PRIVACY POLICY
+   ============================================================ */
+.privacy-body { font-size: 14px; line-height: 1.6; }
+.privacy-body h3 { font-family: var(--serif); font-size: 18px; margin-bottom: 4px; }
+.privacy-body h4 { font-size: 14px; font-weight: 800; margin: 14px 0 4px; color: var(--green-dark); }
+.privacy-body p { margin: 0 0 8px; color: var(--ink-muted); }
