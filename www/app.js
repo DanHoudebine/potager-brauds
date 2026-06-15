@@ -5,40 +5,40 @@
    ============================================================ */
 const CATALOG = [
   // ── Légumes & Potager ─────────────────────────────────────────
-  { id:'tomato',          name:'Tomate',            sci:'Solanum lycopersicum',          icon:'🍅', category:'legume',         family:'Solanacées',     season:['spring','summer'],          difficulty:2, sow:'mars–avr',  plant:'mai',      harvest:'juil–sept', space:'60 cm',  companions:['Basilic','Carotte','Oignon'],         waterEvery:2,  tip:'Pincez les gourmands chaque semaine. Tuteurez tôt.' },
-  { id:'basil',           name:'Basilic',            sci:'Ocimum basilicum',              icon:'🌿', category:'herbe',          family:'Lamiacées',      season:['spring','summer'],          difficulty:1, sow:'avr',       plant:'mai–juin', harvest:'juil–sept', space:'25 cm',  companions:['Tomate','Poivron'],                   waterEvery:2,  tip:'Aime la chaleur. Pincez les fleurs pour relancer les feuilles.' },
-  { id:'lettuce',         name:'Laitue',             sci:'Lactuca sativa',                icon:'🥬', category:'legume',         family:'Astéracées',     season:['spring','autumn'],          difficulty:1, sow:'mars–sept', plant:'avr–sept', harvest:'mai–oct',   space:'25 cm',  companions:['Carotte','Radis','Fraisier'],          waterEvery:2,  tip:'Semez toutes les 3 semaines pour une récolte continue.' },
-  { id:'carrot',          name:'Carotte',            sci:'Daucus carota',                 icon:'🥕', category:'legume',         family:'Apiacées',       season:['spring','autumn'],          difficulty:2, sow:'mars–juil', plant:'—',        harvest:'juil–nov',  space:'5 cm',   companions:['Oignon','Laitue','Tomate'],            waterEvery:3,  tip:'Éclaircissez à 5 cm dès que les plants font 5 cm.' },
-  { id:'zucchini',        name:'Courgette',          sci:'Cucurbita pepo',                icon:'🥒', category:'legume',         family:'Cucurbitacées',  season:['summer'],                   difficulty:1, sow:'avr',       plant:'mai–juin', harvest:'juil–oct',  space:'90 cm',  companions:['Capucine','Maïs'],                    waterEvery:2,  tip:'Récoltez petit pour une chair tendre et plus de fleurs.' },
-  { id:'leek',            name:'Poireau',            sci:'Allium ampeloprasum',           icon:'🧅', category:'legume',         family:'Amaryllidacées', season:['spring','autumn','winter'], difficulty:3, sow:'fév–avr',   plant:'mai–juil', harvest:'oct–mars',  space:'15 cm',  companions:['Carotte','Céleri'],                    waterEvery:4,  tip:'Buttez la terre autour des pieds pour des fûts blancs.' },
-  { id:'strawberry',      name:'Fraisier',           sci:'Fragaria × ananassa',          icon:'🍓', category:'fruit',          family:'Rosacées',       season:['spring','summer'],          difficulty:2, sow:'—',         plant:'mars–mai', harvest:'mai–juil',  space:'30 cm',  companions:['Laitue','Épinard','Bourrache'],        waterEvery:2,  tip:'Paillez avec de la paille pour des fruits propres.' },
-  { id:'radish',          name:'Radis',              sci:'Raphanus sativus',              icon:'🟠', category:'legume',         family:'Brassicacées',   season:['spring','autumn'],          difficulty:1, sow:'mars–sept', plant:'—',        harvest:'30 jours',  space:'5 cm',   companions:['Laitue','Carotte','Petit pois'],       waterEvery:2,  tip:'La culture la plus rapide. Ne les laissez pas devenir creux.' },
-  { id:'pepper',          name:'Poivron',            sci:'Capsicum annuum',               icon:'🌶️', category:'legume',         family:'Solanacées',     season:['summer'],                   difficulty:3, sow:'fév–mars',  plant:'mai–juin', harvest:'juil–oct',  space:'45 cm',  companions:['Basilic','Tomate'],                    waterEvery:2,  tip:'Aime la chaleur. Ne plantez pas avant des nuits >12°.' },
-  { id:'eggplant',        name:'Aubergine',          sci:'Solanum melongena',             icon:'🍆', category:'legume',         family:'Solanacées',     season:['summer'],                   difficulty:3, sow:'fév–mars',  plant:'mai–juin', harvest:'août–oct',  space:'60 cm',  companions:['Basilic','Poivron'],                   waterEvery:2,  tip:'Pincez la tête à 30 cm pour favoriser la ramification.' },
-  { id:'pea',             name:'Petit pois',         sci:'Pisum sativum',                 icon:'🟢', category:'legume',         family:'Fabacées',       season:['spring'],                   difficulty:1, sow:'fév–avr',   plant:'—',        harvest:'mai–juil',  space:'10 cm',  companions:['Carotte','Radis'],                     waterEvery:3,  tip:"Installez un treillis tôt ; les vrilles ont besoin de s'accrocher." },
-  { id:'pumpkin',         name:'Citrouille',         sci:'Cucurbita pepo',                icon:'🎃', category:'legume',         family:'Cucurbitacées',  season:['summer','autumn'],          difficulty:2, sow:'avr',       plant:'mai–juin', harvest:'sept–oct',  space:'120 cm', companions:['Maïs','Haricot'],                     waterEvery:3,  tip:'Donnez-leur de la place — les tiges courent sur 3 m+.' },
+  { id:'tomato',          name:'Tomate',            sci:'Solanum lycopersicum',          icon:'🍅', category:'legume',         family:'Solanacées',     season:['spring','summer'],          difficulty:2, sow:'mars–avr',  plant:'mai',      harvest:'juil–sept', space:'60 cm',  companions:['Basilic','Carotte','Oignon'],         waterEvery:2,  tip:'Pincez les gourmands chaque semaine. Tuteurez tôt.',                   varieties:['Cerise','Cœur de bœuf','Roma','Beefsteak','Noire de Crimée','Marmande'] },
+  { id:'basil',           name:'Basilic',            sci:'Ocimum basilicum',              icon:'🌿', category:'herbe',          family:'Lamiacées',      season:['spring','summer'],          difficulty:1, sow:'avr',       plant:'mai–juin', harvest:'juil–sept', space:'25 cm',  companions:['Tomate','Poivron'],                   waterEvery:2,  tip:'Aime la chaleur. Pincez les fleurs pour relancer les feuilles.',       varieties:['Grand vert','Pourpre','Citron','Thaï','Nain fin vert'] },
+  { id:'lettuce',         name:'Laitue',             sci:'Lactuca sativa',                icon:'🥬', category:'legume',         family:'Astéracées',     season:['spring','autumn'],          difficulty:1, sow:'mars–sept', plant:'avr–sept', harvest:'mai–oct',   space:'25 cm',  companions:['Carotte','Radis','Fraisier'],          waterEvery:2,  tip:'Semez toutes les 3 semaines pour une récolte continue.',              varieties:['Batavia','Feuille de chêne','Romaine','Butterhead','Lollo Rossa'] },
+  { id:'carrot',          name:'Carotte',            sci:'Daucus carota',                 icon:'🥕', category:'legume',         family:'Apiacées',       season:['spring','autumn'],          difficulty:2, sow:'mars–juil', plant:'—',        harvest:'juil–nov',  space:'5 cm',   companions:['Oignon','Laitue','Tomate'],            waterEvery:3,  tip:'Éclaircissez à 5 cm dès que les plants font 5 cm.',                   varieties:['Nantaise','Chantenay','Baby','Purple Haze','Touchon'] },
+  { id:'zucchini',        name:'Courgette',          sci:'Cucurbita pepo',                icon:'🥒', category:'legume',         family:'Cucurbitacées',  season:['summer'],                   difficulty:1, sow:'avr',       plant:'mai–juin', harvest:'juil–oct',  space:'90 cm',  companions:['Capucine','Maïs'],                    waterEvery:2,  tip:'Récoltez petit pour une chair tendre et plus de fleurs.',             varieties:['Black Beauty','Ronde de Nice','Striée d\'Italie','Gold Rush'] },
+  { id:'leek',            name:'Poireau',            sci:'Allium ampeloprasum',           icon:'🧅', category:'legume',         family:'Amaryllidacées', season:['spring','autumn','winter'], difficulty:3, sow:'fév–avr',   plant:'mai–juil', harvest:'oct–mars',  space:'15 cm',  companions:['Carotte','Céleri'],                    waterEvery:4,  tip:'Buttez la terre autour des pieds pour des fûts blancs.',              varieties:['Bleu de Solaise','Monstrueux de Carentan','Saint Victor'] },
+  { id:'strawberry',      name:'Fraisier',           sci:'Fragaria × ananassa',          icon:'🍓', category:'fruit',          family:'Rosacées',       season:['spring','summer'],          difficulty:2, sow:'—',         plant:'mars–mai', harvest:'mai–juil',  space:'30 cm',  companions:['Laitue','Épinard','Bourrache'],        waterEvery:2,  tip:'Paillez avec de la paille pour des fruits propres.',                  varieties:['Gariguette','Mara des Bois','Charlotte','Ciflorette','Fraises des bois'] },
+  { id:'radish',          name:'Radis',              sci:'Raphanus sativus',              icon:'🟠', category:'legume',         family:'Brassicacées',   season:['spring','autumn'],          difficulty:1, sow:'mars–sept', plant:'—',        harvest:'30 jours',  space:'5 cm',   companions:['Laitue','Carotte','Petit pois'],       waterEvery:2,  tip:'La culture la plus rapide. Ne les laissez pas devenir creux.',        varieties:['Rond rouge écarlate','Flambeau','Long de 18 jours','D\'été blanc'] },
+  { id:'pepper',          name:'Poivron',            sci:'Capsicum annuum',               icon:'🌶️', category:'legume',         family:'Solanacées',     season:['summer'],                   difficulty:3, sow:'fév–mars',  plant:'mai–juin', harvest:'juil–oct',  space:'45 cm',  companions:['Basilic','Tomate'],                    waterEvery:2,  tip:'Aime la chaleur. Ne plantez pas avant des nuits >12°.',               varieties:['Lamuyo','California Wonder','Doux d\'Espagne','Corno di Toro'] },
+  { id:'eggplant',        name:'Aubergine',          sci:'Solanum melongena',             icon:'🍆', category:'legume',         family:'Solanacées',     season:['summer'],                   difficulty:3, sow:'fév–mars',  plant:'mai–juin', harvest:'août–oct',  space:'60 cm',  companions:['Basilic','Poivron'],                   waterEvery:2,  tip:'Pincez la tête à 30 cm pour favoriser la ramification.',             varieties:['Barbentane','Violette de Florence','Blanche de Vernou'] },
+  { id:'pea',             name:'Petit pois',         sci:'Pisum sativum',                 icon:'🟢', category:'legume',         family:'Fabacées',       season:['spring'],                   difficulty:1, sow:'fév–avr',   plant:'—',        harvest:'mai–juil',  space:'10 cm',  companions:['Carotte','Radis'],                     waterEvery:3,  tip:"Installez un treillis tôt ; les vrilles ont besoin de s'accrocher.",  varieties:['Merveille de Kelvedon','Maestro','Douce Provence','Mangetout Norli'] },
+  { id:'pumpkin',         name:'Citrouille',         sci:'Cucurbita pepo',                icon:'🎃', category:'legume',         family:'Cucurbitacées',  season:['summer','autumn'],          difficulty:2, sow:'avr',       plant:'mai–juin', harvest:'sept–oct',  space:'120 cm', companions:['Maïs','Haricot'],                     waterEvery:3,  tip:'Donnez-leur de la place — les tiges courent sur 3 m+.',               varieties:['Lumina (blanche)','Rouge vif d\'Étampes','Jack-o\'-lantern'] },
   // ── Nouvelles cultures maraîchères ────────────────────────────
-  { id:'squash-spaghetti',name:'Courge spaghetti',   sci:'Cucurbita pepo',                icon:'🌕', category:'legume',         family:'Cucurbitacées',  season:['summer','autumn'],          difficulty:1, sow:'avr–mai',   plant:'mai–juin', harvest:'sept–oct',  space:'100 cm', companions:['Maïs','Haricot'],                     waterEvery:3,  tip:"Laissez mûrir jusqu'à ce que la peau soit dorée et dure avant de récolter." },
-  { id:'butternut',       name:'Courge butternut',   sci:'Cucurbita moschata',            icon:'🟤', category:'legume',         family:'Cucurbitacées',  season:['summer','autumn'],          difficulty:1, sow:'avr–mai',   plant:'mai–juin', harvest:'sept–oct',  space:'100 cm', companions:['Maïs','Capucine'],                    waterEvery:3,  tip:'Récoltez quand le pédoncule commence à se liéger et à sécher.' },
-  { id:'pumpkin-marron',  name:'Courge petit marron',sci:'Cucurbita maxima',              icon:'🌰', category:'legume',         family:'Cucurbitacées',  season:['summer','autumn'],          difficulty:2, sow:'avr–mai',   plant:'mai–juin', harvest:'sept–oct',  space:'100 cm', companions:['Maïs','Haricot'],                     waterEvery:3,  tip:'Excellente courge de conservation. Gardez au frais et au sec après récolte.' },
-  { id:'chili',           name:'Piment',             sci:'Capsicum frutescens',           icon:'🌶️', category:'legume',         family:'Solanacées',     season:['summer'],                   difficulty:2, sow:'fév–mars',  plant:'mai–juin', harvest:'juil–oct',  space:'40 cm',  companions:['Tomate','Basilic'],                    waterEvery:2,  tip:'Plus le sol est sec et stressé, plus le piment sera fort.' },
-  { id:'sweet-potato',    name:'Patate douce',       sci:'Ipomoea batatas',               icon:'🍠', category:'legume',         family:'Convolvulacées', season:['summer'],                   difficulty:3, sow:'—',         plant:'mai–juin', harvest:'sept–oct',  space:'40 cm',  companions:['Courge','Maïs'],                       waterEvery:3,  tip:'Plantez en butées en sol léger et chaud. Récoltez avant les premiers gels.' },
-  { id:'gherkin',         name:'Cornichon',          sci:'Cucumis sativus',               icon:'🥒', category:'legume',         family:'Cucurbitacées',  season:['summer'],                   difficulty:1, sow:'mai',       plant:'mai–juin', harvest:'juil–sept', space:'50 cm',  companions:['Haricot','Radis','Laitue'],            waterEvery:2,  tip:'Récoltez souvent à 5–7 cm de long pour maintenir la production.' },
-  { id:'red-cabbage',     name:'Chou rouge',         sci:'Brassica oleracea capitata',    icon:'🔴', category:'legume',         family:'Brassicacées',   season:['spring','autumn'],          difficulty:2, sow:'mars–avr',  plant:'mai–juin', harvest:'août–nov',  space:'50 cm',  companions:['Aneth','Camomille'],                   waterEvery:3,  tip:'Se conserve plusieurs mois en cave. Surveiller la piéride du chou.' },
-  { id:'cabbage',         name:'Chou pommé',         sci:'Brassica oleracea capitata',    icon:'🥬', category:'legume',         family:'Brassicacées',   season:['spring','autumn','winter'], difficulty:2, sow:'mars–avr',  plant:'mai–juil', harvest:'sept–mars', space:'50 cm',  companions:['Aneth','Céleri'],                      waterEvery:3,  tip:'Binez souvent et buttez les pieds pour une bonne tenue des pommes.' },
-  { id:'beans',           name:'Haricots',           sci:'Phaseolus vulgaris',            icon:'🫘', category:'legume',         family:'Fabacées',       season:['summer'],                   difficulty:1, sow:'mai–juin',  plant:'—',        harvest:'juil–sept', space:'15 cm',  companions:['Maïs','Courge','Carotte'],             waterEvery:2,  tip:"N'arrosez pas les fleurs pour éviter la chute. Récoltez régulièrement." },
-  { id:'watermelon',      name:'Pastèque',           sci:'Citrullus lanatus',             icon:'🍉', category:'fruit',          family:'Cucurbitacées',  season:['summer'],                   difficulty:3, sow:'avr–mai',   plant:'mai–juin', harvest:'août–sept', space:'150 cm', companions:['Radis','Laitue'],                     waterEvery:3,  tip:"Sol chaud et bien drainé. Tapez le fruit : un son creux indique la maturité." },
-  { id:'melon',           name:'Melon',              sci:'Cucumis melo',                  icon:'🍈', category:'fruit',          family:'Cucurbitacées',  season:['summer'],                   difficulty:3, sow:'avr',       plant:'mai–juin', harvest:'juil–sept', space:'100 cm', companions:['Radis','Maïs'],                       waterEvery:2,  tip:"Pincez la tige principale après la 4ᵉ feuille. Réduisez l'arrosage à maturité." },
+  { id:'squash-spaghetti',name:'Courge spaghetti',   sci:'Cucurbita pepo',                icon:'🌕', category:'legume',         family:'Cucurbitacées',  season:['summer','autumn'],          difficulty:1, sow:'avr–mai',   plant:'mai–juin', harvest:'sept–oct',  space:'100 cm', companions:['Maïs','Haricot'],                     waterEvery:3,  tip:"Laissez mûrir jusqu'à ce que la peau soit dorée et dure avant de récolter.",  varieties:['Tivoli'] },
+  { id:'butternut',       name:'Courge butternut',   sci:'Cucurbita moschata',            icon:'🟤', category:'legume',         family:'Cucurbitacées',  season:['summer','autumn'],          difficulty:1, sow:'avr–mai',   plant:'mai–juin', harvest:'sept–oct',  space:'100 cm', companions:['Maïs','Capucine'],                    waterEvery:3,  tip:'Récoltez quand le pédoncule commence à se liéger et à sécher.',               varieties:['Waltham','Hunter','Solo'] },
+  { id:'pumpkin-marron',  name:'Courge petit marron',sci:'Cucurbita maxima',              icon:'🌰', category:'legume',         family:'Cucurbitacées',  season:['summer','autumn'],          difficulty:2, sow:'avr–mai',   plant:'mai–juin', harvest:'sept–oct',  space:'100 cm', companions:['Maïs','Haricot'],                     waterEvery:3,  tip:'Excellente courge de conservation. Gardez au frais et au sec après récolte.',  varieties:['Uchiki Kuri','Delicata'] },
+  { id:'chili',           name:'Piment',             sci:'Capsicum frutescens',           icon:'🌶️', category:'legume',         family:'Solanacées',     season:['summer'],                   difficulty:2, sow:'fév–mars',  plant:'mai–juin', harvest:'juil–oct',  space:'40 cm',  companions:['Tomate','Basilic'],                    waterEvery:2,  tip:'Plus le sol est sec et stressé, plus le piment sera fort.',                   varieties:['Jalapeño','Cayenne','Bird\'s Eye','Habanero','Anaheim'] },
+  { id:'sweet-potato',    name:'Patate douce',       sci:'Ipomoea batatas',               icon:'🍠', category:'legume',         family:'Convolvulacées', season:['summer'],                   difficulty:3, sow:'—',         plant:'mai–juin', harvest:'sept–oct',  space:'40 cm',  companions:['Courge','Maïs'],                       waterEvery:3,  tip:'Plantez en butées en sol léger et chaud. Récoltez avant les premiers gels.',   varieties:['Beauregard','O\'Henry','Violette d\'Okinawa'] },
+  { id:'gherkin',         name:'Cornichon',          sci:'Cucumis sativus',               icon:'🥒', category:'legume',         family:'Cucurbitacées',  season:['summer'],                   difficulty:1, sow:'mai',       plant:'mai–juin', harvest:'juil–sept', space:'50 cm',  companions:['Haricot','Radis','Laitue'],            waterEvery:2,  tip:'Récoltez souvent à 5–7 cm de long pour maintenir la production.',             varieties:['Vert Petit de Paris','National Pickling'] },
+  { id:'red-cabbage',     name:'Chou rouge',         sci:'Brassica oleracea capitata',    icon:'🔴', category:'legume',         family:'Brassicacées',   season:['spring','autumn'],          difficulty:2, sow:'mars–avr',  plant:'mai–juin', harvest:'août–nov',  space:'50 cm',  companions:['Aneth','Camomille'],                   waterEvery:3,  tip:'Se conserve plusieurs mois en cave. Surveiller la piéride du chou.',          varieties:['Red Acre','Kalibos'] },
+  { id:'cabbage',         name:'Chou pommé',         sci:'Brassica oleracea capitata',    icon:'🥬', category:'legume',         family:'Brassicacées',   season:['spring','autumn','winter'], difficulty:2, sow:'mars–avr',  plant:'mai–juil', harvest:'sept–mars', space:'50 cm',  companions:['Aneth','Céleri'],                      waterEvery:3,  tip:'Binez souvent et buttez les pieds pour une bonne tenue des pommes.',          varieties:['Quintal d\'Alsace','Cabus','Pixie'] },
+  { id:'beans',           name:'Haricots',           sci:'Phaseolus vulgaris',            icon:'🫘', category:'legume',         family:'Fabacées',       season:['summer'],                   difficulty:1, sow:'mai–juin',  plant:'—',        harvest:'juil–sept', space:'15 cm',  companions:['Maïs','Courge','Carotte'],             waterEvery:2,  tip:"N'arrosez pas les fleurs pour éviter la chute. Récoltez régulièrement.",      varieties:['Contender','Borlotti','Mangetout','Nain beurre'] },
+  { id:'watermelon',      name:'Pastèque',           sci:'Citrullus lanatus',             icon:'🍉', category:'fruit',          family:'Cucurbitacées',  season:['summer'],                   difficulty:3, sow:'avr–mai',   plant:'mai–juin', harvest:'août–sept', space:'150 cm', companions:['Radis','Laitue'],                     waterEvery:3,  tip:"Sol chaud et bien drainé. Tapez le fruit : un son creux indique la maturité.", varieties:['Sugar Baby','Charleston Gray','Crimson Sweet'] },
+  { id:'melon',           name:'Melon',              sci:'Cucumis melo',                  icon:'🍈', category:'fruit',          family:'Cucurbitacées',  season:['summer'],                   difficulty:3, sow:'avr',       plant:'mai–juin', harvest:'juil–sept', space:'100 cm', companions:['Radis','Maïs'],                       waterEvery:2,  tip:"Pincez la tige principale après la 4ᵉ feuille. Réduisez l'arrosage à maturité.", varieties:['Charentais','Cavaillon','Cantaloup','Galia'] },
   // ── Arbres fruitiers ──────────────────────────────────────────
-  { id:'mirabelle',       name:'Mirabelle',          sci:'Prunus domestica syriaca',      icon:'🟡', category:'arbre-fruitier', family:'Rosacées',       season:['summer'],                   difficulty:1, sow:'—',         plant:'nov–mars', harvest:'juil–août', space:'4 m',    companions:['Reine Claude','Prunellier'],           waterEvery:7,  tip:'Taille en gobelet. Récolte à la main dès que les fruits se détachent facilement.' },
-  { id:'reine-claude',    name:'Reine Claude',       sci:'Prunus domestica',              icon:'🍏', category:'arbre-fruitier', family:'Rosacées',       season:['summer'],                   difficulty:2, sow:'—',         plant:'nov–mars', harvest:'août–sept', space:'5 m',    companions:['Mirabelle','Prunellier'],              waterEvery:7,  tip:'Préfère un sol profond et bien drainé. Taille minimale pour conserver la saveur.' },
-  { id:'quetsche',        name:'Quetsche (Coutch)',  sci:'Prunus domestica',              icon:'🍇', category:'arbre-fruitier', family:'Rosacées',       season:['summer','autumn'],          difficulty:1, sow:'—',         plant:'nov–mars', harvest:'août–oct',  space:'4–5 m',  companions:['Mirabelle','Reine Claude'],            waterEvery:7,  tip:'Variété rustique et très productive. Excellente pour confitures et eau-de-vie.' },
-  { id:'apple',           name:'Pomme',              sci:'Malus domestica',               icon:'🍎', category:'arbre-fruitier', family:'Rosacées',       season:['autumn'],                   difficulty:2, sow:'—',         plant:'nov–mars', harvest:'août–nov',  space:'5–8 m',  companions:['Capucine','Ciboulette','Pissenlit'],   waterEvery:10, tip:'Taille en hiver dormant. Traitez à la bouillie bordelaise avant le débourrement.' },
-  { id:'pear',            name:'Poire',              sci:'Pyrus communis',                icon:'🍐', category:'arbre-fruitier', family:'Rosacées',       season:['autumn'],                   difficulty:2, sow:'—',         plant:'nov–mars', harvest:'août–oct',  space:'5–8 m',  companions:['Ail','Ciboulette'],                    waterEvery:10, tip:'Sensible au feu bactérien. Taille en palmette pour de bonnes récoltes.' },
-  { id:'cherry',          name:'Cerise',             sci:'Prunus avium',                  icon:'🍒', category:'arbre-fruitier', family:'Rosacées',       season:['summer'],                   difficulty:2, sow:'—',         plant:'nov–mars', harvest:'juin–juil', space:'8 m',    companions:['Ciboulette','Pissenlit'],              waterEvery:7,  tip:'Couvrez d\'un filet avant maturité pour protéger des oiseaux.' },
-  { id:'peach',           name:'Pêche',              sci:'Prunus persica',                icon:'🍑', category:'arbre-fruitier', family:'Rosacées',       season:['summer'],                   difficulty:3, sow:'—',         plant:'nov–mars', harvest:'juil–sept', space:'4–5 m',  companions:['Ail','Basilic'],                       waterEvery:5,  tip:'Très sensible à la cloque. Traitement cuivre obligatoire au gonflement des bourgeons.' },
-  { id:'nectarine',       name:'Nectarine',          sci:'Prunus persica var. nucipersica',icon:'🍑', category:'arbre-fruitier', family:'Rosacées',      season:['summer'],                   difficulty:3, sow:'—',         plant:'nov–mars', harvest:'juil–sept', space:'4–5 m',  companions:['Ail','Basilic'],                       waterEvery:5,  tip:'Même sensibilité à la cloque que le pêcher. Traitez dès le gonflement des bourgeons.' },
-  { id:'apricot',         name:'Abricot',            sci:'Prunus armeniaca',              icon:'🍊', category:'arbre-fruitier', family:'Rosacées',       season:['summer'],                   difficulty:3, sow:'—',         plant:'nov–mars', harvest:'juin–août', space:'5 m',    companions:['Lavande','Ail'],                       waterEvery:7,  tip:'Fleurit tôt — protégez à la floraison contre les gelées tardives. Sol calcaire apprécié.' },
+  { id:'mirabelle',       name:'Mirabelle',          sci:'Prunus domestica syriaca',      icon:'🟡', category:'arbre-fruitier', family:'Rosacées',       season:['summer'],                   difficulty:1, sow:'—',         plant:'nov–mars', harvest:'juil–août', space:'4 m',    companions:['Reine Claude','Prunellier'],           waterEvery:7,  tip:'Taille en gobelet. Récolte à la main dès que les fruits se détachent facilement.', varieties:['De Nancy','De Metz'] },
+  { id:'reine-claude',    name:'Reine Claude',       sci:'Prunus domestica',              icon:'🍏', category:'arbre-fruitier', family:'Rosacées',       season:['summer'],                   difficulty:2, sow:'—',         plant:'nov–mars', harvest:'août–sept', space:'5 m',    companions:['Mirabelle','Prunellier'],              waterEvery:7,  tip:'Préfère un sol profond et bien drainé. Taille minimale pour conserver la saveur.', varieties:['Verte','Dorée','Bavay'] },
+  { id:'quetsche',        name:'Quetsche (Coutch)',  sci:'Prunus domestica',              icon:'🍇', category:'arbre-fruitier', family:'Rosacées',       season:['summer','autumn'],          difficulty:1, sow:'—',         plant:'nov–mars', harvest:'août–oct',  space:'4–5 m',  companions:['Mirabelle','Reine Claude'],            waterEvery:7,  tip:'Variété rustique et très productive. Excellente pour confitures et eau-de-vie.', varieties:['Coutch d\'Alsace','Stanley'] },
+  { id:'apple',           name:'Pomme',              sci:'Malus domestica',               icon:'🍎', category:'arbre-fruitier', family:'Rosacées',       season:['autumn'],                   difficulty:2, sow:'—',         plant:'nov–mars', harvest:'août–nov',  space:'5–8 m',  companions:['Capucine','Ciboulette','Pissenlit'],   waterEvery:10, tip:'Taille en hiver dormant. Traitez à la bouillie bordelaise avant le débourrement.', varieties:['Golden','Granny Smith','Gala','Fuji','Cox','Reinette'] },
+  { id:'pear',            name:'Poire',              sci:'Pyrus communis',                icon:'🍐', category:'arbre-fruitier', family:'Rosacées',       season:['autumn'],                   difficulty:2, sow:'—',         plant:'nov–mars', harvest:'août–oct',  space:'5–8 m',  companions:['Ail','Ciboulette'],                    waterEvery:10, tip:'Sensible au feu bactérien. Taille en palmette pour de bonnes récoltes.',      varieties:['Williams','Conférence','Passe-Crassane','Comice'] },
+  { id:'cherry',          name:'Cerise',             sci:'Prunus avium',                  icon:'🍒', category:'arbre-fruitier', family:'Rosacées',       season:['summer'],                   difficulty:2, sow:'—',         plant:'nov–mars', harvest:'juin–juil', space:'8 m',    companions:['Ciboulette','Pissenlit'],              waterEvery:7,  tip:'Couvrez d\'un filet avant maturité pour protéger des oiseaux.',              varieties:['Burlat','Summit','Reverchon','Napoléon'] },
+  { id:'peach',           name:'Pêche',              sci:'Prunus persica',                icon:'🍑', category:'arbre-fruitier', family:'Rosacées',       season:['summer'],                   difficulty:3, sow:'—',         plant:'nov–mars', harvest:'juil–sept', space:'4–5 m',  companions:['Ail','Basilic'],                       waterEvery:5,  tip:'Très sensible à la cloque. Traitement cuivre obligatoire au gonflement des bourgeons.', varieties:['Redhaven','Amsden','Pêche de vigne'] },
+  { id:'nectarine',       name:'Nectarine',          sci:'Prunus persica var. nucipersica',icon:'🍑', category:'arbre-fruitier', family:'Rosacées',      season:['summer'],                   difficulty:3, sow:'—',         plant:'nov–mars', harvest:'juil–sept', space:'4–5 m',  companions:['Ail','Basilic'],                       waterEvery:5,  tip:'Même sensibilité à la cloque que le pêcher. Traitez dès le gonflement des bourgeons.', varieties:['Fantasia','Stark Red Gold','Nectared'] },
+  { id:'apricot',         name:'Abricot',            sci:'Prunus armeniaca',              icon:'🍊', category:'arbre-fruitier', family:'Rosacées',       season:['summer'],                   difficulty:3, sow:'—',         plant:'nov–mars', harvest:'juin–août', space:'5 m',    companions:['Lavande','Ail'],                       waterEvery:7,  tip:'Fleurit tôt — protégez à la floraison contre les gelées tardives. Sol calcaire apprécié.', varieties:['Bergeron','Goldrich','Polonais','Orangé de Provence'] },
 ];
 
 /* ============================================================
@@ -53,6 +53,234 @@ const REGIONS = [
   { id:'est',      emoji:'🌡️', label:'Est & Rhône-Alpes',       desc:'Continental, hivers froids' },
   { id:'montagne', emoji:'⛰️',  label:'Montagne',                desc:'Été court, gel possible tardif' },
 ];
+
+/* ============================================================
+   MÉTÉO — Open-Meteo (gratuit, sans clé API)
+   ============================================================ */
+const WEATHER_CODES = {
+  0:{icon:'☀️',label:'Ciel dégagé'}, 1:{icon:'🌤️',label:'Peu nuageux'},
+  2:{icon:'⛅',label:'Partiellement nuageux'}, 3:{icon:'☁️',label:'Couvert'},
+  45:{icon:'🌫️',label:'Brouillard'}, 48:{icon:'🌫️',label:'Brouillard givrant'},
+  51:{icon:'🌦️',label:'Bruine'}, 53:{icon:'🌦️',label:'Bruine modérée'},
+  55:{icon:'🌧️',label:'Bruine dense'}, 61:{icon:'🌧️',label:'Pluie légère'},
+  63:{icon:'🌧️',label:'Pluie'}, 65:{icon:'🌧️',label:'Forte pluie'},
+  71:{icon:'🌨️',label:'Neige légère'}, 73:{icon:'🌨️',label:'Neige'},
+  75:{icon:'❄️',label:'Forte neige'}, 80:{icon:'🌦️',label:'Averses légères'},
+  81:{icon:'🌧️',label:'Averses'}, 82:{icon:'⛈️',label:'Fortes averses'},
+  95:{icon:'⛈️',label:'Orage'}, 96:{icon:'⛈️',label:'Orage avec grêle'},
+  99:{icon:'⛈️',label:'Orage violent'},
+};
+
+async function fetchWeather() {
+  if (!state.prefs.weather) return;
+  const now = Date.now();
+  if (state.weather && state.weather.fetched && now - state.weather.fetched < 3600000) return;
+
+  try {
+    let lat, lon;
+
+    if (window.Capacitor?.isNativePlatform?.()) {
+      const { Geolocation } = window.Capacitor.Plugins;
+      const perm = await Geolocation.requestPermissions();
+      if (perm.location !== 'granted' && perm.coarseLocation !== 'granted') return;
+      const pos = await Geolocation.getCurrentPosition({ timeout: 5000, enableHighAccuracy: false });
+      lat = pos.coords.latitude;
+      lon = pos.coords.longitude;
+    } else {
+      if (!navigator.geolocation) return;
+      const pos = await new Promise((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 })
+      );
+      lat = pos.coords.latitude;
+      lon = pos.coords.longitude;
+    }
+
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&current=temperature_2m,precipitation,weathercode,windspeed_10m&timezone=auto`;
+    const res = await fetch(url);
+    if (!res.ok) return;
+    const data = await res.json();
+    const cur = data.current;
+    state.weather = {
+      fetched: now, lat, lon,
+      temp: Math.round(cur.temperature_2m),
+      rain: cur.precipitation,
+      code: cur.weathercode,
+      wind: Math.round(cur.windspeed_10m),
+    };
+    saveState();
+    renderWeatherWidget();
+  } catch {}
+}
+
+function renderWeatherWidget() {
+  const w = state.weather;
+  const el = document.getElementById('weather-widget');
+  if (!el) return;
+  if (!w || !state.prefs.weather) { el.style.display = 'none'; return; }
+  const wc = WEATHER_CODES[w.code] || {icon:'🌡️', label:'—'};
+  const isRainy = [51,53,55,61,63,65,80,81,82,95,96,99].includes(w.code);
+  const isHot = w.temp >= 30;
+  let advice = '';
+  if (isRainy && w.rain > 1) advice = '💧 Il pleut — arrosage inutile aujourd\'hui';
+  else if (isHot) advice = '🌡️ Chaleur — arrosez en soirée, pas au soleil';
+  else if (w.temp <= 5) advice = '❄️ Risque de gel — protégez les plants fragiles';
+  el.style.display = '';
+  el.innerHTML = `<div class="wx-main"><span class="wx-icon">${wc.icon}</span><div class="wx-body"><div class="wx-temp">${w.temp}°C <span class="wx-label">${wc.label}</span></div>${advice ? `<div class="wx-advice">${advice}</div>` : ''}</div></div>`;
+}
+
+/* ============================================================
+   SYMPTÔMES — Identification des problèmes courants
+   ============================================================ */
+const SYMPTOMS = [
+  { id:'yellow', icon:'🍂', label:'Feuilles jaunes', causes:[
+    { name:'Carence en azote', signs:'Jaunissement progressif du bas vers le haut', treat:'Purin d\'ortie dilué (10:1) ou engrais azoté', sev:'medium' },
+    { name:'Excès d\'eau', signs:'Feuilles molles + jaunes, sol détrempé', treat:'Stopper l\'arrosage, améliorer le drainage', sev:'high' },
+    { name:'Carence en fer', signs:'Nervures vertes mais feuilles jaunes entre elles', treat:'Chélate de fer ou corriger le pH (6–6,5)', sev:'medium' },
+    { name:'Déficit d\'eau', signs:'Feuilles tombantes + bords secs puis jaunes', treat:'Arrosage profond au pied, paillage', sev:'medium' },
+  ]},
+  { id:'spots', icon:'🔴', label:'Taches sur les feuilles', causes:[
+    { name:'Mildiou', signs:'Taches huileuses dessus, duvet gris/blanc dessous', treat:'Bouillie bordelaise, supprimer feuilles atteintes', sev:'high' },
+    { name:'Oïdium', signs:'Poudre blanche sur la face supérieure', treat:'Bicarbonate de soude (1 c.c/L eau), bien aérer', sev:'medium' },
+    { name:'Alternariose', signs:'Taches brunes cerclées de jaune (tomates, choux)', treat:'Supprimer feuilles, éviter l\'arrosage foliaire', sev:'medium' },
+    { name:'Bactériose', signs:'Taches angulaires humides qui noircissent', treat:'Cuivre, aération, rotation des cultures', sev:'high' },
+  ]},
+  { id:'holes', icon:'🕳️', label:'Trous dans les feuilles', causes:[
+    { name:'Limaces / Escargots', signs:'Trous irréguliers, traces de bave argentée', treat:'Cendres de bois, pièges à bière, granulés ferriques', sev:'medium' },
+    { name:'Piéride du chou', signs:'Trous sur choux, chenilles vert-jaune visibles', treat:'Filet insect-proof, Bt (Bacillus thuringiensis)', sev:'medium' },
+    { name:'Doryphores', signs:'Feuilles de pomme de terre dévorées, larves orangées', treat:'Ramassage manuel, décoction de fougère', sev:'high' },
+    { name:'Altises', signs:'Petits trous ronds sur radis, navets, brassicacées', treat:'Filet, cendres de bois, rotation', sev:'low' },
+  ]},
+  { id:'wilt', icon:'😿', label:'Plante qui fane / se dessèche', causes:[
+    { name:'Sécheresse', signs:'Feuilles tombantes, sol sec', treat:'Arrosage profond, paillage, arroser tôt le matin', sev:'medium' },
+    { name:'Fusariose', signs:'Jaunissement unilatéral, tige brune en coupe', treat:'Supprimer la plante, ne pas composter, rotation obligatoire', sev:'high' },
+    { name:'Pourriture du collet', signs:'Collier noir à la base, racines brunes molles', treat:'Moins d\'arrosage, bon drainage, supprimer si très atteinte', sev:'high' },
+    { name:'Chaleur excessive', signs:'Toute la plante fléchit le midi, récupère le soir', treat:'Ombrage temporaire, arrosage régulier en soirée', sev:'low' },
+  ]},
+  { id:'deformed', icon:'🔀', label:'Feuilles / fruits déformés', causes:[
+    { name:'Pucerons', signs:'Feuilles enroulées, collantes, insectes verts/noirs/blancs', treat:'Savon noir (10 ml/L), favoriser coccinelles', sev:'medium' },
+    { name:'Araignées rouges', signs:'Feuilles blanchâtres/bronzées, toiles fines dessous', treat:'Pulvériser eau fraîche, augmenter l\'humidité', sev:'medium' },
+    { name:'Virus (mosaïque)', signs:'Mosaïque vert clair/foncé, déformation foliaire', treat:'Supprimer la plante, lutter contre pucerons (vecteurs)', sev:'high' },
+    { name:'Carences multiples', signs:'Déformation + décoloration irrégulière', treat:'Analyse de sol, apport de compost équilibré', sev:'medium' },
+  ]},
+  { id:'no-fruit', icon:'🌸', label:'Fleurs sans fruits', causes:[
+    { name:'Manque de pollinisation', signs:'Fleurs tombent sans développement', treat:'Agiter les tiges (tomates), planter des fleurs pollinisatrices', sev:'medium' },
+    { name:'Températures extrêmes', signs:'Fleurs avortent si nuit < 10°C ou jour > 35°C', treat:'Voile de protection la nuit, ombrage le jour', sev:'medium' },
+    { name:'Excès d\'azote', signs:'Végétation luxuriante mais peu de fleurs ou fruits', treat:'Stopper l\'azote, apporter potasse et phosphore', sev:'medium' },
+    { name:'Manque d\'eau à la floraison', signs:'Fruits mal formés, creux ou qui tombent', treat:'Arrosage régulier et profond, surtout pendant la floraison', sev:'medium' },
+  ]},
+];
+
+let symptomStep = 0;
+let selectedSymptom = null;
+
+function openSymptomFinder() {
+  symptomStep = 0; selectedSymptom = null;
+  renderSymptomFinder();
+  openModal('symptom-modal-backdrop');
+}
+
+function renderSymptomFinder() {
+  const body = document.getElementById('symptom-modal-body');
+  if (!body) return;
+  if (symptomStep === 0) {
+    body.innerHTML = `
+      <p class="muted small mb-4">Quel est le principal symptôme observé sur votre plante ?</p>
+      <div class="sf-grid">
+        ${SYMPTOMS.map(s => `<button class="sf-item" data-sid="${s.id}"><span class="sf-icon">${s.icon}</span><span class="sf-label">${escapeHTML(s.label)}</span></button>`).join('')}
+      </div>`;
+    body.querySelectorAll('[data-sid]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedSymptom = SYMPTOMS.find(s => s.id === btn.dataset.sid);
+        symptomStep = 1;
+        renderSymptomFinder();
+      });
+    });
+  } else if (symptomStep === 1 && selectedSymptom) {
+    const sevColor = {high:'var(--urgent)',medium:'var(--warn)',low:'var(--green-dark)'};
+    const sevLabel = {high:'Urgent',medium:'À surveiller',low:'Peu grave'};
+    body.innerHTML = `
+      <button class="btn ghost sm mb-3" id="sf-back">← Retour</button>
+      <div class="sf-result-head">${selectedSymptom.icon} ${escapeHTML(selectedSymptom.label)}</div>
+      <p class="muted small mb-4">${selectedSymptom.causes.length} causes possibles :</p>
+      ${selectedSymptom.causes.map(c => `
+        <div class="sf-cause">
+          <div class="sf-cause-head">
+            <b>${escapeHTML(c.name)}</b>
+            <span class="sf-sev" style="color:${sevColor[c.sev]}">${sevLabel[c.sev]}</span>
+          </div>
+          <div class="sf-signs">🔎 ${escapeHTML(c.signs)}</div>
+          <div class="sf-treat">✅ ${escapeHTML(c.treat)}</div>
+        </div>`).join('')}`;
+    body.querySelector('#sf-back').addEventListener('click', () => { symptomStep = 0; renderSymptomFinder(); });
+  }
+}
+
+/* ============================================================
+   LISTE DE COURSES
+   ============================================================ */
+function openShoppingList() {
+  renderShoppingList();
+  openModal('shopping-modal-backdrop');
+}
+
+function renderShoppingList() {
+  const body = document.getElementById('shopping-modal-body');
+  if (!body) return;
+  const shopping = state.shopping || [];
+
+  // Auto-suggestions : plantes à semer dans les 30 prochains jours selon leur fiche
+  const MONTH_NAMES = ['janv','févr','mars','avr','mai','juin','juil','août','sept','oct','nov','déc'];
+  const now = new Date();
+  const m = now.getMonth(); // 0-based
+  const suggestions = CATALOG.filter(p => {
+    if (!p.sow || p.sow === '—') return false;
+    const sow = p.sow.toLowerCase();
+    const cur = MONTH_NAMES[m];
+    const next = MONTH_NAMES[(m+1)%12];
+    return sow.includes(cur) || sow.includes(next);
+  }).map(p => `${p.icon} ${p.name} (semis : ${p.sow})`);
+
+  body.innerHTML = `
+    <div class="sl-section">
+      <div class="sl-title">💡 À semer ce mois-ci</div>
+      ${suggestions.length ? suggestions.map(s => `<div class="sl-suggest">${escapeHTML(s)}</div>`).join('') : '<div class="muted small">Aucune suggestion pour le moment.</div>'}
+    </div>
+    <div class="sl-section">
+      <div class="sl-title">Ma liste personnelle</div>
+      <div id="sl-items">${shopping.map((item,i) => `
+        <div class="sl-item ${item.done ? 'sl-done' : ''}">
+          <label class="sl-check"><input type="checkbox" data-si="${i}" ${item.done?'checked':''}/><span>${escapeHTML(item.text)}</span></label>
+          <button class="btn ghost sm danger" data-sdel="${i}">✕</button>
+        </div>`).join('') || '<div class="muted small">Aucun article.</div>'}
+      </div>
+      <div class="row gap-2 mt-3">
+        <input class="input" id="sl-input" placeholder="Ajouter un article…" style="flex:1">
+        <button class="btn primary" id="sl-add">Ajouter</button>
+      </div>
+    </div>`;
+
+  body.querySelectorAll('[data-si]').forEach(cb => {
+    cb.addEventListener('change', () => {
+      const i = parseInt(cb.dataset.si);
+      if (state.shopping[i]) { state.shopping[i].done = cb.checked; saveState(); renderShoppingList(); }
+    });
+  });
+  body.querySelectorAll('[data-sdel]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.shopping.splice(parseInt(btn.dataset.sdel), 1);
+      saveState(); renderShoppingList();
+    });
+  });
+  document.getElementById('sl-add').addEventListener('click', () => {
+    const v = document.getElementById('sl-input').value.trim();
+    if (!v) return;
+    state.shopping.push({ text: v, done: false });
+    saveState(); renderShoppingList();
+  });
+  document.getElementById('sl-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('sl-add').click();
+  });
+}
 
 const REGION_DATA = {
   tomato:              { nord:65, idf:75, ocean:78, sudouest:90, med:95, est:78, montagne:50 },
@@ -187,6 +415,19 @@ function renderXPWidget() {
    NOTIFICATIONS — Vrais rappels navigateur
    ============================================================ */
 async function requestNotificationPermission() {
+  // Capacitor native
+  if (window.Capacitor?.isNativePlatform?.()) {
+    try {
+      const { LocalNotifications } = window.Capacitor.Plugins;
+      const perm = await LocalNotifications.requestPermissions();
+      const granted = perm.display === 'granted';
+      state.prefs.pushAsked = true;
+      state.prefs.pushOn = granted;
+      saveState();
+      return granted ? 'granted' : 'denied';
+    } catch {}
+  }
+  // Web fallback
   if (!('Notification' in window)) return 'unsupported';
   if (Notification.permission === 'granted') return 'granted';
   if (Notification.permission === 'denied') return 'denied';
@@ -217,33 +458,47 @@ async function handleSurveyNotifRequest(btn) {
   }
 }
 
-function sendNotification(title, body, tag = 'potager') {
+async function sendNotification(title, body, tag = 'potager') {
+  const hour = new Date().getHours();
+  if (state.prefs && state.prefs.quiet && (hour < 7 || hour >= 21)) return;
+  // Capacitor native
+  if (window.Capacitor?.isNativePlatform?.()) {
+    try {
+      const { LocalNotifications } = window.Capacitor.Plugins;
+      await LocalNotifications.schedule({ notifications: [{ title, body, id: Math.floor(Math.random() * 100000), extra: { tag } }] });
+      return;
+    } catch {}
+  }
+  // Web fallback
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
   if (!state.prefs || !state.prefs.pushOn) return;
-  const hour = new Date().getHours();
-  if (state.prefs.quiet && (hour < 7 || hour >= 21)) return;
   try {
     new Notification(title, { body, icon: 'icon-192.png', badge: 'icon-192.png', tag, vibrate: [200, 100, 200] });
   } catch {}
 }
 
+function notifEnabled() {
+  if (window.Capacitor?.isNativePlatform?.()) return !!(state.prefs||{}).pushOn;
+  return ('Notification' in window) && Notification.permission === 'granted' && !!(state.prefs||{}).pushOn;
+}
+
 function scheduleWateringChecks() {
-  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  if (!notifEnabled()) return;
   const todayStr = iso(new Date());
   const waterTasks = state.tasks.filter(t => t.kind === 'water' && !t.done && t.date === todayStr);
-  if (waterTasks.length && state.prefs.pushOn) {
+  if (waterTasks.length) {
     const names = waterTasks.slice(0, 3).map(t => t.title).join(', ');
     sendNotification('💧 Arrosage du potager', `${waterTasks.length} plante${waterTasks.length > 1 ? 's' : ''} à arroser : ${names}`, 'watering');
   }
   const urgentPlants = state.beds.flatMap(b => (b.cells||[]).filter(c => c && c.status === 'urgent'));
-  if (urgentPlants.length && state.prefs.pushOn) {
+  if (urgentPlants.length) {
     const pnames = urgentPlants.slice(0, 2).map(c => { const p = plantById(c.plant); return p ? p.name : c.plant; }).join(', ');
     sendNotification('🚨 Alerte au jardin', `${urgentPlants.length} plante${urgentPlants.length > 1 ? 's' : ''} urgente${urgentPlants.length > 1 ? 's' : ''} : ${pnames}`, 'urgent');
   }
 }
 
 function initNotificationScheduler() {
-  if (!('Notification' in window) || Notification.permission !== 'granted' || !(state.prefs||{}).pushOn) return;
+  if (!notifEnabled()) return;
   const hour = new Date().getHours();
   if (hour >= 7 && hour < 12) scheduleWateringChecks();
   setInterval(() => {
@@ -321,8 +576,6 @@ function regionScoreHTML(score) {
   </div>`;
 }
 
-<<<<<<< HEAD
-=======
 function companionGridHTML() {
   const rows = COMPANION_DATA.map(c => `
     <div class="comp-row">
@@ -343,7 +596,6 @@ function companionGridHTML() {
     <div class="comp-flowers">${flowers}</div>`;
 }
 
->>>>>>> 3de00b2843520ade4187c01673d039e3bfe40e8f
 function renderGuide() {
   const el = document.getElementById('guide-content');
   if (!el) return;
@@ -657,13 +909,16 @@ const DEFAULT_STATE = {
   ],
   prefs: {
     digest:true, weather:true, quiet:true, pushAsked:false, pushOn:false,
+    darkMode:false,
     alertMildiou:true, alertTraitement:true, alertParasite:true,
     alertTaille:true, alertTraitementArbo:true, alertGreffage:true
   },
   onboarded: false,
   gardenTab: 'all',
   draft: null,
-  streak: 7
+  streak: 7,
+  weather: null,
+  shopping: []
 };
 
 const STORAGE_KEY = 'potager.state.v2.fr';
@@ -692,6 +947,22 @@ function activeBed() { return state.beds.find(b => b.id === state.activeBedId) |
    ============================================================ */
 let currentUser = null;
 let isLocalMode = false;
+
+/* ============================================================
+   THÈME (mode sombre)
+   ============================================================ */
+function applyTheme() {
+  const dark = state.prefs?.darkMode;
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+}
+
+function toggleDarkMode() {
+  state.prefs.darkMode = !state.prefs.darkMode;
+  saveState();
+  applyTheme();
+  const btn = document.getElementById('acc-darkmode');
+  if (btn) btn.querySelector('.at').textContent = state.prefs.darkMode ? '🌙 Mode sombre' : '☀️ Mode clair';
+}
 
 function isFirebaseConfigured() {
   try { return typeof firebase !== 'undefined' && firebase.apps.length > 0 && !!firebase.app().options.apiKey; }
@@ -855,6 +1126,10 @@ function renderDashboard() {
       greetSubEl.textContent = 'Tout va bien dans votre potager. 🌱';
     }
   }
+
+  // Weather widget
+  fetchWeather();
+  renderWeatherWidget();
 
   updateNavBadges();
 
@@ -1129,6 +1404,12 @@ function openPlantPanel(idx) {
         ${companions.map(c => `<span class="chip earth">🤝 ${escapeHTML(c)}</span>`).join('')}
       </div>
     </div>` : ''}
+    ${p && p.varieties && p.varieties.length ? `<div class="pd-section">
+      <h4>Variétés populaires</h4>
+      <div class="row gap-2" style="flex-wrap:wrap">
+        ${p.varieties.map(v => `<span class="chip">${escapeHTML(v)}</span>`).join('')}
+      </div>
+    </div>` : ''}
 
     <div class="pd-section">
       <h4>Historique</h4>
@@ -1325,6 +1606,7 @@ function renderCatalog() {
         ${(p.companions||[]).length ? `<span class="chip earth">🤝 ${escapeHTML((p.companions||[]).slice(0,2).join(', '))}</span>` : ''}
       </div>
       ${(() => { const sc = regionScore(p.id); return sc !== null ? regionScoreHTML(sc) : ''; })()}
+      ${p.varieties && p.varieties.length ? `<div class="cat-varieties"><span class="cat-var-label">Variétés :</span>${p.varieties.map(v => `<span class="cat-var-chip">${escapeHTML(v)}</span>`).join('')}</div>` : ''}
       <div class="pc-actions">
         <button class="btn primary" data-add="${p.id}">+ Ajouter à mon jardin</button>
       </div>
@@ -1434,7 +1716,7 @@ function renderJournal() {
   }
   el.innerHTML = list.map(j => `
     <article class="journal-entry" data-j="${j.id}">
-      <div class="je-img" ${j.photo ? `style="background-image:url('${j.photo}')"` : ''}>${j.photo ? '' : (j.icon||'🌿')}</div>
+      <div class="je-img" data-photo="${j.photo ? '1' : ''}">${j.photo ? '' : (j.icon||'🌿')}</div>
       <div class="je-body">
         <div class="je-meta"><span style="font-weight:800;color:var(--ink)">${formatDate(j.date)}</span><span>•</span><span>${escapeHTML(j.subject||'')}</span></div>
         <div class="je-text">${escapeHTML(j.text||'')}</div>
@@ -1446,6 +1728,15 @@ function renderJournal() {
       </div>
     </article>`).join('');
 
+  el.querySelectorAll('[data-photo="1"]').forEach(div => {
+    const jId = div.closest('[data-j]').dataset.j;
+    const j = (state.journal||[]).find(j => j.id === jId);
+    if (j?.photo && j.photo.startsWith('data:image/')) {
+      div.style.backgroundImage = `url('${j.photo}')`;
+      div.style.backgroundSize = 'cover';
+      div.style.backgroundPosition = 'center';
+    }
+  });
   el.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', e => {
     e.stopPropagation();
     const id = b.dataset.del;
@@ -1457,7 +1748,15 @@ function renderJournal() {
     const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
     input.onchange = () => {
       const file = input.files[0]; if (!file) return;
-      const r = new FileReader(); r.onload = () => { const j = (state.journal||[]).find(j => j.id === id); if (j) { j.photo = r.result; saveState(); renderJournal(); flash('Photo ajoutée ✓'); } }; r.readAsDataURL(file);
+      if (file.size > 2 * 1024 * 1024) { flash('Photo trop lourde — max 2 Mo'); return; }
+      const r = new FileReader();
+      r.onload = () => {
+        const dataUrl = r.result;
+        if (!dataUrl.startsWith('data:image/')) { flash('Format non supporté'); return; }
+        const j = (state.journal||[]).find(j => j.id === id);
+        if (j) { j.photo = dataUrl; saveState(); renderJournal(); flash('Photo ajoutée ✓'); }
+      };
+      r.readAsDataURL(file);
     };
     input.click();
   }));
@@ -1629,6 +1928,10 @@ function confirmDialog({ title, msg, yesLabel = 'Oui, supprimer', onYes }) {
    ============================================================ */
 function openModal(id) { document.getElementById(id).classList.add('open'); document.body.style.overflow = 'hidden'; }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); document.body.style.overflow = ''; }
+function openPrivacyModal() {
+  closeModal('acc-backdrop');
+  openModal('privacy-modal-backdrop');
+}
 
 /* ============================================================
    UTILITIES
@@ -1835,6 +2138,20 @@ function boot() {
       }
     });
   });
+  document.getElementById('acc-darkmode')?.addEventListener('click', toggleDarkMode);
+  document.getElementById('acc-privacy')?.addEventListener('click', openPrivacyModal);
+  document.getElementById('acc-shopping')?.addEventListener('click', () => { closeModal('acc-backdrop'); openShoppingList(); });
+
+  // Symptom finder
+  document.getElementById('symptom-btn')?.addEventListener('click', openSymptomFinder);
+  document.getElementById('symptom-modal-close')?.addEventListener('click', () => closeModal('symptom-modal-backdrop'));
+
+  // Shopping list
+  document.getElementById('shopping-modal-close')?.addEventListener('click', () => closeModal('shopping-modal-backdrop'));
+
+  // Privacy policy
+  document.getElementById('privacy-modal-close')?.addEventListener('click', () => closeModal('privacy-modal-backdrop'));
+  document.getElementById('privacy-modal-close-btn')?.addEventListener('click', () => closeModal('privacy-modal-backdrop'));
 
   // Click-outside to close modals (sauf questionnaire et auth : obligatoires)
   const PROTECTED_MODALS = ['survey-backdrop', 'auth-backdrop'];
@@ -1878,6 +2195,9 @@ function boot() {
 
   // Start notification scheduler if permission already granted
   initNotificationScheduler();
+
+  // Apply theme
+  applyTheme();
 
   // Questionnaire (remplace l'ancien onboarding)
   if (!state.profile || !state.profile.surveyed) {

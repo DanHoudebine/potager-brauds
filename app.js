@@ -1716,7 +1716,7 @@ function renderJournal() {
   }
   el.innerHTML = list.map(j => `
     <article class="journal-entry" data-j="${j.id}">
-      <div class="je-img" ${j.photo ? `style="background-image:url('${j.photo}')"` : ''}>${j.photo ? '' : (j.icon||'🌿')}</div>
+      <div class="je-img" data-photo="${j.photo ? '1' : ''}">${j.photo ? '' : (j.icon||'🌿')}</div>
       <div class="je-body">
         <div class="je-meta"><span style="font-weight:800;color:var(--ink)">${formatDate(j.date)}</span><span>•</span><span>${escapeHTML(j.subject||'')}</span></div>
         <div class="je-text">${escapeHTML(j.text||'')}</div>
@@ -1728,6 +1728,15 @@ function renderJournal() {
       </div>
     </article>`).join('');
 
+  el.querySelectorAll('[data-photo="1"]').forEach(div => {
+    const jId = div.closest('[data-j]').dataset.j;
+    const j = (state.journal||[]).find(j => j.id === jId);
+    if (j?.photo && j.photo.startsWith('data:image/')) {
+      div.style.backgroundImage = `url('${j.photo}')`;
+      div.style.backgroundSize = 'cover';
+      div.style.backgroundPosition = 'center';
+    }
+  });
   el.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', e => {
     e.stopPropagation();
     const id = b.dataset.del;
@@ -1739,7 +1748,15 @@ function renderJournal() {
     const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*';
     input.onchange = () => {
       const file = input.files[0]; if (!file) return;
-      const r = new FileReader(); r.onload = () => { const j = (state.journal||[]).find(j => j.id === id); if (j) { j.photo = r.result; saveState(); renderJournal(); flash('Photo ajoutée ✓'); } }; r.readAsDataURL(file);
+      if (file.size > 2 * 1024 * 1024) { flash('Photo trop lourde — max 2 Mo'); return; }
+      const r = new FileReader();
+      r.onload = () => {
+        const dataUrl = r.result;
+        if (!dataUrl.startsWith('data:image/')) { flash('Format non supporté'); return; }
+        const j = (state.journal||[]).find(j => j.id === id);
+        if (j) { j.photo = dataUrl; saveState(); renderJournal(); flash('Photo ajoutée ✓'); }
+      };
+      r.readAsDataURL(file);
     };
     input.click();
   }));
