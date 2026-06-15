@@ -4,7 +4,7 @@
 // IMPORTANT : incrémenter CACHE_NAME à chaque mise à jour de l'app
 // pour invalider les caches des anciens service workers.
 
-const CACHE_NAME = 'potager-v9';
+const CACHE_NAME = 'potager-v10';
 
 // Fichiers à mettre en cache pour fonctionnement hors-ligne
 const ASSETS = [
@@ -12,7 +12,9 @@ const ASSETS = [
   './index.html',
   './app.js',
   './style.css',
-  './manifest.json'
+  './manifest.json',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 // Installation : mise en cache des assets
