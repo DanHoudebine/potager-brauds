@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="light">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -85,6 +85,9 @@
       </div>
 
       <div class="alerts" id="alerts-list"></div>
+
+      <!-- Widget météo (rempli par JS) -->
+      <div id="weather-widget" style="display:none"></div>
 
       <div class="stats">
         <div class="stat stat-plants"><div class="ic">🌱</div><div class="v" id="stat-plants">—</div><div class="k">Plantes</div></div>
@@ -363,6 +366,7 @@
         </div>
         <button class="btn ghost sm" id="guide-restart-tut">🎓 Tutoriel</button>
       </div>
+      <button class="btn primary" id="symptom-btn" style="width:100%;margin-bottom:16px">🔍 Identifier un problème sur mes plantes</button>
       <div id="guide-content"></div>
     </section>
 
@@ -711,6 +715,18 @@
       <div style="flex:1"><div class="at">Ma région</div><div class="as" id="acc-region-label">Non renseignée</div></div>
       <span style="color:var(--ink-soft);font-size:18px">›</span>
     </button>
+    <button class="acc-row" id="acc-darkmode">
+      <span class="ai">☀️</span>
+      <div style="flex:1"><div class="at">Mode clair / sombre</div><div class="as">Basculer l'apparence de l'application</div></div>
+    </button>
+    <button class="acc-row" id="acc-shopping">
+      <span class="ai">🛒</span>
+      <div style="flex:1"><div class="at">Liste de courses</div><div class="as">Graines et fournitures à acheter</div></div>
+    </button>
+    <button class="acc-row" id="acc-privacy">
+      <span class="ai">🔒</span>
+      <div style="flex:1"><div class="at">Politique de confidentialité</div><div class="as">Comment nous utilisons vos données</div></div>
+    </button>
     <button class="acc-row" id="acc-replay-tutorial">
       <span class="ai">🎓</span>
       <div style="flex:1"><div class="at">Revoir le tutoriel</div><div class="as">Relancer la visite guidée de l'application</div></div>
@@ -775,6 +791,53 @@
     </div>
     <p class="muted small mb-4">Personnalise le taux de réussite de chaque plante dans votre catalogue.</p>
     <div id="region-modal-choices" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+</div>
+
+<!-- ===== SYMPTOM FINDER MODAL ===== -->
+<div class="modal-backdrop" id="symptom-modal-backdrop">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-head">
+      <h2>🔍 Identifier un problème</h2>
+      <button class="close" id="symptom-modal-close" aria-label="Fermer">✕</button>
+    </div>
+    <div id="symptom-modal-body"></div>
+  </div>
+</div>
+
+<!-- ===== SHOPPING LIST MODAL ===== -->
+<div class="modal-backdrop" id="shopping-modal-backdrop">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-head">
+      <h2>🛒 Liste de courses</h2>
+      <button class="close" id="shopping-modal-close" aria-label="Fermer">✕</button>
+    </div>
+    <div id="shopping-modal-body"></div>
+  </div>
+</div>
+
+<!-- ===== PRIVACY POLICY MODAL ===== -->
+<div class="modal-backdrop" id="privacy-modal-backdrop">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-head">
+      <h2>🔒 Politique de confidentialité</h2>
+      <button class="close" id="privacy-modal-close" aria-label="Fermer">✕</button>
+    </div>
+    <div class="privacy-body">
+      <h3>Le Potager des Brauds</h3>
+      <p class="small muted">Version 1.0 — Dernière mise à jour : juin 2026</p>
+      <h4>Données collectées</h4>
+      <p>L'application stocke localement sur votre appareil : votre jardin, vos tâches, votre journal et vos préférences. Ces données ne quittent jamais votre téléphone, sauf si vous choisissez la connexion Google.</p>
+      <h4>Connexion Google (optionnelle)</h4>
+      <p>Si vous vous connectez avec Google, votre prénom et adresse email sont utilisés uniquement pour identifier votre compte. Vos données de jardin sont synchronisées via Firebase Realtime Database (Google LLC, USA). Elles ne sont ni vendues ni partagées avec des tiers.</p>
+      <h4>Météo</h4>
+      <p>Si vous activez la météo, votre position GPS approximative est envoyée à Open-Meteo (open-meteo.com), un service open-source hébergé en Europe. Aucune donnée personnelle n'est transmise.</p>
+      <h4>Notifications</h4>
+      <p>Les notifications sont gérées localement sur votre appareil. Aucune donnée n'est envoyée à des serveurs tiers pour les notifications.</p>
+      <h4>Vos droits</h4>
+      <p>Vous pouvez supprimer toutes vos données à tout moment depuis Mon compte → Repartir de zéro. Pour toute question : <strong>danhoudebine@gmail.com</strong></p>
+    </div>
+    <button class="btn primary" id="privacy-modal-close-btn" style="width:100%;margin-top:16px">Fermer</button>
   </div>
 </div>
 
