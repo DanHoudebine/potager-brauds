@@ -6,7 +6,8 @@ const WEB_FILES = [
   'app.js',
   'style.css',
   'sw.js',
-  'manifest.json'
+  'manifest.json',
+  'firebase-config.js'
 ];
 
 const WWW = path.join(__dirname, 'www');
