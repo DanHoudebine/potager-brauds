@@ -2138,7 +2138,7 @@ function boot() {
   });
   document.getElementById('acc-export').addEventListener('click', () => {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'potager-export.json'; a.click();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'jardin-de-poche-export.json'; a.click();
     flash('Export téléchargé ✓');
   });
   document.getElementById('region-modal-close').addEventListener('click', () => closeModal('region-modal-backdrop'));
