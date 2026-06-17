@@ -716,6 +716,11 @@
       <div style="flex:1"><div class="at">Mes récoltes</div><div class="as">Suivi des quantités et comparatif par mois / année</div></div>
       <span style="color:var(--ink-soft);font-size:18px">›</span>
     </button>
+    <button class="acc-row" id="acc-share">
+      <span class="ai">📤</span>
+      <div style="flex:1"><div class="at">Partager mon potager</div><div class="as">QR code ou code à envoyer vers un autre téléphone</div></div>
+      <span style="color:var(--ink-soft);font-size:18px">›</span>
+    </button>
     <button class="acc-row" id="acc-region">
       <span class="ai">🗺️</span>
       <div style="flex:1"><div class="at">Ma région</div><div class="as" id="acc-region-label">Non renseignée</div></div>
@@ -749,6 +754,38 @@
       <span class="ai">🚪</span>
       <div style="flex:1"><div class="at">Se déconnecter</div><div class="as">Retour à l'écran de connexion</div></div>
     </button>
+  </div>
+</div>
+
+<!-- ===== SHARE / IMPORT MODAL ===== -->
+<div class="modal-backdrop" id="share-backdrop">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-head">
+      <h2>Partager mon potager</h2>
+      <button class="close" id="share-close" aria-label="Fermer">✕</button>
+    </div>
+    <div class="share-tabs">
+      <button class="share-tab active" data-share-tab="export">📤 Partager</button>
+      <button class="share-tab" data-share-tab="import">📥 Importer</button>
+    </div>
+
+    <div data-share-pane="export">
+      <p class="small muted mb-3">Scannez ce QR code avec l'autre téléphone, ou envoyez le code ci-dessous. Vos parcelles et vos récoltes seront copiées — sans toucher au reste.</p>
+      <div id="share-qr" class="share-qr"></div>
+      <div id="share-qr-note" class="xsmall muted" style="text-align:center;margin:6px 0 12px"></div>
+      <textarea id="share-code" class="share-code-box" readonly rows="3"></textarea>
+      <div class="row gap-2 mt-3">
+        <button class="btn" id="share-copy" style="flex:1">📋 Copier</button>
+        <button class="btn primary" id="share-send" style="flex:1">📤 Envoyer…</button>
+      </div>
+    </div>
+
+    <div data-share-pane="import" style="display:none">
+      <p class="small muted mb-3">Collez le code reçu, puis importez. Les parcelles et récoltes partagées seront <b>ajoutées</b> aux vôtres (rien n'est effacé).</p>
+      <textarea id="import-code" class="share-code-box" rows="3" placeholder="Collez le code ici…"></textarea>
+      <div id="import-preview" class="share-preview"></div>
+      <button class="btn primary mt-3" id="import-apply" style="width:100%">📥 Importer ce potager</button>
+    </div>
   </div>
 </div>
 
