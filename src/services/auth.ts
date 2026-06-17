@@ -1,10 +1,14 @@
 // ============================================================
-//  Auth — Google (Firebase compat, optionnel) + mode local
+//  Auth — Google natif (Capacitor) + Firebase web SDK + mode local
 // ============================================================
 import { Capacitor } from '@capacitor/core';
-import { state } from '../state';
+import { GoogleAuth } from '@capacitor-community/google-auth';
+import { state, registerAfterSave } from '../state';
 import { el, elOpt, openModal, closeModal } from '../ui/dom';
 import { REGIONS } from '../data/regions';
+import { scheduleSync, syncFromFirebase } from './firebase-sync';
+
+// window.firebase est déclaré comme `any` dans src/global.d.ts (CDN Firebase compat)
 
 interface AuthUser {
   displayName?: string | null;
@@ -16,23 +20,15 @@ let currentUser: AuthUser | null = null;
 let localMode = false;
 let enterCb: () => void = () => {};
 
-export function getUser(): AuthUser | null {
-  return currentUser;
-}
-export function isLocal(): boolean {
-  return localMode;
-}
-export function onEnterApp(cb: () => void): void {
-  enterCb = cb;
-}
+export function getUser(): AuthUser | null { return currentUser; }
+export function isLocal(): boolean { return localMode; }
+export function onEnterApp(cb: () => void): void { enterCb = cb; }
 
 export function isFirebaseConfigured(): boolean {
   try {
-    const fb = window.firebase;
-    return !!fb && fb.apps.length > 0 && !!fb.app().options.apiKey;
-  } catch {
-    return false;
-  }
+    const f = window.firebase;
+    return !!f && f.apps.length > 0 && !!f.app().options.apiKey;
+  } catch { return false; }
 }
 
 export function updateAccountUI(): void {
@@ -53,15 +49,11 @@ export function updateAccountUI(): void {
       node.textContent = initial;
     }
   };
-
   setAva(elOpt('ava-desktop'), currentUser?.photoURL);
   setAva(elOpt('ava-mobile'), currentUser?.photoURL);
   setAva(elOpt('ava-menu'), currentUser?.photoURL);
 
-  const set = (id: string, text: string) => {
-    const node = elOpt(id);
-    if (node) node.textContent = text;
-  };
+  const set = (id: string, text: string) => { const n = elOpt(id); if (n) n.textContent = text; };
   set('acc-name-desktop', name);
   set('acc-state-desktop', currentUser ? 'Connecté' : 'Mode local');
   set('acc-menu-name', name);
@@ -79,16 +71,9 @@ export function updateAccountUI(): void {
   }
 }
 
-function enterApp(): void {
-  updateAccountUI();
-  closeModal('auth-backdrop');
-  enterCb();
-}
-
-export function handleLocalMode(): void {
-  localMode = true;
-  currentUser = null;
-  enterApp();
+function showAuthError(msg: string): void {
+  const errEl = elOpt('auth-error');
+  if (errEl) { errEl.textContent = msg; errEl.classList.add('show'); }
 }
 
 function translateAuthError(code: string): string {
@@ -101,47 +86,66 @@ function translateAuthError(code: string): string {
   return map[code] || 'Une erreur est survenue. Réessayez.';
 }
 
-export function handleGoogleSignIn(): void {
-  // La connexion Google de Firebase repose sur une fenêtre popup, indisponible
-  // dans la WebView Android. On l'indique clairement et on propose le mode local
-  // plutôt que de laisser le bouton sembler « cassé ».
-  if (Capacitor.isNativePlatform()) {
-    const errEl = elOpt('auth-error');
-    if (errEl) {
-      errEl.textContent = "La connexion Google n'est pas encore disponible dans l'application. Utilisez « Continuer sans compte » — vos données restent sur votre appareil.";
-      errEl.classList.add('show');
+async function enterApp(freshLogin: boolean): Promise<void> {
+  if (currentUser && isFirebaseConfigured()) {
+    registerAfterSave(scheduleSync);
+    if (freshLogin) {
+      const synced = await syncFromFirebase();
+      if (synced) { window.location.reload(); return; }
     }
-    return;
   }
-  if (!isFirebaseConfigured()) {
-    handleLocalMode();
-    return;
+  updateAccountUI();
+  closeModal('auth-backdrop');
+  enterCb();
+}
+
+export function handleLocalMode(): void {
+  localMode = true;
+  currentUser = null;
+  void enterApp(false);
+}
+
+// ---- Connexion Google native (Android) ----------------------
+async function nativeGoogleSignIn(): Promise<void> {
+  try {
+    await GoogleAuth.initialize({ scopes: ['profile', 'email'], grantOfflineAccess: true });
+    const gUser = await GoogleAuth.signIn();
+
+    if (isFirebaseConfigured()) {
+      const cred = window.firebase.auth.GoogleAuthProvider.credential(gUser.authentication.idToken);
+      const result = await window.firebase.auth().signInWithCredential(cred);
+      currentUser = result.user as AuthUser;
+    } else {
+      currentUser = { displayName: gUser.displayName, email: gUser.email, photoURL: gUser.imageUrl };
+    }
+    await enterApp(true);
+  } catch (err) {
+    const msg = (err as { message?: string }).message ?? '';
+    if (!msg.includes('12501') && !msg.toLowerCase().includes('cancel')) {
+      showAuthError('Connexion Google impossible. Vérifiez votre réseau ou utilisez « Continuer sans compte ».');
+    }
   }
-  const fb = window.firebase;
-  const provider = new fb.auth.GoogleAuthProvider();
-  fb.auth()
+}
+
+// ---- Connexion Google web (navigateur) ----------------------
+function webGoogleSignIn(): void {
+  if (!isFirebaseConfigured()) { handleLocalMode(); return; }
+  const provider = new window.firebase.auth.GoogleAuthProvider();
+  window.firebase
+    .auth()
     .signInWithPopup(provider)
-    .then((result: { user: AuthUser }) => {
-      currentUser = result.user;
-      enterApp();
-    })
-    .catch((err: { code: string }) => {
-      const errEl = elOpt('auth-error');
-      if (errEl) {
-        errEl.textContent = translateAuthError(err.code);
-        errEl.classList.add('show');
-      }
-    });
+    .then((result: { user: AuthUser }) => { currentUser = result.user; void enterApp(true); })
+    .catch((err: { code: string }) => showAuthError(translateAuthError(err.code)));
+}
+
+export function handleGoogleSignIn(): void {
+  if (Capacitor.isNativePlatform()) void nativeGoogleSignIn();
+  else webGoogleSignIn();
 }
 
 export function signOut(): void {
-  if (isFirebaseConfigured()) {
-    try {
-      window.firebase.auth().signOut();
-    } catch {
-      /* ignore */
-    }
-  }
+  if (isFirebaseConfigured()) window.firebase.auth().signOut().catch(() => {});
+  if (Capacitor.isNativePlatform()) GoogleAuth.signOut().catch(() => {});
   currentUser = null;
   localMode = false;
   closeModal('acc-backdrop');
@@ -163,7 +167,13 @@ export function initAuth(): void {
   window.firebase.auth().onAuthStateChanged((user: AuthUser | null) => {
     if (user) {
       currentUser = user;
-      enterApp();
+      registerAfterSave(scheduleSync);
+      updateAccountUI();
+      closeModal('auth-backdrop');
+      enterCb();
+      void syncFromFirebase().then((synced) => {
+        if (synced) window.location.reload();
+      });
     } else {
       openModal('auth-backdrop');
     }

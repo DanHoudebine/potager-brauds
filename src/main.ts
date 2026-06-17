@@ -26,7 +26,6 @@ import { initAccount } from './features/account';
 import { initSymptomFinder } from './features/symptomFinder';
 import { initShopping } from './features/shopping';
 import { initHarvests } from './features/harvests';
-import { initShare } from './features/share';
 import { initTutorial } from './features/tutorial';
 import { initSurvey, maybeStartSurvey } from './features/survey';
 import { save } from './state';
@@ -93,7 +92,6 @@ function wireAll(): void {
   initSymptomFinder();
   initShopping();
   initHarvests();
-  initShare();
   initTutorial();
   initSurvey();
 

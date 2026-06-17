@@ -123,12 +123,19 @@ function loadState(): AppState {
 /** The single mutable app state. Mutate then call save(). */
 export const state: AppState = loadState();
 
+let _afterSave: ((s: AppState) => void) | undefined;
+/** Enregistre un hook appelé après chaque save() — utilisé pour la synchro Firebase. */
+export function registerAfterSave(fn: (s: AppState) => void): void {
+  _afterSave = fn;
+}
+
 export function save(): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch {
     /* quota / private mode — ignore */
   }
+  _afterSave?.(state);
 }
 
 export function clearStored(): void {
