@@ -108,7 +108,11 @@ export function handleLocalMode(): void {
 // ---- Connexion Google native (Android) ----------------------
 async function nativeGoogleSignIn(): Promise<void> {
   try {
-    await GoogleAuth.initialize({ scopes: ['profile', 'email'], grantOfflineAccess: true });
+    await GoogleAuth.initialize({
+      clientId: '813154716183-tgdujrasr772i91lc63fhlg4ef3t0c24.apps.googleusercontent.com',
+      scopes: ['profile', 'email'],
+      grantOfflineAccess: true,
+    });
     const gUser = await GoogleAuth.signIn();
 
     if (isFirebaseConfigured()) {
