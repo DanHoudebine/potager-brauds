@@ -8,6 +8,7 @@ import { plantById } from '../data/catalog';
 import { daysBetween, parseISO, addDays, iso, formatDate, seasonLabel, escapeHTML } from '../utils';
 import { regionScore, regionScoreHTML } from './region';
 import { awardXP, checkMilestones } from './xp';
+import { openHarvests } from './harvests';
 import { syncGardenTasks } from '../garden-sync';
 import { renderGarden } from '../views/garden';
 
@@ -98,12 +99,17 @@ export function openPlantPanel(idx: number): void {
       </div>
     </div>
 
-    <div class="row gap-2 mt-4">
+    <div class="row gap-2 mt-4" style="flex-wrap:wrap">
       <button class="btn" id="pd-water">💧 Marquer arrosée</button>
+      <button class="btn" id="pd-harvest">🧺 J'ai récolté</button>
       <button class="btn danger" id="pd-remove">🗑️ Retirer</button>
     </div>
   `;
 
+  el('pd-harvest').onclick = () => {
+    closePanel();
+    openHarvests(cell.plant);
+  };
   el('pd-water').onclick = () => {
     const todayStr = iso(new Date());
     const t = state.tasks.find((x) => !x.done && x.kind === 'water' && x.plantId === cell.plant && x.date <= todayStr);

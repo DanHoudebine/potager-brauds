@@ -1,12 +1,13 @@
 // ============================================================
 //  Mon compte — préférences, export, reset, déconnexion
 // ============================================================
-import { state, clearStored } from '../state';
-import { el, openModal, closeModal, confirmDialog, flash } from '../ui/dom';
+import { resetStored } from '../state';
+import { el, openModal, closeModal, confirmDialog } from '../ui/dom';
 import { updateAccountUI, signOut } from '../services/auth';
 import { toggleDarkMode } from '../theme';
 import { toggleAmbient } from '../services/audio';
 import { openShoppingList } from './shopping';
+import { openHarvests } from './harvests';
 import { openRegionModal } from './region';
 import { startTutorial } from './tutorial';
 
@@ -20,17 +21,10 @@ export function openPrivacyModal(): void {
   openModal('privacy-modal-backdrop');
 }
 
-function exportData(): void {
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'jardin-de-poche-export.json';
-  a.click();
-  flash('Export téléchargé ✓');
-}
-
 async function resetEverything(): Promise<void> {
-  clearStored();
+  // Écrit un état vierge (jardin et serres vides) AVANT de recharger, pour que
+  // l'app ne ré-injecte pas les données de démonstration au redémarrage.
+  resetStored();
   try {
     if ('serviceWorker' in navigator) {
       const regs = await navigator.serviceWorker.getRegistrations();
@@ -52,7 +46,10 @@ export function initAccount(): void {
   el('account-chip-desktop').addEventListener('click', openAccountModal);
   el('acc-close').addEventListener('click', () => closeModal('acc-backdrop'));
 
-  el('acc-export').addEventListener('click', exportData);
+  el('acc-harvests').addEventListener('click', () => {
+    closeModal('acc-backdrop');
+    openHarvests();
+  });
   el('acc-region').addEventListener('click', () => {
     closeModal('acc-backdrop');
     openRegionModal();

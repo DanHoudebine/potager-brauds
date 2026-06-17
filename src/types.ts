@@ -199,6 +199,18 @@ export interface ShoppingItem {
   done: boolean;
 }
 
+export type HarvestUnit = 'kg' | 'g' | 'pièces' | 'bottes' | 'L';
+
+export interface HarvestRecord {
+  id: string;
+  date: string;        // ISO YYYY-MM-DD
+  plantId: string;     // id du catalogue, ou texte libre si hors catalogue
+  plantName?: string;  // nom affiché (utile si hors catalogue)
+  quantity: number;
+  unit: HarvestUnit;
+  note?: string;
+}
+
 export interface AppState {
   profile: Profile;
   beds: Bed[];
@@ -213,4 +225,5 @@ export interface AppState {
   streak: number;
   weather: WeatherState | null;
   shopping: ShoppingItem[];
+  harvests: HarvestRecord[];
 }

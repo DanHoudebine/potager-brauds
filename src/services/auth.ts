@@ -1,6 +1,7 @@
 // ============================================================
 //  Auth — Google (Firebase compat, optionnel) + mode local
 // ============================================================
+import { Capacitor } from '@capacitor/core';
 import { state } from '../state';
 import { el, elOpt, openModal, closeModal } from '../ui/dom';
 import { REGIONS } from '../data/regions';
@@ -101,6 +102,17 @@ function translateAuthError(code: string): string {
 }
 
 export function handleGoogleSignIn(): void {
+  // La connexion Google de Firebase repose sur une fenêtre popup, indisponible
+  // dans la WebView Android. On l'indique clairement et on propose le mode local
+  // plutôt que de laisser le bouton sembler « cassé ».
+  if (Capacitor.isNativePlatform()) {
+    const errEl = elOpt('auth-error');
+    if (errEl) {
+      errEl.textContent = "La connexion Google n'est pas encore disponible dans l'application. Utilisez « Continuer sans compte » — vos données restent sur votre appareil.";
+      errEl.classList.add('show');
+    }
+    return;
+  }
   if (!isFirebaseConfigured()) {
     handleLocalMode();
     return;

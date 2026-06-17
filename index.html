@@ -25,7 +25,7 @@
       <div class="brand-mark">🌱</div>
       <div>
         <div class="brand-name">Jardin de Poche</div>
-        <div class="brand-sub">des Brauds</div>
+        <div class="brand-sub">Votre potager au quotidien</div>
       </div>
     </div>
     <button class="nav-item active" data-nav="dashboard"><span class="nav-icon">🏡</span> Tableau de bord</button>
@@ -59,7 +59,7 @@
         <div class="brand-mark" style="width:34px;height:34px;font-size:19px;border-radius:10px">🌱</div>
         <div>
           <div class="brand-name" style="font-size:18px;line-height:1">Jardin de Poche</div>
-          <div class="brand-sub" style="font-size:10px">des Brauds</div>
+          <div class="brand-sub" style="font-size:10px">Votre potager</div>
         </div>
       </div>
       <div class="topbar-actions">
@@ -226,8 +226,10 @@
       <div class="card">
         <div class="cal-head">
           <div class="row gap-2">
+            <button class="icon-btn" id="cal-prev-year" aria-label="Année précédente" title="Année précédente">«</button>
             <button class="icon-btn" id="cal-prev" aria-label="Mois précédent">‹</button>
             <button class="icon-btn" id="cal-next" aria-label="Mois suivant">›</button>
+            <button class="icon-btn" id="cal-next-year" aria-label="Année suivante" title="Année suivante">»</button>
           </div>
           <div class="cal-month" id="cal-month">—</div>
           <button class="btn sm" id="cal-today">Aujourd'hui</button>
@@ -532,9 +534,10 @@
       </select>
     </div>
     <div class="grid grid-2">
-      <div class="field"><label>Colonnes</label><input class="input" type="number" id="bed-modal-cols" value="4" min="2" max="10"></div>
-      <div class="field"><label>Rangées</label><input class="input" type="number" id="bed-modal-rows" value="3" min="2" max="10"></div>
+      <div class="field"><label>Colonnes <span class="muted xsmall">(2 à 10 max)</span></label><input class="input" type="number" id="bed-modal-cols" value="4" min="2" max="10"></div>
+      <div class="field"><label>Rangées <span class="muted xsmall">(2 à 10 max)</span></label><input class="input" type="number" id="bed-modal-rows" value="3" min="2" max="10"></div>
     </div>
+    <div class="muted xsmall mt-2">Une parcelle peut contenir jusqu'à 10 × 10 = 100 emplacements.</div>
     <div class="row between mt-4">
       <button class="btn ghost" id="bed-modal-cancel">Annuler</button>
       <button class="btn primary" id="bed-modal-save">Enregistrer</button>
@@ -562,6 +565,7 @@
 
     <!-- Étape 2 : Expérience -->
     <div class="sv-step" data-step="2">
+      <button class="sv-back" data-sv-back="1">‹ Retour</button>
       <h2 class="sv-q">Votre expérience en jardinage ?</h2>
       <p class="muted small mb-4">L'interface s'adapte à votre niveau.</p>
       <div class="sv-choices">
@@ -585,6 +589,7 @@
 
     <!-- Étape 3 : Espace -->
     <div class="sv-step" data-step="3">
+      <button class="sv-back" data-sv-back="2">‹ Retour</button>
       <h2 class="sv-q">Quel espace avez-vous ?</h2>
       <p class="muted small mb-4">Nous séparerons jardin et serre dans l'application.</p>
       <div class="sv-choices">
@@ -608,6 +613,7 @@
 
     <!-- Étape 4 : Région -->
     <div class="sv-step" data-step="4">
+      <button class="sv-back" data-sv-back="3">‹ Retour</button>
       <h2 class="sv-q">Dans quelle région jardinez-vous ?</h2>
       <p class="muted small mb-4">Le taux de réussite de chaque plante sera affiché pour votre région.</p>
       <div class="sv-choices">
@@ -705,9 +711,10 @@
       </div>
       <span class="sync-badge local" id="acc-sync-badge">Local</span>
     </div>
-    <button class="acc-row" id="acc-export">
-      <span class="ai">⬇️</span>
-      <div style="flex:1"><div class="at">Exporter mes données</div><div class="as">Téléchargez un fichier JSON de votre jardin</div></div>
+    <button class="acc-row" id="acc-harvests">
+      <span class="ai">🥕</span>
+      <div style="flex:1"><div class="at">Mes récoltes</div><div class="as">Suivi des quantités et comparatif par mois / année</div></div>
+      <span style="color:var(--ink-soft);font-size:18px">›</span>
     </button>
     <button class="acc-row" id="acc-region">
       <span class="ai">🗺️</span>
@@ -808,6 +815,17 @@
   </div>
 </div>
 
+<!-- ===== HARVEST MODAL ===== -->
+<div class="modal-backdrop" id="harvest-modal-backdrop">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-head">
+      <h2>🥕 Mes récoltes</h2>
+      <button class="close" id="harvest-modal-close" aria-label="Fermer">✕</button>
+    </div>
+    <div id="harvest-modal-body"></div>
+  </div>
+</div>
+
 <!-- ===== SHOPPING LIST MODAL ===== -->
 <div class="modal-backdrop" id="shopping-modal-backdrop">
   <div class="modal" style="max-width:480px">
@@ -838,7 +856,7 @@
       <h4>Notifications</h4>
       <p>Les notifications sont gérées localement sur votre appareil. Aucune donnée n'est envoyée à des serveurs tiers pour les notifications.</p>
       <h4>Vos droits</h4>
-      <p>Vous pouvez supprimer toutes vos données à tout moment depuis Mon compte → Repartir de zéro. Pour toute question : <strong>danhoudebine@gmail.com</strong></p>
+      <p>Vous pouvez supprimer toutes vos données à tout moment depuis Mon compte → Repartir de zéro. Vos données restent stockées localement sur votre appareil et ne sont jamais transmises à un tiers.</p>
     </div>
     <button class="btn primary" id="privacy-modal-close-btn" style="width:100%;margin-top:16px">Fermer</button>
   </div>

@@ -76,6 +76,32 @@ function buildDefaultState(): AppState {
     streak: 7,
     weather: null,
     shopping: [],
+    harvests: [],
+  };
+}
+
+/** État totalement vierge : jardin et serres vides, aucune donnée de démo.
+ *  Sert au « Repartir de zéro » pour que rien ne soit ré-injecté au reload. */
+function buildEmptyState(): AppState {
+  const def = buildDefaultState();
+  return {
+    ...def,
+    profile: {
+      surveyed: false, level: null, experience: null, spaceType: null,
+      xp: 0, stars: 0, milestones: [], tutorialDone: false, guideSeen: [], region: null,
+    },
+    beds: [{ id: 'b1', name: 'Jardin', type: 'jardin', cols: 4, rows: 3, cells: Array(12).fill(null) }],
+    activeBedId: 'b1',
+    tasks: [],
+    journal: [],
+    reminders: [],
+    onboarded: false,
+    gardenTab: 'all',
+    draft: null,
+    streak: 0,
+    weather: null,
+    shopping: [],
+    harvests: [],
   };
 }
 
@@ -108,6 +134,16 @@ export function save(): void {
 export function clearStored(): void {
   try {
     localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+/** « Repartir de zéro » : écrase le stockage par un état vierge (et non un
+ *  simple removeItem, qui laisserait l'app recharger les données de démo). */
+export function resetStored(): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(buildEmptyState()));
   } catch {
     /* ignore */
   }

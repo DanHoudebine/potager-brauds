@@ -25,6 +25,7 @@ import { openQuickAdd, initQuickAdd } from './features/quickAdd';
 import { initAccount } from './features/account';
 import { initSymptomFinder } from './features/symptomFinder';
 import { initShopping } from './features/shopping';
+import { initHarvests } from './features/harvests';
 import { initTutorial } from './features/tutorial';
 import { initSurvey, maybeStartSurvey } from './features/survey';
 import { save } from './state';
@@ -90,6 +91,7 @@ function wireAll(): void {
   initAccount();
   initSymptomFinder();
   initShopping();
+  initHarvests();
   initTutorial();
   initSurvey();
 

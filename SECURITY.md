@@ -9,12 +9,12 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in **Le Potager des Brauds**, please do **not** open a public GitHub issue.
+If you discover a security vulnerability in **Jardin de Poche**, please do **not** open a public GitHub issue.
 
 Instead, report it privately by contacting the maintainer directly:
 
 - **GitHub:** [@danhoudebine](https://github.com/danhoudebine)
-- **Subject line:** `[SECURITY] Potager des Brauds — <brief description>`
+- **Subject line:** `[SECURITY] Jardin de Poche — <brief description>`
 
 ### What to include
 
@@ -67,4 +67,4 @@ The following are **out of scope**:
 
 We follow a **coordinated disclosure** model. Please allow us the 30-day remediation window before publishing details of a vulnerability publicly. We will work with you to agree on a disclosure date if the fix requires more time.
 
-Thank you for helping keep Le Potager des Brauds safe for all its users. 🌿
+Thank you for helping keep Jardin de Poche safe for all its users. 🌿
