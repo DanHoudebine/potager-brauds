@@ -86,8 +86,39 @@ body {
   line-height: 1.45;
   font-size: 16px;
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
   padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ============================================================
+   COMPORTEMENT « APPLICATION NATIVE »
+   (et non plus « site web dans une WebView »)
+   ============================================================ */
+html, body {
+  /* Coupe le rebond élastique et le « tirer pour rafraîchir » Android. */
+  overscroll-behavior: none;
+}
+* {
+  /* Pas de flash gris au toucher façon navigateur. */
+  -webkit-tap-highlight-color: transparent;
+}
+body {
+  /* Pas de menu contextuel natif sur appui long, ni de sélection
+     accidentelle des éléments d'interface. */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+/* Le texte saisi par l'utilisateur reste sélectionnable. */
+input, textarea, [contenteditable="true"], .journal-entry, .selectable {
+  -webkit-user-select: text;
+  user-select: text;
+}
+/* Supprime le délai de 300 ms et le zoom double-tap sur les éléments
+   interactifs : les boutons réagissent instantanément, comme en natif. */
+button, .tab, .nav-item, .btn, .chip, .filter-chip, .cell, .icon-btn, .fab, [data-nav], [role="button"] {
+  touch-action: manipulation;
 }
 
 h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; letter-spacing: -0.01em; margin: 0; color: var(--ink); }
@@ -212,10 +243,22 @@ a { color: var(--green-dark); }
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
   display: flex; justify-content: space-around; align-items: stretch;
-  background: rgba(255,255,255,.92); backdrop-filter: blur(12px);
+  background: var(--bg);
   border-top: 1px solid var(--line);
   padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
   height: var(--bottom-h);
+  /* Couche de composition stable : supprime le scintillement de la barre
+     pendant le défilement sur la WebView Android. */
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+/* Le flou n'est appliqué qu'en arrière-plan opaque (pas de re-échantillonnage
+   du contenu défilant), évitant le bug de scintillement. */
+@supports (backdrop-filter: blur(12px)) {
+  .bottom-nav { background: rgba(249,246,240,.86); backdrop-filter: blur(12px); }
+  [data-theme="dark"] .bottom-nav { background: rgba(20,26,18,.86); }
 }
 @media (min-width: 900px) { .bottom-nav { display: none; } }
 .tab {
@@ -238,6 +281,9 @@ a { color: var(--green-dark); }
   box-shadow: 0 8px 22px rgba(74,124,89,.40), inset 0 -2px 0 rgba(0,0,0,.10);
   display: grid; place-items: center; z-index: 40;
   transition: transform .15s;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 .fab:hover { transform: translateY(-2px); }
 .fab:active { transform: translateY(0); }
@@ -1241,6 +1287,33 @@ a { color: var(--green-dark); }
 
 @keyframes badgePop { 0% { transform: scale(.6); } 60% { transform: scale(1.12); } 100% { transform: scale(1); } }
 .milestone-badge.done { animation: badgePop .4s ease; }
+
+/* ============================================================
+   STABILITÉ AU DÉFILEMENT (anti-scintillement WebView Android)
+   Les éléments animés en continu (lueur de palier, reflet de barre XP,
+   pulsation d'alerte) sont isolés sur leur propre couche de rendu pour
+   ne plus « flasher » ni disparaître quand on fait défiler la page.
+   ============================================================ */
+.xp-levels { contain: layout paint; }
+.xp-level.current,
+.xp-fill,
+.alert.urgent,
+.milestone-badge {
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  contain: paint;
+}
+
+/* Confort : respecte le réglage système « réduire les animations ». */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 /* ============================================================
    TAUX DE RÉUSSITE RÉGIONAL
