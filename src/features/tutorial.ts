@@ -74,6 +74,22 @@ function renderTutStep(): void {
     hl.style.display = 'none';
     card.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%)';
   }
+
+  // Recadre la carte dans les limites de l'écran après que le navigateur
+  // ait calculé sa hauteur réelle (via requestAnimationFrame).
+  const MARGIN = 10;
+  requestAnimationFrame(() => {
+    const rect = card.getBoundingClientRect();
+    if (rect.bottom > window.innerHeight - MARGIN) {
+      const adjusted = window.innerHeight - rect.height - MARGIN;
+      card.style.top = Math.max(MARGIN, adjusted) + 'px';
+      card.style.bottom = '';
+    }
+    if (rect.top < MARGIN) {
+      card.style.top = MARGIN + 'px';
+      card.style.bottom = '';
+    }
+  });
 }
 
 function nextTutStep(): void {

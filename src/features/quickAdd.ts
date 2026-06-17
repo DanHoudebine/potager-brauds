@@ -7,7 +7,7 @@ import { escapeHTML, iso, uid } from '../utils';
 import { CATALOG, plantById } from '../data/catalog';
 import { syncGardenTasks } from '../garden-sync';
 import { awardXP, checkMilestones } from './xp';
-import { setView } from '../ui/router';
+import { refreshView } from '../ui/router';
 
 let draftTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -108,8 +108,7 @@ function saveQuickAdd(): void {
   save();
   clearDraftFields();
   closeModal('quickadd-backdrop');
-  const active = qs<HTMLElement>('.view.active');
-  if (active?.dataset.view) setView(active.dataset.view);
+  refreshView();
 }
 
 function clearDraftFields(): void {
