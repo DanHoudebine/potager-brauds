@@ -71,6 +71,14 @@ export function initCalendar(): void {
     calMonth = new Date(calMonth.getFullYear(), calMonth.getMonth() + 1, 1);
     renderCalendar();
   });
+  el('cal-prev-year').addEventListener('click', () => {
+    calMonth = new Date(calMonth.getFullYear() - 1, calMonth.getMonth(), 1);
+    renderCalendar();
+  });
+  el('cal-next-year').addEventListener('click', () => {
+    calMonth = new Date(calMonth.getFullYear() + 1, calMonth.getMonth(), 1);
+    renderCalendar();
+  });
   el('cal-today').addEventListener('click', () => {
     calMonth = new Date();
     calMonth.setDate(1);

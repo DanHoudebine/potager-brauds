@@ -1,5 +1,6 @@
 // ============================================
-// FIREBASE CONFIG - Le Potager des Brauds
+// FIREBASE CONFIG - Jardin de Poche
+// (Le projet Firebase conserve son identifiant d'origine.)
 // ============================================
 
 const firebaseConfig = {

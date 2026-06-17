@@ -67,9 +67,11 @@ function buildSurveyResult(): void {
   const region = surveyData.region ? REGIONS.find((r) => r.id === surveyData.region) : null;
   const regionLine = region ? `${region.emoji} ${region.label}` : '';
   const node = el('sv-result-step');
+  const backBtn = '<button class="sv-back" data-sv-back="4">‹ Retour</button>';
 
   if (isBegin) {
     node.innerHTML = `
+      ${backBtn}
       <div class="center mb-3"><div style="font-size:60px">🎉</div></div>
       <h2 class="sv-q">Parfait, on s'adapte à vous !</h2>
       <div class="card mt-3" style="background:var(--green-tint);border:none">
@@ -104,6 +106,7 @@ function buildSurveyResult(): void {
       <button class="btn primary sv-cta mt-4" id="sv-finish-btn">Lancer l'application →</button>`;
   } else {
     node.innerHTML = `
+      ${backBtn}
       <div class="center mb-3"><div style="font-size:60px">🏆</div></div>
       <h2 class="sv-q">Bienvenue, expert !</h2>
       <div class="card mt-3" style="background:var(--green-tint);border:none">
@@ -133,6 +136,7 @@ function buildSurveyResult(): void {
 
   el<HTMLButtonElement>('sv-notif-btn').addEventListener('click', (e) => handleSurveyNotifRequest(e.currentTarget as HTMLButtonElement));
   el('sv-finish-btn').addEventListener('click', finishSurvey);
+  node.querySelector<HTMLElement>('[data-sv-back]')?.addEventListener('click', () => renderSurveyStep(4));
 }
 
 function finishSurvey(): void {
@@ -174,6 +178,7 @@ function finishSurvey(): void {
 /** Wire the survey choice buttons. Call once at boot. */
 export function initSurvey(): void {
   qsa<HTMLElement>('[data-sv-next]').forEach((b) => b.addEventListener('click', () => renderSurveyStep(Number(b.dataset.svNext))));
+  qsa<HTMLElement>('[data-sv-back]').forEach((b) => b.addEventListener('click', () => renderSurveyStep(Number(b.dataset.svBack))));
   qsa<HTMLElement>('[data-sv-exp]').forEach((b) => b.addEventListener('click', () => selectExperience(b.dataset.svExp as Experience)));
   qsa<HTMLElement>('[data-sv-space]').forEach((b) => b.addEventListener('click', () => selectSpaceType(b.dataset.svSpace as SpaceType)));
   qsa<HTMLElement>('[data-sv-region]').forEach((b) => b.addEventListener('click', () => selectRegion(b.dataset.svRegion as RegionId)));
