@@ -909,7 +909,7 @@ const DEFAULT_STATE = {
   ],
   prefs: {
     digest:true, weather:true, quiet:true, pushAsked:false, pushOn:false,
-    darkMode:false,
+    darkMode:false, ambientOn:false,
     alertMildiou:true, alertTraitement:true, alertParasite:true,
     alertTaille:true, alertTraitementArbo:true, alertGreffage:true
   },
@@ -962,6 +962,36 @@ function toggleDarkMode() {
   applyTheme();
   const btn = document.getElementById('acc-darkmode');
   if (btn) btn.querySelector('.at').textContent = state.prefs.darkMode ? '🌙 Mode sombre' : '☀️ Mode clair';
+}
+
+/* ---- Ambient music ---- */
+let _ambientAudio = null;
+
+function getAmbientAudio() {
+  if (!_ambientAudio) {
+    _ambientAudio = new Audio('./ambient.mp3');
+    _ambientAudio.loop = true;
+    _ambientAudio.volume = 0.3;
+  }
+  return _ambientAudio;
+}
+
+function applyAmbient() {
+  const audio = getAmbientAudio();
+  if (state.prefs?.ambientOn) audio.play().catch(() => {});
+  else { audio.pause(); }
+  const btn = document.getElementById('acc-ambient');
+  if (btn) {
+    btn.querySelector('.ai').textContent = state.prefs?.ambientOn ? '🎵' : '🎶';
+    btn.querySelector('.as').textContent = state.prefs?.ambientOn ? 'En cours de lecture — toucher pour arrêter' : 'Sons de nature relaxants en fond';
+  }
+}
+
+function toggleAmbient() {
+  if (!state.prefs) state.prefs = {};
+  state.prefs.ambientOn = !state.prefs.ambientOn;
+  saveState();
+  applyAmbient();
 }
 
 function isFirebaseConfigured() {
@@ -2108,7 +2138,7 @@ function boot() {
   });
   document.getElementById('acc-export').addEventListener('click', () => {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type:'application/json' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'potager-export.json'; a.click();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'jardin-de-poche-export.json'; a.click();
     flash('Export téléchargé ✓');
   });
   document.getElementById('region-modal-close').addEventListener('click', () => closeModal('region-modal-backdrop'));
@@ -2139,6 +2169,7 @@ function boot() {
     });
   });
   document.getElementById('acc-darkmode')?.addEventListener('click', toggleDarkMode);
+  document.getElementById('acc-ambient')?.addEventListener('click', toggleAmbient);
   document.getElementById('acc-privacy')?.addEventListener('click', openPrivacyModal);
   document.getElementById('acc-shopping')?.addEventListener('click', () => { closeModal('acc-backdrop'); openShoppingList(); });
 
@@ -2198,6 +2229,9 @@ function boot() {
 
   // Apply theme
   applyTheme();
+
+  // Resume ambient music if was enabled
+  if (state.prefs?.ambientOn) applyAmbient();
 
   // Questionnaire (remplace l'ancien onboarding)
   if (!state.profile || !state.profile.surveyed) {
