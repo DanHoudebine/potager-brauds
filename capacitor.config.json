@@ -1,7 +1,7 @@
 {
   "appId": "com.jardindepoche.app",
   "appName": "Jardin de Poche",
-  "webDir": "www",
+  "webDir": "dist",
   "server": {
     "androidScheme": "https"
   },

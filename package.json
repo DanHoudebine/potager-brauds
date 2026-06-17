@@ -1,9 +1,12 @@
 {
   "name": "jardin-de-poche",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Jardin de Poche - Application de jardinage",
+  "type": "module",
   "scripts": {
-    "build": "node build.js",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
     "cap:sync": "npm run build && npx cap sync",
     "cap:android": "npm run build && npx cap sync && npx cap open android",
     "cap:run": "npm run build && npx cap sync && npx cap run android"
@@ -15,6 +18,8 @@
     "@capacitor/local-notifications": "^6.0.0"
   },
   "devDependencies": {
-    "@capacitor/cli": "^6.0.0"
+    "@capacitor/cli": "^8.4.0",
+    "typescript": "^5.4.0",
+    "vite": "^6.4.3"
   }
 }
