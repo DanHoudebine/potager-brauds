@@ -8,14 +8,12 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Jardin de Poche">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.open-meteo.com wss://*.firebaseio.com; img-src 'self' data: blob: https:; frame-src 'none'">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="manifest" href="manifest.json">
   <title>Jardin de Poche</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -60,7 +58,7 @@
       <div class="row gap-2">
         <div class="brand-mark" style="width:34px;height:34px;font-size:19px;border-radius:10px">🌱</div>
         <div>
-          <div class="brand-name" style="font-size:18px;line-height:1">Potager</div>
+          <div class="brand-name" style="font-size:18px;line-height:1">Jardin de Poche</div>
           <div class="brand-sub" style="font-size:10px">des Brauds</div>
         </div>
       </div>
@@ -277,7 +275,7 @@
         <div>
           <div class="eyebrow">Rappels</div>
           <h1>Notifications</h1>
-          <div class="sub">Réglez une fois. Potager vous prévient au bon moment.</div>
+          <div class="sub">Réglez une fois. Jardin de Poche vous prévient au bon moment.</div>
         </div>
         <button class="btn primary" id="new-reminder-btn">+ Nouveau rappel</button>
       </div>
@@ -559,7 +557,7 @@
         <h2 class="sv-title">Bienvenue dans Jardin de Poche</h2>
         <p class="muted mt-3" style="font-size:15px;line-height:1.6">Votre assistant de jardinage. 3 questions rapides pour personnaliser votre expérience.</p>
       </div>
-      <button class="btn primary sv-cta" onclick="renderSurveyStep(2)">Commencer →</button>
+      <button class="btn primary sv-cta" data-sv-next="2">Commencer →</button>
     </div>
 
     <!-- Étape 2 : Expérience -->
@@ -567,17 +565,17 @@
       <h2 class="sv-q">Votre expérience en jardinage ?</h2>
       <p class="muted small mb-4">L'interface s'adapte à votre niveau.</p>
       <div class="sv-choices">
-        <button class="sv-choice" onclick="selectExperience('none')">
+        <button class="sv-choice" data-sv-exp="none">
           <div class="sv-ci">🌱</div>
           <div class="sv-cd"><div class="sv-ct">Débutant</div><div class="sv-cs">Je commence, j'ai besoin de guidance</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectExperience('some')">
+        <button class="sv-choice" data-sv-exp="some">
           <div class="sv-ci">🌿</div>
           <div class="sv-cd"><div class="sv-ct">Intermédiaire</div><div class="sv-cs">Quelques saisons d'expérience</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectExperience('lots')">
+        <button class="sv-choice" data-sv-exp="lots">
           <div class="sv-ci">🏆</div>
           <div class="sv-cd"><div class="sv-ct">Expert</div><div class="sv-cs">Plusieurs années, j'ai mes habitudes</div></div>
           <div class="sv-arrow">›</div>
@@ -590,17 +588,17 @@
       <h2 class="sv-q">Quel espace avez-vous ?</h2>
       <p class="muted small mb-4">Nous séparerons jardin et serre dans l'application.</p>
       <div class="sv-choices">
-        <button class="sv-choice" onclick="selectSpaceType('jardin')">
+        <button class="sv-choice" data-sv-space="jardin">
           <div class="sv-ci">🌿</div>
           <div class="sv-cd"><div class="sv-ct">Jardin uniquement</div><div class="sv-cs">Potager en plein air</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectSpaceType('serre')">
+        <button class="sv-choice" data-sv-space="serre">
           <div class="sv-ci">🏡</div>
           <div class="sv-cd"><div class="sv-ct">Serre uniquement</div><div class="sv-cs">Culture sous abri</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectSpaceType('both')">
+        <button class="sv-choice" data-sv-space="both">
           <div class="sv-ci">🌍</div>
           <div class="sv-cd"><div class="sv-ct">Les deux</div><div class="sv-cs">Jardin extérieur + serre</div></div>
           <div class="sv-arrow">›</div>
@@ -613,37 +611,37 @@
       <h2 class="sv-q">Dans quelle région jardinez-vous ?</h2>
       <p class="muted small mb-4">Le taux de réussite de chaque plante sera affiché pour votre région.</p>
       <div class="sv-choices">
-        <button class="sv-choice" onclick="selectRegion('nord')">
+        <button class="sv-choice" data-sv-region="nord">
           <div class="sv-ci">🌧️</div>
           <div class="sv-cd"><div class="sv-ct">Nord &amp; Bretagne</div><div class="sv-cs">Frais, pluvieux, hivers doux</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectRegion('idf')">
+        <button class="sv-choice" data-sv-region="idf">
           <div class="sv-ci">☁️</div>
           <div class="sv-cd"><div class="sv-ct">Île-de-France &amp; Centre</div><div class="sv-cs">Tempéré, variable, été chaud</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectRegion('ocean')">
+        <button class="sv-choice" data-sv-region="ocean">
           <div class="sv-ci">🌊</div>
           <div class="sv-cd"><div class="sv-ct">Grand Ouest &amp; Atlantique</div><div class="sv-cs">Océanique, doux, humide</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectRegion('sudouest')">
+        <button class="sv-choice" data-sv-region="sudouest">
           <div class="sv-ci">☀️</div>
           <div class="sv-cd"><div class="sv-ct">Sud-Ouest &amp; Occitanie</div><div class="sv-cs">Chaud et humide en été</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectRegion('med')">
+        <button class="sv-choice" data-sv-region="med">
           <div class="sv-ci">🌞</div>
           <div class="sv-cd"><div class="sv-ct">Méditerranée &amp; PACA</div><div class="sv-cs">Très chaud et sec l'été</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectRegion('est')">
+        <button class="sv-choice" data-sv-region="est">
           <div class="sv-ci">🌡️</div>
           <div class="sv-cd"><div class="sv-ct">Est &amp; Rhône-Alpes</div><div class="sv-cs">Continental, hivers froids</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectRegion('montagne')">
+        <button class="sv-choice" data-sv-region="montagne">
           <div class="sv-ci">⛰️</div>
           <div class="sv-cd"><div class="sv-ct">Montagne</div><div class="sv-cs">Été court, gel possible tardif</div></div>
           <div class="sv-arrow">›</div>
@@ -846,11 +844,11 @@
   </div>
 </div>
 
-<!-- Firebase SDK (compat) -->
+<!-- Firebase SDK (compat, optionnel) -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
-<script src="app.js"></script>
+<script type="module" src="/src/main.ts"></script>
 </body>
 </html>
