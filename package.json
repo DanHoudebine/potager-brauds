@@ -1,7 +1,7 @@
 {
-  "name": "potager-des-brauds",
+  "name": "jardin-de-poche",
   "version": "1.0.0",
-  "description": "Le Potager des Brauds - Application de jardinage",
+  "description": "Jardin de Poche - Application de jardinage",
   "scripts": {
     "build": "node build.js",
     "cap:sync": "npm run build && npx cap sync",
