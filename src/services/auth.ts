@@ -124,10 +124,11 @@ async function nativeGoogleSignIn(): Promise<void> {
     }
     await enterApp(true);
   } catch (err) {
+    const code = (err as { code?: number | string }).code;
     const msg = (err as { message?: string }).message ?? '';
-    if (!msg.includes('12501') && !msg.toLowerCase().includes('cancel')) {
-      showAuthError('Connexion Google impossible. Vérifiez votre réseau ou utilisez « Continuer sans compte ».');
-    }
+    // 12501 = annulé par l'utilisateur
+    if (code === 12501 || String(code) === '12501' || msg.includes('12501') || msg.toLowerCase().includes('cancel')) return;
+    showAuthError(`Erreur ${code ?? '?'} — ${msg || 'inconnue'}`);
   }
 }
 
