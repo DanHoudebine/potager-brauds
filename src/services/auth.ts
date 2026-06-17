@@ -2,7 +2,7 @@
 //  Auth — Google natif (Capacitor) + Firebase web SDK + mode local
 // ============================================================
 import { Capacitor } from '@capacitor/core';
-import { GoogleAuth } from '@capacitor-community/google-auth';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import { state, registerAfterSave } from '../state';
 import { el, elOpt, openModal, closeModal } from '../ui/dom';
 import { REGIONS } from '../data/regions';
@@ -120,7 +120,7 @@ async function nativeGoogleSignIn(): Promise<void> {
       const result = await window.firebase.auth().signInWithCredential(cred);
       currentUser = result.user as AuthUser;
     } else {
-      currentUser = { displayName: gUser.displayName, email: gUser.email, photoURL: gUser.imageUrl };
+      currentUser = { displayName: gUser.name, email: gUser.email, photoURL: gUser.imageUrl };
     }
     await enterApp(true);
   } catch (err) {
