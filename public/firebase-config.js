@@ -1,16 +1,15 @@
 // ============================================
 // FIREBASE CONFIG - Jardin de Poche
-// (Le projet Firebase conserve son identifiant d'origine.)
 // ============================================
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCa3WsaPWR7Lqit9GSlz6YMQ7LJXJEQKNI",
-  authDomain: "le-potager-des-brauds.firebaseapp.com",
-  databaseURL: "https://le-potager-des-brauds-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "le-potager-des-brauds",
-  storageBucket: "le-potager-des-brauds.firebasestorage.app",
-  messagingSenderId: "126725590831",
-  appId: "1:126725590831:web:de5126d62b0f0aaf259bda"
+  apiKey: "AIzaSyA8_VFaqZCvl2d5Z-r9tftkL-rxEK4Ddcw",
+  authDomain: "jardin-de-poche.firebaseapp.com",
+  databaseURL: "https://jardin-de-poche-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "jardin-de-poche",
+  storageBucket: "jardin-de-poche.firebasestorage.app",
+  messagingSenderId: "813154716183",
+  appId: "1:813154716183:web:30d376112ca0b6a5482a52"
 };
 
 // Init Firebase
