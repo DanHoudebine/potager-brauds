@@ -45,11 +45,13 @@ export async function haptic(kind: 'light' | 'medium' | 'heavy' | 'success' | 'w
   }
 }
 
-/** Cache l'écran de démarrage natif (appelé une fois l'app prête). */
+/** Cache l'écran de démarrage natif (appelé une fois l'app prête).
+ *  Le splash est aussi configuré en auto-hide (1200 ms) pour qu'un crash
+ *  au démarrage ne bloque jamais l'utilisateur sur l'écran de lancement. */
 export async function hideSplash(): Promise<void> {
   if (!isNative) return;
   try {
-    await SplashScreen.hide();
+    await SplashScreen.hide({ fadeOutDuration: 300 });
   } catch {
     /* ignore */
   }
