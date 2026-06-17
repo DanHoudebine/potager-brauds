@@ -1,6 +1,6 @@
 {
-  "name": "Jardin de Poche",
-  "short_name": "Jardin",
+  "name": "Le Potager des Brauds",
+  "short_name": "Potager",
   "description": "Votre jardin connecté",
   "start_url": "/",
   "display": "standalone",

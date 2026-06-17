@@ -1,6 +1,6 @@
 {
-  "appId": "com.potagerdesbrauds.app",
-  "appName": "Le Potager des Brauds",
+  "appId": "com.jardindepoche.app",
+  "appName": "Jardin de Poche",
   "webDir": "www",
   "server": {
     "androidScheme": "https"
@@ -16,7 +16,7 @@
     }
   },
   "android": {
-    "allowMixedContent": true,
+    "allowMixedContent": false,
     "captureInput": true,
     "webContentsDebuggingEnabled": false
   }
