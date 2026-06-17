@@ -1208,6 +1208,27 @@ a { color: var(--green-dark); }
   .cell-days { font-size: 8px; }
 }
 
+/* Spacing-blocked cells */
+.cell.cell-blocked {
+  cursor: not-allowed;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent, transparent 5px,
+    rgba(180, 120, 0, .1) 5px, rgba(180, 120, 0, .1) 10px
+  );
+  border: 2px dashed rgba(180, 120, 0, .35);
+}
+.cell.cell-blocked:active { transform: none !important; }
+.cell-blocked-inner {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  height: 100%; gap: 2px;
+}
+.cell-blocked-emoji { font-size: 1.3rem; opacity: .45; }
+.cell-blocked-lbl {
+  font-size: 8px; font-weight: 700; color: rgba(140, 90, 0, .7);
+  text-transform: uppercase; letter-spacing: .04em;
+}
+
 /* ============================================================
    BOTTOM NAV BADGE
    ============================================================ */
