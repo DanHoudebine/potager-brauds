@@ -691,7 +691,9 @@ a { color: var(--green-dark); }
 /* ============ Modals ============ */
 .modal-backdrop {
   position: fixed; inset: 0; z-index: 100;
-  background: rgba(45,58,46,.45); backdrop-filter: blur(3px);
+  /* Pas de backdrop-filter : cause un flash GPU visible sur Android WebView
+     quand le clavier ouvre/ferme et force un re-composite de la couche. */
+  background: rgba(20,26,18,.58);
   display: grid; place-items: end center;
   opacity: 0; pointer-events: none; transition: opacity .2s;
 }
@@ -700,7 +702,9 @@ a { color: var(--green-dark); }
 .modal {
   background: var(--bg); width: 100%; max-width: 520px;
   border-radius: 24px 24px 0 0; padding: 20px;
-  max-height: 90vh; overflow-y: auto;
+  /* dvh = hauteur dynamique du viewport = se réduit quand le clavier Android
+     s'ouvre avec adjustResize, ce qui garde le modal visible. */
+  max-height: 90dvh; overflow-y: auto;
   transform: translateY(20px);
   transition: transform .25s cubic-bezier(.2,.7,.2,1);
   box-shadow: var(--shadow-lg);
@@ -970,6 +974,16 @@ a { color: var(--green-dark); }
   background: var(--card); border-radius: 20px;
   padding: 22px; box-shadow: var(--shadow-lg);
   z-index: 501;
+  /* Empêche la carte de déborder de l'écran : le texte long défile
+     mais les boutons « Suivant » et « Ignorer » restent toujours visibles. */
+  max-height: min(75vh, 460px);
+  display: flex; flex-direction: column;
+}
+/* Le corps de texte défile quand il dépasse la hauteur disponible. */
+#tut-text {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 .tut-counter { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-muted); }
 

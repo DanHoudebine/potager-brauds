@@ -2,7 +2,7 @@
 //  Router — bascule de vue + badges de navigation
 // ============================================================
 import { state } from '../state';
-import { qsa } from './dom';
+import { qs, qsa } from './dom';
 import { closePanel } from '../features/plantPanel';
 import { renderDashboard } from '../views/dashboard';
 import { renderGarden } from '../views/garden';
@@ -49,6 +49,14 @@ export function goBack(): boolean {
   history.pop();
   setView(history[history.length - 1], { fromBack: true });
   return true;
+}
+
+/** Relance le renderer de la vue active sans déclencher d'animation ni changer
+ *  l'historique de navigation. À utiliser pour rafraîchir après une action
+ *  (ajout de plante, sauvegarde…) sans le flash de fadeIn. */
+export function refreshView(): void {
+  const active = qs<HTMLElement>('.view.active');
+  if (active?.dataset.view) RENDERERS[active.dataset.view]?.();
 }
 
 export function updateNavBadges(): void {

@@ -7,6 +7,9 @@ import { elOpt, qs, flash } from '../ui/dom';
 import { escapeHTML } from '../utils';
 import { MILESTONES, XP_EVENTS, LEVELS } from '../data/progression';
 
+let _lastLvlIdx = -1;
+let _lastMilestoneCount = -1;
+
 function isBeginner(): boolean {
   return state.profile?.level === 'beginner';
 }
@@ -76,7 +79,10 @@ export function renderXPWidget(): void {
   if (fill) fill.style.width = pct + '%';
 
   const ladder = elOpt('xp-levels');
-  if (ladder) {
+  // Ne reconstruit la liste des paliers que lors d'un changement de niveau
+  // pour éviter le scintillement des icônes (repaint complet via innerHTML).
+  if (ladder && lvlIdx !== _lastLvlIdx) {
+    _lastLvlIdx = lvlIdx;
     ladder.innerHTML = LEVELS.map((l, i) => {
       const cls = i < lvlIdx ? 'past' : i === lvlIdx ? 'current' : '';
       const xpLabel = i === lvlIdx && next ? `${xp} / ${next.xp} XP` : `${l.xp} XP`;
@@ -86,11 +92,18 @@ export function renderXPWidget(): void {
         <div class="xl-xp">${xpLabel}</div>
       </div>`;
     }).join('');
+  } else if (ladder && next) {
+    // Même niveau : met à jour uniquement le compteur XP courant.
+    const curXp = ladder.querySelector<HTMLElement>('.xp-level.current .xl-xp');
+    if (curXp) curXp.textContent = `${xp} / ${next.xp} XP`;
   }
 
+  const mileCount = state.profile.milestones?.length || 0;
   const done = new Set(state.profile.milestones || []);
   const mRow = elOpt('milestones-row');
-  if (mRow) {
+  // Ne reconstruit les badges que si de nouveaux défis ont été débloqués.
+  if (mRow && mileCount !== _lastMilestoneCount) {
+    _lastMilestoneCount = mileCount;
     mRow.innerHTML = MILESTONES.map(
       (m) => `<span class="milestone-badge ${done.has(m.id) ? 'done' : ''}" title="${escapeHTML(m.label)}">${m.icon}</span>`
     ).join('');

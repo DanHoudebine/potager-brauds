@@ -118,4 +118,14 @@ export function initNative(): void {
 
   // Bouton retour matériel.
   CapApp.addListener('backButton', handleHardwareBack).catch(() => {});
+
+  // Quand le clavier virtuel apparaît, fait défiler l'input focalisé pour
+  // qu'il reste visible au-dessus du clavier (ajustResize resize le WebView
+  // mais ne garantit pas que le champ est dans la zone visible).
+  Keyboard.addListener('keyboardDidShow', () => {
+    const focused = document.activeElement as HTMLElement | null;
+    if (focused && (focused.tagName === 'INPUT' || focused.tagName === 'TEXTAREA' || focused.tagName === 'SELECT')) {
+      setTimeout(() => focused.scrollIntoView({ behavior: 'smooth', block: 'center' }), 50);
+    }
+  }).catch(() => {});
 }
