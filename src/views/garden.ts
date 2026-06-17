@@ -3,7 +3,8 @@
 // ============================================================
 import { state, save, activeBed } from '../state';
 import { el, elOpt, qsa, openModal, closeModal, confirmDialog, flash } from '../ui/dom';
-import { escapeHTML, clampInt, statusColor, daysBetween, parseISO, uid } from '../utils';
+import { escapeHTML, clampInt, statusColor, daysBetween, parseISO, uid, gridSpacingCells } from '../utils';
+import type { Bed } from '../types';
 import { plantById } from '../data/catalog';
 import { updateNavBadges } from '../ui/router';
 import { openPlantPanel } from '../features/plantPanel';
@@ -11,6 +12,28 @@ import { openQuickAdd } from '../features/quickAdd';
 import { syncGardenTasks } from '../garden-sync';
 
 const TITLE_MAP: Record<string, string> = { all: 'Le potager', jardin: 'Jardin (plein air)', serre: 'Serre (sous abri)' };
+
+/** Returns a map of empty-cell-idx → blocking-plant-cell-idx based on spacing requirements. */
+function computeBlockedCells(bed: Bed): Map<number, number> {
+  const blocked = new Map<number, number>();
+  const cols = bed.cols;
+  bed.cells.forEach((c, i) => {
+    if (!c) return;
+    const p = plantById(c.plant);
+    const gs = gridSpacingCells(p?.space ?? '');
+    if (gs === 0) return;
+    const ri = Math.floor(i / cols);
+    const ci = i % cols;
+    bed.cells.forEach((target, j) => {
+      if (j === i || target !== null) return;
+      const rj = Math.floor(j / cols);
+      const cj = j % cols;
+      const dist = Math.max(Math.abs(ri - rj), Math.abs(ci - cj));
+      if (dist <= gs && !blocked.has(j)) blocked.set(j, i);
+    });
+  });
+  return blocked;
+}
 
 export function renderGarden(): void {
   const gt = state.gardenTab || 'all';
@@ -61,6 +84,8 @@ export function renderGarden(): void {
   while ((bed.cells || []).length < total) bed.cells.push(null);
   bed.cells.length = total;
 
+  const blockedBy = computeBlockedCells(bed);
+
   grid.innerHTML = bed.cells
     .map((c, i) => {
       if (c) {
@@ -77,6 +102,17 @@ export function renderGarden(): void {
         </div>
       </div>`;
       }
+      const bpi = blockedBy.get(i);
+      if (bpi !== undefined) {
+        const bc = bed.cells[bpi];
+        const bp = bc ? plantById(bc.plant) : null;
+        return `<div class="cell cell-blocked" data-idx="${i}" data-blocked-by="${bpi}">
+          <div class="cell-blocked-inner">
+            <span class="cell-blocked-emoji">${bp ? bp.icon : '⛔'}</span>
+            <span class="cell-blocked-lbl">↔ ${bp ? escapeHTML(bp.space) : '?'}</span>
+          </div>
+        </div>`;
+      }
       return `<div class="cell" data-idx="${i}"><div class="cell-empty-inner"><span class="cell-plus">+</span><span class="cell-plus-label">Planter</span></div></div>`;
     })
     .join('');
@@ -84,8 +120,16 @@ export function renderGarden(): void {
   qsa<HTMLElement>('.cell', grid).forEach((node) => {
     const idx = Number(node.dataset.idx);
     node.addEventListener('click', () => {
-      if (node.classList.contains('has-plant')) openPlantPanel(idx);
-      else openQuickAdd('plant');
+      if (node.classList.contains('has-plant')) {
+        openPlantPanel(idx);
+      } else if (node.classList.contains('cell-blocked')) {
+        const bpi = Number(node.dataset.blockedBy);
+        const bc = bed.cells[bpi];
+        const bp = bc ? plantById(bc.plant) : null;
+        flash(`Zone réservée — espacement ${bp ? `${bp.space} requis pour ${bp.name}` : 'requis'}`);
+      } else {
+        openQuickAdd('plant');
+      }
     });
   });
 
@@ -120,6 +164,11 @@ export function renderGarden(): void {
       const from = dragSrc;
       const to = Number(node.dataset.idx);
       if (from === null || from === to) return;
+      if (node.classList.contains('cell-blocked')) {
+        flash('Emplacement trop proche — espacement non respecté');
+        qsa('.cell', grid).forEach((n) => n.classList.remove('dragging', 'drag-over'));
+        return;
+      }
       const tmp = bed.cells[from];
       bed.cells[from] = bed.cells[to];
       bed.cells[to] = tmp;

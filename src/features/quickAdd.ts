@@ -3,13 +3,33 @@
 // ============================================================
 import { state, save } from '../state';
 import { el, elOpt, qs, qsa, openModal, closeModal, flash } from '../ui/dom';
-import { escapeHTML, iso, uid } from '../utils';
+import { escapeHTML, iso, uid, gridSpacingCells } from '../utils';
+import type { Bed } from '../types';
 import { CATALOG, plantById } from '../data/catalog';
 import { syncGardenTasks } from '../garden-sync';
 import { awardXP, checkMilestones } from './xp';
 import { refreshView } from '../ui/router';
 
 let draftTimer: ReturnType<typeof setTimeout> | undefined;
+
+/** First cell index that is empty AND not within any existing plant's spacing radius. */
+function firstValidCell(bed: Bed): number {
+  const cols = bed.cols;
+  return (bed.cells || []).findIndex((c, i) => {
+    if (c !== null) return false;
+    const ri = Math.floor(i / cols);
+    const ci = i % cols;
+    return !(bed.cells || []).some((existing, j) => {
+      if (!existing) return false;
+      const ep = plantById(existing.plant);
+      const gs = gridSpacingCells(ep?.space ?? '');
+      if (gs === 0) return false;
+      const rj = Math.floor(j / cols);
+      const cj = j % cols;
+      return Math.max(Math.abs(ri - rj), Math.abs(ci - cj)) <= gs;
+    });
+  });
+}
 
 type FieldEl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 const draftField = (name: string) => qs<FieldEl>(`[data-draft="${name}"]`);
@@ -80,9 +100,10 @@ function saveQuickAdd(): void {
       flash('Choisissez une parcelle');
       return;
     }
-    const emptyIdx = (bed.cells || []).findIndex((c) => !c);
+    const emptyIdx = firstValidCell(bed);
     if (emptyIdx === -1) {
-      flash('Parcelle pleine.');
+      const hasEmpty = (bed.cells || []).some((c) => !c);
+      flash(hasEmpty ? 'Aucun emplacement libre — espacement non respecté.' : 'Parcelle pleine.');
       return;
     }
     bed.cells[emptyIdx] = { id: uid('c'), plant: plantId, planted, status: 'healthy', notes: '' };
