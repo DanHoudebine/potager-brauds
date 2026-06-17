@@ -1517,6 +1517,30 @@ a { color: var(--green-dark); }
 .hv-empty { padding: 16px 0; text-align: center; }
 
 /* ============================================================
+   SHARE / IMPORT
+   ============================================================ */
+.share-tabs { display: flex; gap: 6px; margin-bottom: 16px; background: var(--bg-soft); padding: 4px; border-radius: 12px; }
+.share-tab {
+  flex: 1; padding: 9px 8px; border: none; background: transparent; border-radius: 9px;
+  font-weight: 700; font-size: 14px; color: var(--ink-muted); cursor: pointer;
+}
+.share-tab.active { background: var(--bg); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+.share-qr {
+  display: grid; place-items: center; min-height: 180px; padding: 12px;
+  background: #fff; border-radius: 14px; border: 1px solid rgba(90,63,28,.12);
+}
+.share-qr svg { width: 100%; max-width: 220px; height: auto; }
+.share-qr-wait, .share-qr-fail { font-size: 38px; opacity: .4; }
+.share-code-box {
+  width: 100%; font-family: ui-monospace, monospace; font-size: 11px; line-height: 1.4;
+  padding: 10px; border-radius: 10px; border: 1px solid rgba(90,63,28,.18);
+  background: var(--bg-soft); color: var(--ink-muted); resize: vertical; word-break: break-all;
+}
+.share-preview { margin-top: 10px; font-size: 13px; font-weight: 700; min-height: 18px; }
+.share-preview.ok { color: var(--green-dark); }
+.share-preview.err { color: var(--urgent); }
+
+/* ============================================================
    PRIVACY POLICY
    ============================================================ */
 .privacy-body { font-size: 14px; line-height: 1.6; }
