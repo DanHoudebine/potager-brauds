@@ -8,7 +8,10 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.2.1'
-        classpath 'com.google.gms:google-services:4.4.0'
+        // google-services (Firebase natif) volontairement retiré : cette app
+        // utilise Firebase via le SDK web (CDN), pas le SDK natif. Sa présence
+        // tirait BouncyCastle 1.79 (classes Java 21) que l'instrumentation
+        // Gradle ne savait pas lire → échec de build.
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
