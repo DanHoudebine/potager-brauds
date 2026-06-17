@@ -22,12 +22,33 @@ const RENDERERS: Record<string, () => void> = {
   reminders: renderReminders,
 };
 
-export function setView(name: string): void {
+// Pile d'historique pour le bouton retour Android.
+const history: string[] = ['dashboard'];
+
+export function setView(name: string, opts: { fromBack?: boolean } = {}): void {
   closePanel();
   qsa<HTMLElement>('.view').forEach((v) => v.classList.toggle('active', v.dataset.view === name));
   qsa<HTMLElement>('[data-nav]').forEach((b) => b.classList.toggle('active', b.dataset.nav === name));
   RENDERERS[name]?.();
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (!opts.fromBack && history[history.length - 1] !== name) {
+    history.push(name);
+    if (history.length > 20) history.shift();
+  }
+}
+
+/** Vrai s'il existe une vue précédente où revenir. */
+export function canGoBack(): boolean {
+  return history.length > 1;
+}
+
+/** Revient à la vue précédente. Renvoie false si on est déjà à la racine. */
+export function goBack(): boolean {
+  if (history.length <= 1) return false;
+  history.pop();
+  setView(history[history.length - 1], { fromBack: true });
+  return true;
 }
 
 export function updateNavBadges(): void {

@@ -9,6 +9,7 @@ import { regionScore, regionScoreHTML, renderRegionPrompt } from '../features/re
 import { setView } from '../ui/router';
 import { syncGardenTasks } from '../garden-sync';
 import { awardXP, checkMilestones } from '../features/xp';
+import { haptic } from '../services/native';
 
 interface CatalogFilter {
   q: string;
@@ -160,6 +161,7 @@ export function openAddToBedPicker(plantId: string): void {
       syncGardenTasks();
       awardXP('plant_added');
       checkMilestones();
+      haptic('success');
       closeModal('addbed-backdrop');
       flash(`${p ? p.name : plantId} ajoutée dans ${bed.name} ✓`);
       state.activeBedId = bed.id;

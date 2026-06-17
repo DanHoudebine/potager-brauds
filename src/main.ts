@@ -11,6 +11,7 @@ import { applyTheme } from './theme';
 import { applyAmbient } from './services/audio';
 import { initNotificationScheduler } from './services/notifications';
 import { initAuth, onEnterApp } from './services/auth';
+import { initNative, hideSplash, haptic } from './services/native';
 
 import { renderDashboard } from './views/dashboard';
 import { renderGarden, addBed, openBedModal, deleteBed } from './views/garden';
@@ -34,7 +35,12 @@ let wired = false;
 
 function wireAll(): void {
   // Navigation (sidebar, bottom-nav, topbar shortcuts with data-nav)
-  qsa<HTMLElement>('[data-nav]').forEach((b) => b.addEventListener('click', () => setView(b.dataset.nav!)));
+  qsa<HTMLElement>('[data-nav]').forEach((b) =>
+    b.addEventListener('click', () => {
+      haptic('light');
+      setView(b.dataset.nav!);
+    })
+  );
   el('topbar-search').addEventListener('click', () => setView('catalog'));
 
   // Plant detail panel
@@ -48,7 +54,10 @@ function wireAll(): void {
   }, { passive: true });
 
   // FAB
-  el('fab').addEventListener('click', () => openQuickAdd('task'));
+  el('fab').addEventListener('click', () => {
+    haptic('medium');
+    openQuickAdd('task');
+  });
 
   // Garden controls
   qsa<HTMLElement>('.gtab').forEach((b) =>
@@ -120,9 +129,12 @@ function boot(): void {
   applyTheme();
   if (state.prefs?.ambientOn) applyAmbient();
   maybeStartSurvey();
+  // L'app est prête : on retire l'écran de démarrage natif.
+  void hideSplash();
 }
 
 // ---- Bootstrap ----------------------------------------------
+initNative();
 onEnterApp(boot);
 initAuth();
 
