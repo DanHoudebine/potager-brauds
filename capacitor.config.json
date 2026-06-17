@@ -16,8 +16,8 @@
       "permissions": ["coarse", "fine"]
     },
     "SplashScreen": {
-      "launchShowDuration": 1500,
-      "launchAutoHide": false,
+      "launchShowDuration": 1200,
+      "launchAutoHide": true,
       "backgroundColor": "#f9f6f0",
       "androidScaleType": "CENTER_CROP",
       "showSpinner": false,
