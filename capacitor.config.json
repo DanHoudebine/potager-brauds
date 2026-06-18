@@ -1,6 +1,6 @@
 {
   "appId": "com.jardindepoche.app",
-  "appName": "Jardin de Poche",
+  "appName": "Potager de Poche",
   "webDir": "dist",
   "backgroundColor": "#f9f6f0",
   "server": {
@@ -35,7 +35,7 @@
     },
     "GoogleAuth": {
       "scopes": ["profile", "email"],
-      "serverClientId": "813154716183-tgdujrasr772i91lc63fhlg4ef3t0c24.apps.googleusercontent.com",
+      "serverClientId": "978848610696-92oaec4ef83niats5l1ureb31eppbd08.apps.googleusercontent.com",
       "forceCodeForRefreshToken": true
     }
   },
