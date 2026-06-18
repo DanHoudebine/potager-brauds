@@ -19,6 +19,10 @@ interface AuthUser {
 let currentUser: AuthUser | null = null;
 let localMode = false;
 let enterCb: () => void = () => {};
+let syncDoneCb: (() => void) | null = null;
+
+/** Enregistre un callback appelé une fois la synchro Firebase initiale terminée. */
+export function onFirebaseSyncDone(cb: () => void): void { syncDoneCb = cb; }
 
 export function getUser(): AuthUser | null { return currentUser; }
 export function isLocal(): boolean { return localMode; }
@@ -90,8 +94,8 @@ async function enterApp(freshLogin: boolean): Promise<void> {
   if (currentUser && isFirebaseConfigured()) {
     registerAfterSave(scheduleSync);
     if (freshLogin) {
-      const synced = await syncFromFirebase();
-      if (synced) { window.location.reload(); return; }
+      // hotReloadState() est appelé à l'intérieur de syncFromFirebase()
+      await syncFromFirebase();
     }
   }
   updateAccountUI();
@@ -177,11 +181,13 @@ export function initAuth(): void {
       updateAccountUI();
       closeModal('auth-backdrop');
       enterCb();
-      // Sync once per browser session — prevents infinite reload loop
+      // Sync once per browser session — hotReloadState() inside syncFromFirebase()
+      // met à jour l'état en mémoire, puis syncDoneCb rafraîchit la vue courante
+      // sans déclencher un rechargement complet de la page.
       if (!sessionStorage.getItem('firebase-synced')) {
         sessionStorage.setItem('firebase-synced', '1');
         void syncFromFirebase().then((synced) => {
-          if (synced) window.location.reload();
+          if (synced) syncDoneCb?.();
         });
       }
     } else {

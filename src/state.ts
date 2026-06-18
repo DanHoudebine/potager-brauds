@@ -127,6 +127,11 @@ function loadState(): AppState {
 /** The single mutable app state. Mutate then call save(). */
 export const state: AppState = loadState();
 
+/** Relit localStorage et écrase l'état en mémoire sans recharger la page. */
+export function hotReloadState(): void {
+  Object.assign(state, loadState());
+}
+
 let _afterSave: ((s: AppState) => void) | undefined;
 /** Enregistre un hook appelé après chaque save() — utilisé pour la synchro Firebase. */
 export function registerAfterSave(fn: (s: AppState) => void): void {
