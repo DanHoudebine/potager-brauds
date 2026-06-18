@@ -29,7 +29,6 @@ import { initHarvests } from './features/harvests';
 import { initTutorial } from './features/tutorial';
 import { initSurvey, maybeStartSurvey } from './features/survey';
 import { initShare } from './features/share';
-import { initTroc } from './features/troc';
 import { save } from './state';
 
 const PROTECTED_MODALS = ['survey-backdrop', 'auth-backdrop'];
@@ -97,7 +96,6 @@ function wireAll(): void {
   initTutorial();
   initSurvey();
   initShare();
-  initTroc();
 
   // Click-outside to close (except mandatory modals)
   qsa<HTMLElement>('.modal-backdrop').forEach((bd) =>

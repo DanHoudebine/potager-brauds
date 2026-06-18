@@ -56,6 +56,7 @@ export interface WeatherState {
   code: number;
   wind: number;
   minTemp?: number;
+  forecast?: Array<{ min: number; max: number; code: number }>;
 }
 
 export interface SymptomCause {
