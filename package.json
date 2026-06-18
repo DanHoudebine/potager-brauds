@@ -1,7 +1,7 @@
 {
-  "name": "jardin-de-poche",
+  "name": "potager-de-poche",
   "version": "2.0.0",
-  "description": "Jardin de Poche - Application de jardinage",
+  "description": "Potager de Poche - Application de jardinage",
   "type": "module",
   "scripts": {
     "dev": "vite",
