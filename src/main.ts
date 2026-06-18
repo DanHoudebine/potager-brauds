@@ -5,12 +5,12 @@ import './style.css';
 
 import { state, activeBed } from './state';
 import { el, qsa, closeModal, initConfirm } from './ui/dom';
-import { setView } from './ui/router';
+import { setView, refreshView } from './ui/router';
 import { syncGardenTasks } from './garden-sync';
 import { applyTheme } from './theme';
 import { applyAmbient } from './services/audio';
 import { initNotificationScheduler } from './services/notifications';
-import { initAuth, onEnterApp } from './services/auth';
+import { initAuth, onEnterApp, onFirebaseSyncDone } from './services/auth';
 import { initNative, hideSplash, haptic } from './services/native';
 
 import { renderDashboard } from './views/dashboard';
@@ -140,6 +140,8 @@ function boot(): void {
 // ---- Bootstrap ----------------------------------------------
 initNative();
 onEnterApp(boot);
+// Après synchro Firebase initiale : rafraîchit la vue courante sans recharger la page.
+onFirebaseSyncDone(() => { syncGardenTasks(); refreshView(); });
 initAuth();
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {

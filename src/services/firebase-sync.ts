@@ -4,7 +4,7 @@
 //  Déclenchement : debounce 4 s après chaque save()
 // ============================================================
 import type { AppState } from '../types';
-import { STORAGE_KEY } from '../state';
+import { STORAGE_KEY, hotReloadState } from '../state';
 
 let writeTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -50,6 +50,7 @@ export async function syncFromFirebase(): Promise<boolean> {
     const merged = { ...local, ...remote } as AppState;
     if (local.prefs) merged.prefs = { ...remote.prefs, ...local.prefs } as AppState['prefs'];
     localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+    hotReloadState();
     return true;
   } catch { return false; }
 }
