@@ -522,6 +522,7 @@ a { color: var(--green-dark); }
   position: relative; display: grid; gap: 8px;
   grid-template-columns: repeat(var(--cols, 4), minmax(60px, 1fr));
 }
+.grid-hint { margin-top: 10px; text-align: center; line-height: 1.4; }
 
 .cell {
   aspect-ratio: 1 / 1; border-radius: 14px;
@@ -997,6 +998,43 @@ a { color: var(--green-dark); }
   min-height: 0;
 }
 .tut-counter { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-muted); }
+
+/* ---- Démo animée du tutoriel (déplacement d'une plante sur la grille) ---- */
+.tut-demo-wrap { flex: none; }
+.tut-demo { position: relative; width: 132px; height: 86px; margin: 14px auto 2px; }
+.tut-demo-grid { display: grid; grid-template-columns: repeat(3, 40px); grid-auto-rows: 40px; gap: 6px; }
+.tut-demo-grid .tdc { background: var(--bg, #f1efe8); border: 1px dashed var(--line, #cdd6c4); border-radius: 9px; }
+.tut-demo-grid .tdc-target { border-color: var(--green); border-style: solid; background: rgba(91,145,102,.12); }
+.tut-demo-tile {
+  position: absolute; top: 0; left: 0; width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center; font-size: 22px;
+  background: var(--card, #fff); border-radius: 9px; box-shadow: 0 2px 6px rgba(0,0,0,.18);
+  animation: tutDrag 3.4s ease-in-out infinite; will-change: transform;
+}
+.tut-demo-hand {
+  position: absolute; top: 20px; left: 20px; font-size: 19px; pointer-events: none;
+  animation: tutHand 3.4s ease-in-out infinite; will-change: transform;
+}
+@keyframes tutDrag {
+  0%   { transform: translate(0,0) scale(1); }
+  10%  { transform: translate(0,0) scale(1.12); box-shadow: 0 7px 15px rgba(0,0,0,.28); }
+  45%  { transform: translate(92px,46px) scale(1.12); box-shadow: 0 7px 15px rgba(0,0,0,.28); }
+  58%  { transform: translate(92px,46px) scale(1); box-shadow: 0 2px 6px rgba(0,0,0,.18); }
+  82%  { transform: translate(92px,46px) scale(1); }
+  100% { transform: translate(0,0) scale(1); }
+}
+@keyframes tutHand {
+  0%   { transform: translate(0,0); }
+  10%  { transform: translate(3px,3px); }
+  45%  { transform: translate(92px,49px); }
+  58%  { transform: translate(92px,46px); }
+  82%  { transform: translate(92px,46px); }
+  100% { transform: translate(0,0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tut-demo-tile, .tut-demo-hand { animation: none; }
+  .tut-demo-tile { transform: translate(46px,23px); }
+}
 
 /* ============================================================
    MÉTÉO WIDGET

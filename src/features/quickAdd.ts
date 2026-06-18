@@ -11,10 +11,17 @@ import { refreshView } from '../ui/router';
 
 let draftTimer: ReturnType<typeof setTimeout> | undefined;
 
+/** Cellule visée quand on ouvre l'ajout depuis une case précise de la grille. */
+let plantTarget: { bedId: string; index: number } | null = null;
+
 type FieldEl = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 const draftField = (name: string) => qs<FieldEl>(`[data-draft="${name}"]`);
 
-export function openQuickAdd(type: 'task' | 'plant' | 'note' = 'task'): void {
+export function openQuickAdd(
+  type: 'task' | 'plant' | 'note' = 'task',
+  target?: { bedId: string; index: number }
+): void {
+  plantTarget = target ?? null;
   const draft = state.draft;
   if (draft) {
     el('qa-draft').style.display = 'inline-flex';
@@ -46,6 +53,13 @@ export function openQuickAdd(type: 'task' | 'plant' | 'note' = 'task'): void {
         })
       )
       .join('');
+
+  // Ouvert depuis une case précise : on force l'onglet « plante » et on
+  // pré-sélectionne la bonne parcelle pour que la plante atterrisse au bon endroit.
+  if (plantTarget) {
+    type = 'plant';
+    el<HTMLSelectElement>('qa-bed-select').value = plantTarget.bedId;
+  }
 
   setQAType(type);
   openModal('quickadd-backdrop');
@@ -80,12 +94,19 @@ function saveQuickAdd(): void {
       flash('Choisissez une parcelle');
       return;
     }
-    const emptyIdx = (bed.cells || []).findIndex((c) => !c);
-    if (emptyIdx === -1) {
+    // Si on a cliqué une case précise (et qu'elle est toujours libre), on plante
+    // exactement là. Sinon on prend la première case libre de la parcelle.
+    let targetIdx = -1;
+    if (plantTarget && plantTarget.bedId === bedId && !bed.cells[plantTarget.index]) {
+      targetIdx = plantTarget.index;
+    } else {
+      targetIdx = (bed.cells || []).findIndex((c) => !c);
+    }
+    if (targetIdx === -1) {
       flash('Parcelle pleine.');
       return;
     }
-    bed.cells[emptyIdx] = { id: uid('c'), plant: plantId, planted, status: 'healthy', notes: '' };
+    bed.cells[targetIdx] = { id: uid('c'), plant: plantId, planted, status: 'healthy', notes: '' };
     syncGardenTasks();
     awardXP('plant_added');
     checkMilestones();
@@ -105,6 +126,7 @@ function saveQuickAdd(): void {
   }
 
   state.draft = null;
+  plantTarget = null;
   save();
   clearDraftFields();
   closeModal('quickadd-backdrop');
@@ -119,8 +141,8 @@ function clearDraftFields(): void {
 
 /** Wire the quick-add modal. Call once at boot. */
 export function initQuickAdd(): void {
-  el('qa-close').addEventListener('click', () => closeModal('quickadd-backdrop'));
-  el('qa-cancel').addEventListener('click', () => closeModal('quickadd-backdrop'));
+  el('qa-close').addEventListener('click', () => { plantTarget = null; closeModal('quickadd-backdrop'); });
+  el('qa-cancel').addEventListener('click', () => { plantTarget = null; closeModal('quickadd-backdrop'); });
   el('qa-save').addEventListener('click', saveQuickAdd);
   qsa<HTMLElement>('[data-qa]').forEach((b) => b.addEventListener('click', () => setQAType(b.dataset.qa!)));
   el('qa-clear-draft').addEventListener('click', () => {

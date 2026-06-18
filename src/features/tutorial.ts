@@ -27,6 +27,31 @@ function renderTutStep(): void {
   el('tut-text').textContent = s.text;
   el('tut-next').textContent = tutStep < TUTORIAL_STEPS.length - 1 ? 'Suivant →' : 'Terminer ✓';
 
+  // Démo/animation éventuelle (ex. déplacement d'une plante sur la grille).
+  const demo = el('tut-demo');
+  if (s.demo) {
+    demo.innerHTML = s.demo;
+    demo.style.display = '';
+  } else {
+    demo.innerHTML = '';
+    demo.style.display = 'none';
+  }
+
+  // Bascule sur la vue concernée par l'étape, puis on attend le rendu/layout
+  // avant de mesurer et positionner le surlignage.
+  const activeView = document.querySelector<HTMLElement>('.view.active')?.dataset.view;
+  if (s.view && s.view !== activeView) {
+    setView(s.view);
+    requestAnimationFrame(() => requestAnimationFrame(positionTutStep));
+  } else {
+    positionTutStep();
+  }
+}
+
+function positionTutStep(): void {
+  const s = TUTORIAL_STEPS[tutStep];
+  if (!s) return;
+
   const ov = el('tutorial-overlay');
   const hl = el('tut-highlight');
   const card = el('tut-card');

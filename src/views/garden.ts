@@ -113,7 +113,7 @@ export function renderGarden(): void {
       if (node.classList.contains('has-plant')) {
         openPlantPanel(idx);
       } else {
-        openQuickAdd('plant');
+        openQuickAdd('plant', { bedId: bed.id, index: idx });
       }
     });
   });

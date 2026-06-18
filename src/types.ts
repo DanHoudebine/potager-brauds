@@ -113,6 +113,10 @@ export interface TutorialStep {
   sel: string;
   title: string;
   text: string;
+  /** Vue à afficher pendant cette étape (dashboard, garden, catalog…). */
+  view?: string;
+  /** HTML d'animation/démonstration affiché dans la carte du tutoriel. */
+  demo?: string;
 }
 
 export interface Cell {
