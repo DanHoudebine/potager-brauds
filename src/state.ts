@@ -77,6 +77,7 @@ function buildDefaultState(): AppState {
     weather: null,
     shopping: [],
     harvests: [],
+    seeds: [],
   };
 }
 
@@ -102,6 +103,7 @@ function buildEmptyState(): AppState {
     weather: null,
     shopping: [],
     harvests: [],
+    seeds: [],
   };
 }
 
@@ -111,10 +113,12 @@ function loadState(): AppState {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return def;
     const saved = JSON.parse(raw) as Partial<AppState>;
-    const merged = { ...def, ...saved } as AppState;
-    merged.prefs = { ...def.prefs, ...(saved.prefs || {}) };
-    merged.profile = { ...def.profile, ...(saved.profile || {}) };
-    return merged;
+    const loaded = { ...def, ...saved } as AppState;
+    loaded.prefs = { ...def.prefs, ...(saved.prefs || {}) };
+    loaded.profile = { ...def.profile, ...(saved.profile || {}) };
+    if (!loaded.harvests) loaded.harvests = [];
+    if (!loaded.seeds) loaded.seeds = [];
+    return loaded;
   } catch {
     return def;
   }

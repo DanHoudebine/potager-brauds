@@ -10,6 +10,7 @@ import { setView } from '../ui/router';
 import { syncGardenTasks } from '../garden-sync';
 import { awardXP, checkMilestones } from '../features/xp';
 import { haptic } from '../services/native';
+import { REGIONS } from '../data/regions';
 
 interface CatalogFilter {
   q: string;
@@ -48,6 +49,50 @@ const FILTER_GROUPS = [
   ] },
 ] as const;
 
+function renderRecommendedSection(): void {
+  const node = elOpt('catalog-recommended');
+  if (!node) return;
+  const regionId = state.profile?.region;
+  if (!regionId) { node.innerHTML = ''; return; }
+  const region = REGIONS.find((r) => r.id === regionId);
+  if (!region) { node.innerHTML = ''; return; }
+
+  // Import regionSuccessRates from regions data
+  // Use CATALOG filtered and sorted by success rate for this region
+  // We need to get the success rates - check if REGION_RATES or similar exists
+  // Actually, use regionScore from features/region
+  const top = [...CATALOG]
+    .map((p) => ({ p, score: regionScore(p.id) ?? 0 }))
+    .filter((x) => x.score >= 70)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 6);
+
+  if (!top.length) { node.innerHTML = ''; return; }
+  node.innerHTML = `
+    <div class="recommended-section">
+      <div class="rec-head">
+        <div>
+          <div class="eyebrow">Pour votre région</div>
+          <h3>${region.emoji} Recommandées en ${region.label}</h3>
+        </div>
+      </div>
+      <div class="rec-chips">
+        ${top.map(({ p, score }) => `
+          <div class="rec-chip" data-rec="${p.id}">
+            <span class="rec-ic">${p.icon}</span>
+            <div>
+              <div class="rec-name">${escapeHTML(p.name)}</div>
+              <div class="rec-score">${score}% succès</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+
+  qsa<HTMLElement>('[data-rec]', node).forEach((chip) =>
+    chip.addEventListener('click', () => openAddToBedPicker(chip.dataset.rec!))
+  );
+}
+
 export function renderCatalog(): void {
   renderRegionPrompt();
 
@@ -73,6 +118,8 @@ export function renderCatalog(): void {
     if (filter.difficulty !== 'all' && p.difficulty !== Number(filter.difficulty)) return false;
     return true;
   });
+
+  renderRecommendedSection();
 
   const grid = el('catalog-grid');
   if (!list.length) {
