@@ -113,7 +113,7 @@ export function handleLocalMode(): void {
 async function nativeGoogleSignIn(): Promise<void> {
   try {
     await GoogleAuth.initialize({
-      clientId: '813154716183-tgdujrasr772i91lc63fhlg4ef3t0c24.apps.googleusercontent.com',
+      clientId: '978848610696-92oaec4ef83niats5l1ureb31eppbd08.apps.googleusercontent.com',
       scopes: ['profile', 'email'],
       grantOfflineAccess: true,
     });
