@@ -149,6 +149,7 @@ export function handleGoogleSignIn(): void {
 }
 
 export function signOut(): void {
+  sessionStorage.removeItem('firebase-synced');
   if (isFirebaseConfigured()) window.firebase.auth().signOut().catch(() => {});
   if (Capacitor.isNativePlatform()) GoogleAuth.signOut().catch(() => {});
   currentUser = null;
@@ -176,9 +177,13 @@ export function initAuth(): void {
       updateAccountUI();
       closeModal('auth-backdrop');
       enterCb();
-      void syncFromFirebase().then((synced) => {
-        if (synced) window.location.reload();
-      });
+      // Sync once per browser session — prevents infinite reload loop
+      if (!sessionStorage.getItem('firebase-synced')) {
+        sessionStorage.setItem('firebase-synced', '1');
+        void syncFromFirebase().then((synced) => {
+          if (synced) window.location.reload();
+        });
+      }
     } else {
       openModal('auth-backdrop');
     }

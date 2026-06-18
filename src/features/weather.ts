@@ -1,28 +1,38 @@
 // ============================================================
 //  Météo — Open-Meteo (gratuit, sans clé) + géolocalisation
 // ============================================================
-import { Capacitor } from '@capacitor/core';
-import { Geolocation } from '@capacitor/geolocation';
 import { state, save } from '../state';
 import { elOpt } from '../ui/dom';
 import { WEATHER_CODES, RAINY_CODES } from '../data/weatherCodes';
+import type { RegionId } from '../types';
 
 const THIRTY_MIN = 1800000;
 
 const DAYS_FR = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
 
+const REGION_COORDS: Record<RegionId, { lat: number; lon: number }> = {
+  nord:      { lat: 50.63, lon: 3.07 },
+  idf:       { lat: 48.87, lon: 2.33 },
+  ocean:     { lat: 47.22, lon: -1.55 },
+  sudouest:  { lat: 43.60, lon: 1.44 },
+  med:       { lat: 43.30, lon: 5.38 },
+  est:       { lat: 48.58, lon: 7.75 },
+  montagne:  { lat: 45.19, lon: 5.72 },
+};
+
 async function getCoords(): Promise<{ lat: number; lon: number } | null> {
-  if (Capacitor.isNativePlatform()) {
-    const perm = await Geolocation.requestPermissions();
-    if (perm.location !== 'granted' && perm.coarseLocation !== 'granted') return null;
-    const pos = await Geolocation.getCurrentPosition({ timeout: 5000, enableHighAccuracy: false });
-    return { lat: pos.coords.latitude, lon: pos.coords.longitude };
+  if (navigator.geolocation) {
+    try {
+      const pos = await new Promise<GeolocationPosition>((resolve, reject) =>
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000, enableHighAccuracy: false })
+      );
+      return { lat: pos.coords.latitude, lon: pos.coords.longitude };
+    } catch {
+      /* géoloc refusée ou timeout — on tombe sur le fallback région */
+    }
   }
-  if (!navigator.geolocation) return null;
-  const pos = await new Promise<GeolocationPosition>((resolve, reject) =>
-    navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 })
-  );
-  return { lat: pos.coords.latitude, lon: pos.coords.longitude };
+  const region = state.profile?.region as RegionId | null;
+  return region ? (REGION_COORDS[region] ?? null) : null;
 }
 
 export async function fetchWeather(): Promise<void> {
