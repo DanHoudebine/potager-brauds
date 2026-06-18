@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Le Potager des Brauds</string>
     <string name="title_activity_main">Le Potager des Brauds</string>
-    <string name="package_name">com.potagerdesbrauds.app</string>
-    <string name="custom_url_scheme">com.potagerdesbrauds.app</string>
+    <string name="package_name">com.jardindepoche.app</string>
+    <string name="custom_url_scheme">com.jardindepoche.app</string>
     <string name="server_client_id">813154716183-tgdujrasr772i91lc63fhlg4ef3t0c24.apps.googleusercontent.com</string>
 </resources>

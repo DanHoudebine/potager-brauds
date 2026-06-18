@@ -1,4 +1,4 @@
-package com.potagerdesbrauds.app;
+package com.jardindepoche.app;
 
 import com.getcapacitor.BridgeActivity;
 
