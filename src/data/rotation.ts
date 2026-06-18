@@ -45,6 +45,33 @@ const ROTATION_MAP: Record<string, RotationAdvice> = {
     avoidFamilies: ['Rosacées'],
     reason: 'Évitez de replanter des rosacées au même endroit.',
   },
+  // Familles botaniques telles qu'utilisées dans le catalogue (synonymes des
+  // termes de jardinage ci-dessus) — pour que la rotation s'applique aussi.
+  'Amaryllidacées': {
+    nextFamilies: ['Légumineuses', 'Cucurbitacées'],
+    avoidFamilies: ['Amaryllidacées'],
+    reason: 'Les alliacées (oignon, ail, poireau) nettoient le sol. Suivez avec des légumineuses.',
+  },
+  'Fabacées': {
+    nextFamilies: ['Brassicacées', 'Cucurbitacées'],
+    avoidFamilies: ['Fabacées'],
+    reason: 'Les légumineuses (pois, haricot) enrichissent le sol en azote.',
+  },
+  'Lamiacées': {
+    nextFamilies: ['Légumineuses', 'Solanacées'],
+    avoidFamilies: ['Lamiacées'],
+    reason: 'Les aromatiques sont peu exigeantes — laissez le sol se reposer ou enrichissez-le.',
+  },
+  'Amaranthacées': {
+    nextFamilies: ['Légumineuses', 'Alliacées'],
+    avoidFamilies: ['Amaranthacées'],
+    reason: 'Betterave, blette et épinard puisent en profondeur : alternez avec des légumineuses.',
+  },
+  'Poacées': {
+    nextFamilies: ['Légumineuses'],
+    avoidFamilies: ['Poacées'],
+    reason: 'Le maïs est gourmand en azote — restaurez le sol avec des légumineuses.',
+  },
 };
 
 export function getRotationAdvice(family: string): RotationAdvice | null {
