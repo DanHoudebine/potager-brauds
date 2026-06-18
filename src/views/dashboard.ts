@@ -6,7 +6,8 @@ import { el, elOpt } from '../ui/dom';
 import { escapeHTML, iso, addDays } from '../utils';
 import { plantById } from '../data/catalog';
 import { getUser } from '../services/auth';
-import { fetchWeather, renderWeatherWidget } from '../features/weather';
+import { fetchWeather, renderWeatherWidget, hasFrostRisk } from '../features/weather';
+import { getMoonPhase } from '../data/moonPhase';
 import { renderXPWidget } from '../features/xp';
 import { updateNavBadges } from '../ui/router';
 import { renderTasks } from './tasks';
@@ -44,6 +45,7 @@ export function renderDashboard(): void {
 
   void fetchWeather();
   renderWeatherWidget();
+  renderMoonWidget();
   updateNavBadges();
   renderXPWidget();
 
@@ -52,6 +54,9 @@ export function renderDashboard(): void {
   const alerts: Alert[] = [];
   const urgentCells = beds.flatMap((b) => (b.cells || []).filter((c) => c && c.status === 'urgent'));
   const warnCells = beds.flatMap((b) => (b.cells || []).filter((c) => c && c.status === 'warn'));
+  if (hasFrostRisk()) {
+    alerts.unshift({ kind: 'urgent', icon: '❄️', text: 'Gel prévu — couvrez vos plants fragiles cette nuit', act: 'PROTÉGER' });
+  }
   urgentCells.slice(0, 2).forEach((c) => {
     const p = plantById(c!.plant);
     alerts.push({ kind: 'urgent', icon: '🐛', text: `${p ? p.name : c!.plant} demande de l'attention — ${c!.notes || 'intervention urgente'}`, act: 'TRAITER' });
@@ -75,6 +80,22 @@ export function renderDashboard(): void {
 
   renderTasks(state.tasks.filter((t) => t.date === todayStr));
   renderWeekGlance(today);
+}
+
+function renderMoonWidget(): void {
+  const node = elOpt('moon-widget');
+  if (!node) return;
+  const moon = getMoonPhase(new Date());
+  node.style.display = '';
+  node.innerHTML = `
+    <div class="moon-card">
+      <div class="moon-emoji">${moon.emoji}</div>
+      <div class="moon-body">
+        <div class="moon-label">${moon.label}</div>
+        <div class="moon-activity">🌱 ${moon.activity}</div>
+        <div class="moon-tip xsmall muted">${moon.tip}</div>
+      </div>
+    </div>`;
 }
 
 function renderWeekGlance(today: Date): void {

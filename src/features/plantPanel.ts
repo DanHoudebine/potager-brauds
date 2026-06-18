@@ -56,6 +56,16 @@ export function openPlantPanel(idx: number): void {
       </div>
     </div>
 
+    <div class="pd-photo-wrap">
+      ${cell.photo
+        ? `<div class="pd-photo-preview"><img src="${cell.photo}" alt="Photo de la plante" class="pd-photo-img"><button class="pd-photo-del" id="pd-photo-del">✕ Retirer</button></div>`
+        : `<label class="pd-photo-add" id="pd-photo-label">
+            <input type="file" accept="image/*" capture="environment" id="pd-photo-input" style="display:none">
+            📷 Ajouter une photo
+          </label>`
+      }
+    </div>
+
     <div class="pd-section">
       <h4>En un coup d'œil</h4>
       <div class="pd-rows">
@@ -134,6 +144,46 @@ export function openPlantPanel(idx: number): void {
       },
     });
   };
+
+  const photoInput = document.getElementById('pd-photo-input') as HTMLInputElement | null;
+  const photoLabel = document.getElementById('pd-photo-label');
+  const photoDel = document.getElementById('pd-photo-del');
+
+  if (photoLabel && photoInput) {
+    photoLabel.addEventListener('click', () => photoInput.click());
+    photoInput.addEventListener('change', () => {
+      const file = photoInput.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        // Compress via canvas
+        const img = new Image();
+        img.onload = () => {
+          const MAX = 800;
+          const scale = Math.min(1, MAX / Math.max(img.width, img.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.round(img.width * scale);
+          canvas.height = Math.round(img.height * scale);
+          const ctx = canvas.getContext('2d')!;
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          cell.photo = canvas.toDataURL('image/jpeg', 0.7);
+          import('../state').then(({ save }) => save());
+          flash('Photo enregistrée ✓');
+          openPlantPanel(idx);  // re-render panel
+        };
+        img.src = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  if (photoDel) {
+    photoDel.addEventListener('click', () => {
+      cell.photo = undefined;
+      import('../state').then(({ save }) => save());
+      openPlantPanel(idx);
+    });
+  }
 
   el('plant-panel').classList.add('open');
   el('panel-backdrop').classList.add('open');

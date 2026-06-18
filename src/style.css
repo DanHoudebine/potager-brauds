@@ -1541,6 +1541,104 @@ a { color: var(--green-dark); }
 .share-preview.err { color: var(--urgent); }
 
 /* ============================================================
+   MOON WIDGET
+   ============================================================ */
+.moon-card {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; background: var(--bg-soft);
+  border-radius: 16px; border: 1px solid rgba(90,63,28,.1);
+  margin-bottom: 16px;
+}
+.moon-emoji { font-size: 38px; line-height: 1; flex-shrink: 0; }
+.moon-label { font-family: var(--serif); font-size: 17px; font-weight: 600; color: var(--ink); }
+.moon-activity { font-size: 13px; font-weight: 700; color: var(--green-dark); margin-top: 2px; }
+.moon-tip { margin-top: 4px; font-size: 12px; }
+
+/* ============================================================
+   RECOMMENDED BY REGION
+   ============================================================ */
+.recommended-section {
+  margin-bottom: 20px; padding: 16px;
+  background: linear-gradient(135deg, var(--green-tint), var(--bg-soft));
+  border-radius: 18px; border: 1px solid rgba(58,107,72,.15);
+}
+.rec-head { margin-bottom: 14px; }
+.rec-head h3 { font-family: var(--serif); font-size: 18px; font-weight: 600; margin: 0; }
+.rec-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.rec-chip {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; background: var(--bg); border-radius: 14px;
+  border: 1px solid rgba(58,107,72,.2); cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+}
+.rec-chip:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+.rec-ic { font-size: 26px; }
+.rec-name { font-size: 13px; font-weight: 800; color: var(--ink); }
+.rec-score { font-size: 11px; color: var(--green-dark); font-weight: 700; }
+
+/* ============================================================
+   ROTATION DES CULTURES
+   ============================================================ */
+.rotation-card {
+  margin-top: 8px; padding: 12px 14px;
+  background: var(--earth-tint); border-radius: 12px;
+  border: 1px solid rgba(90,63,28,.15); font-size: 13px;
+}
+.rot-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--earth-dark); margin-bottom: 4px; }
+.rot-main { font-family: var(--serif); font-size: 16px; font-weight: 600; color: var(--ink); }
+.rot-reason { margin: 4px 0; }
+.rot-next { margin-top: 8px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; color: var(--ink-muted); }
+.rot-avoid { margin-top: 4px; }
+
+/* ============================================================
+   PLANT PHOTO
+   ============================================================ */
+.pd-photo-wrap { margin: 12px 0; }
+.pd-photo-add {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px; border-radius: 12px; border: 2px dashed rgba(58,107,72,.3);
+  color: var(--green-dark); font-size: 14px; font-weight: 700;
+  cursor: pointer; transition: background .15s;
+}
+.pd-photo-add:hover { background: var(--green-tint); }
+.pd-photo-preview { position: relative; border-radius: 14px; overflow: hidden; }
+.pd-photo-img { width: 100%; max-height: 220px; object-fit: cover; display: block; border-radius: 14px; }
+.pd-photo-del {
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(0,0,0,.55); color: #fff; border: none;
+  padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer;
+}
+
+/* ============================================================
+   SHARE GARDEN
+   ============================================================ */
+.share-code-wrap {
+  display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+  background: var(--bg-soft); border-radius: 14px; border: 2px solid var(--green);
+}
+.share-code-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-muted); margin-bottom: 2px; }
+.share-code {
+  font-family: ui-monospace, monospace; font-size: 28px; font-weight: 900;
+  letter-spacing: .18em; color: var(--green-dark); flex: 1;
+}
+.import-preview-card {
+  padding: 14px; background: var(--green-tint); border-radius: 12px;
+  border: 1px solid rgba(58,107,72,.2); font-size: 14px;
+}
+
+/* ============================================================
+   TROC DE GRAINES
+   ============================================================ */
+.troc-row {
+  display: flex; align-items: center; gap: 12px; padding: 12px 0;
+  border-bottom: 1px solid rgba(90,63,28,.08);
+}
+.troc-row:last-child { border-bottom: none; }
+.troc-ic { font-size: 28px; flex-shrink: 0; }
+.troc-info { flex: 1; min-width: 0; }
+.troc-name { font-size: 14px; font-weight: 800; color: var(--ink); }
+
+/* ============================================================
    PRIVACY POLICY
    ============================================================ */
 .privacy-body { font-size: 14px; line-height: 1.6; }

@@ -2,7 +2,7 @@
 //  Mon compte — préférences, export, reset, déconnexion
 // ============================================================
 import { resetStored } from '../state';
-import { el, openModal, closeModal, confirmDialog } from '../ui/dom';
+import { el, elOpt, openModal, closeModal, confirmDialog } from '../ui/dom';
 import { updateAccountUI, signOut } from '../services/auth';
 import { toggleDarkMode } from '../theme';
 import { toggleAmbient } from '../services/audio';
@@ -49,6 +49,14 @@ export function initAccount(): void {
   el('acc-harvests').addEventListener('click', () => {
     closeModal('acc-backdrop');
     openHarvests();
+  });
+  elOpt('acc-share')?.addEventListener('click', () => {
+    closeModal('acc-backdrop');
+    import('./share').then(({ openShareModal }) => openShareModal());
+  });
+  elOpt('acc-troc')?.addEventListener('click', () => {
+    closeModal('acc-backdrop');
+    import('./troc').then(({ openTrocModal }) => openTrocModal());
   });
   el('acc-region').addEventListener('click', () => {
     closeModal('acc-backdrop');

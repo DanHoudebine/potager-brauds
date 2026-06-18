@@ -10,6 +10,7 @@ import { updateNavBadges } from '../ui/router';
 import { openPlantPanel } from '../features/plantPanel';
 import { openQuickAdd } from '../features/quickAdd';
 import { syncGardenTasks } from '../garden-sync';
+import { getRotationForBed } from '../data/rotation';
 
 const TITLE_MAP: Record<string, string> = { all: 'Le potager', jardin: 'Jardin (plein air)', serre: 'Serre (sous abri)' };
 
@@ -33,6 +34,28 @@ function computeBlockedCells(bed: Bed): Map<number, number> {
     });
   });
   return blocked;
+}
+
+function renderRotationHint(bed: Bed): void {
+  const node = elOpt('rotation-hint');
+  if (!node) return;
+  const families = (bed.cells || []).filter(Boolean).map((c) => {
+    const p = plantById(c!.plant);
+    return p?.family ?? '';
+  }).filter(Boolean);
+  const result = getRotationForBed(families);
+  if (!result) { node.innerHTML = ''; return; }
+  node.innerHTML = `
+    <div class="rotation-card">
+      <div class="rot-label">🔄 Rotation conseillée</div>
+      <div class="rot-main">${escapeHTML(result.mainFamily)}</div>
+      <div class="rot-reason xsmall muted">${escapeHTML(result.advice.reason)}</div>
+      <div class="rot-next">
+        Saison prochaine :
+        ${result.advice.nextFamilies.map((f) => `<span class="chip green">${escapeHTML(f)}</span>`).join(' ')}
+      </div>
+      ${result.advice.avoidFamilies.length ? `<div class="rot-avoid xsmall muted">Éviter : ${result.advice.avoidFamilies.map((f) => escapeHTML(f)).join(', ')}</div>` : ''}
+    </div>`;
 }
 
 export function renderGarden(): void {
@@ -78,6 +101,7 @@ export function renderGarden(): void {
   const planted = (bed.cells || []).filter(Boolean).length;
   const total = (bed.cols || 4) * (bed.rows || 3);
   el('bed-sub').textContent = `${bed.cols} × ${bed.rows} • ${planted} plantée${planted > 1 ? 's' : ''} • ${total - planted} libre${total - planted > 1 ? 's' : ''}`;
+  renderRotationHint(bed);
 
   const grid = el('bed-grid');
   grid.style.setProperty('--cols', String(bed.cols || 4));

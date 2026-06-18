@@ -32,11 +32,13 @@ export async function fetchWeather(): Promise<void> {
     const coords = await getCoords();
     if (!coords) return;
     const { lat, lon } = coords;
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&current=temperature_2m,precipitation,weathercode,windspeed_10m&timezone=auto`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&current=temperature_2m,precipitation,weathercode,windspeed_10m&daily=temperature_2m_min&forecast_days=3&timezone=auto`;
     const res = await fetch(url);
     if (!res.ok) return;
     const data = await res.json();
     const cur = data.current;
+    const dailyMins: number[] = data.daily?.temperature_2m_min ?? [];
+    const minTemp = dailyMins.length > 0 ? Math.min(...dailyMins) : undefined;
     state.weather = {
       fetched: now,
       lat,
@@ -45,6 +47,7 @@ export async function fetchWeather(): Promise<void> {
       rain: cur.precipitation,
       code: cur.weathercode,
       wind: Math.round(cur.windspeed_10m),
+      minTemp,
     };
     save();
     renderWeatherWidget();
@@ -66,8 +69,15 @@ export function renderWeatherWidget(): void {
   let advice = '';
   if (isRainy && w.rain > 1) advice = "💧 Il pleut — arrosage inutile aujourd'hui";
   else if (w.temp >= 30) advice = '🌡️ Chaleur — arrosez en soirée, pas au soleil';
-  else if (w.temp <= 5) advice = '❄️ Risque de gel — protégez les plants fragiles';
+  else if ((w.minTemp !== undefined && w.minTemp <= 2) || w.temp <= 5)
+    advice = `❄️ Gel prévu ${w.minTemp !== undefined ? `(${w.minTemp}°C min)` : ''} — protégez vos plants fragiles`;
 
   widget.style.display = '';
   widget.innerHTML = `<div class="wx-main"><span class="wx-icon">${wc.icon}</span><div class="wx-body"><div class="wx-temp">${w.temp}°C <span class="wx-label">${wc.label}</span></div>${advice ? `<div class="wx-advice">${advice}</div>` : ''}</div></div>`;
+}
+
+export function hasFrostRisk(): boolean {
+  const w = state.weather;
+  if (!w) return false;
+  return (w.minTemp !== undefined && w.minTemp <= 2) || w.temp <= 2;
 }

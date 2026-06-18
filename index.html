@@ -88,6 +88,9 @@
       <!-- Widget météo (rempli par JS) -->
       <div id="weather-widget" style="display:none"></div>
 
+      <!-- Widget lune (rempli par JS) -->
+      <div id="moon-widget" style="display:none"></div>
+
       <div class="stats">
         <div class="stat stat-plants"><div class="ic">🌱</div><div class="v" id="stat-plants">—</div><div class="k">Plantes</div></div>
         <div class="stat stat-water"><div class="ic">💧</div><div class="v" id="stat-water">—</div><div class="k">À arroser</div></div>
@@ -176,6 +179,7 @@
           <div>
             <div class="name" id="bed-name">—</div>
             <div class="sub" id="bed-sub">—</div>
+            <div id="rotation-hint"></div>
           </div>
           <div class="row gap-2">
             <button class="btn sm" id="rename-bed">✏️ Renommer</button>
@@ -210,6 +214,7 @@
         <div class="search"><input class="input" id="catalog-search" placeholder="Rechercher tomate, basilic…"></div>
       </div>
       <div id="region-catalog-prompt"></div>
+      <div id="catalog-recommended"></div>
       <div class="filters" id="catalog-filters"></div>
       <div class="grid grid-3" id="catalog-grid"></div>
     </section>
@@ -733,6 +738,16 @@
       <span class="ai">🛒</span>
       <div style="flex:1"><div class="at">Liste de courses</div><div class="as">Graines et fournitures à acheter</div></div>
     </button>
+    <button class="acc-row" id="acc-share">
+      <span class="ai">🔗</span>
+      <div style="flex:1"><div class="at">Partager mon jardin</div><div class="as">Donnez un code à un proche pour partager vos parcelles</div></div>
+      <span style="color:var(--ink-soft);font-size:18px">›</span>
+    </button>
+    <button class="acc-row" id="acc-troc">
+      <span class="ai">🌾</span>
+      <div style="flex:1"><div class="at">Troc de graines</div><div class="as">Échangez vos semences avec la communauté</div></div>
+      <span style="color:var(--ink-soft);font-size:18px">›</span>
+    </button>
     <button class="acc-row" id="acc-privacy">
       <span class="ai">🔒</span>
       <div style="flex:1"><div class="at">Politique de confidentialité</div><div class="as">Comment nous utilisons vos données</div></div>
@@ -752,7 +767,28 @@
   </div>
 </div>
 
-<!-- ===== SHARE / IMPORT MODAL ===== -->
+<!-- ===== SHARE MODAL ===== -->
+<div class="modal-backdrop" id="share-modal-backdrop">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-head">
+      <h2>🔗 Partager mon jardin</h2>
+      <button class="close" id="share-modal-close" aria-label="Fermer">✕</button>
+    </div>
+    <div id="share-modal-body"></div>
+  </div>
+</div>
+
+<!-- ===== TROC MODAL ===== -->
+<div class="modal-backdrop" id="troc-modal-backdrop">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-head">
+      <h2>🌾 Troc de graines</h2>
+      <button class="close" id="troc-modal-close" aria-label="Fermer">✕</button>
+    </div>
+    <div id="troc-modal-body"></div>
+  </div>
+</div>
+
 <!-- ===== REMINDER MODAL ===== -->
 <div class="modal-backdrop" id="reminder-modal-backdrop">
   <div class="modal" style="max-width:460px">
