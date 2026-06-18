@@ -128,21 +128,11 @@
         <div class="card">
           <div class="card-title">
             <h3>Météo</h3>
-            <span class="meta">Conditions du jardin</span>
+            <span class="meta" id="wx-card-meta">Conditions du jardin</span>
           </div>
-          <div class="weather-main">
-            <div class="wi">⛅</div>
-            <div>
-              <div class="temp">19°<small>C</small></div>
-              <div class="desc">Partiellement nuageux</div>
-            </div>
+          <div id="wx-card-body">
+            <div class="muted small" style="padding:12px 0">Chargement de la météo…</div>
           </div>
-          <div class="forecast">
-            <div class="day"><div class="d">Dim</div><div class="ic">☀️</div><div class="t">22° <small>13°</small></div></div>
-            <div class="day"><div class="d">Lun</div><div class="ic">🌦️</div><div class="t">17° <small>11°</small></div></div>
-            <div class="day"><div class="d">Mar</div><div class="ic">⛅</div><div class="t">20° <small>12°</small></div></div>
-          </div>
-          <div class="mt-3 xsmall muted">Pas de risque de gel cette semaine ✓</div>
         </div>
       </div>
 
@@ -743,11 +733,6 @@
       <div style="flex:1"><div class="at">Partager mon jardin</div><div class="as">Donnez un code à un proche pour partager vos parcelles</div></div>
       <span style="color:var(--ink-soft);font-size:18px">›</span>
     </button>
-    <button class="acc-row" id="acc-troc">
-      <span class="ai">🌾</span>
-      <div style="flex:1"><div class="at">Troc de graines</div><div class="as">Échangez vos semences avec la communauté</div></div>
-      <span style="color:var(--ink-soft);font-size:18px">›</span>
-    </button>
     <button class="acc-row" id="acc-privacy">
       <span class="ai">🔒</span>
       <div style="flex:1"><div class="at">Politique de confidentialité</div><div class="as">Comment nous utilisons vos données</div></div>
@@ -775,17 +760,6 @@
       <button class="close" id="share-modal-close" aria-label="Fermer">✕</button>
     </div>
     <div id="share-modal-body"></div>
-  </div>
-</div>
-
-<!-- ===== TROC MODAL ===== -->
-<div class="modal-backdrop" id="troc-modal-backdrop">
-  <div class="modal" style="max-width:500px">
-    <div class="modal-head">
-      <h2>🌾 Troc de graines</h2>
-      <button class="close" id="troc-modal-close" aria-label="Fermer">✕</button>
-    </div>
-    <div id="troc-modal-body"></div>
   </div>
 </div>
 

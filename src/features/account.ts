@@ -54,10 +54,6 @@ export function initAccount(): void {
     closeModal('acc-backdrop');
     import('./share').then(({ openShareModal }) => openShareModal());
   });
-  elOpt('acc-troc')?.addEventListener('click', () => {
-    closeModal('acc-backdrop');
-    import('./troc').then(({ openTrocModal }) => openTrocModal());
-  });
   el('acc-region').addEventListener('click', () => {
     closeModal('acc-backdrop');
     openRegionModal();
