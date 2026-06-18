@@ -1,5 +1,5 @@
 // ============================================================
-//  Types — Jardin de Poche
+//  Types — Potager de Poche
 // ============================================================
 
 export type Category = 'legume' | 'herbe' | 'fruit' | 'arbre-fruitier';
