@@ -3,7 +3,7 @@
 // ============================================================
 import { state, save } from '../state';
 import { el, qsa, confirmDialog, flash } from '../ui/dom';
-import { formatDate, escapeHTML } from '../utils';
+import { formatDate, escapeHTML, compressImage } from '../utils';
 import { openQuickAdd } from '../features/quickAdd';
 
 let journalFilter = 'all';
@@ -72,20 +72,11 @@ export function renderJournal(): void {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = 'image/*';
+      input.capture = 'environment';
       input.onchange = () => {
         const file = input.files?.[0];
         if (!file) return;
-        if (file.size > 2 * 1024 * 1024) {
-          flash('Photo trop lourde — max 2 Mo');
-          return;
-        }
-        const r = new FileReader();
-        r.onload = () => {
-          const dataUrl = String(r.result);
-          if (!dataUrl.startsWith('data:image/')) {
-            flash('Format non supporté');
-            return;
-          }
+        compressImage(file).then((dataUrl) => {
           const j = (state.journal || []).find((x) => x.id === id);
           if (j) {
             j.photo = dataUrl;
@@ -93,8 +84,7 @@ export function renderJournal(): void {
             renderJournal();
             flash('Photo ajoutée ✓');
           }
-        };
-        r.readAsDataURL(file);
+        }).catch(() => flash('Impossible de lire cette image'));
       };
       input.click();
     })

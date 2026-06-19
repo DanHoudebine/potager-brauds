@@ -5,7 +5,7 @@ import { state, activeBed } from '../state';
 import { el } from '../ui/dom';
 import { confirmDialog, flash } from '../ui/dom';
 import { plantById } from '../data/catalog';
-import { daysBetween, parseISO, addDays, iso, formatDate, seasonLabel, escapeHTML } from '../utils';
+import { daysBetween, parseISO, addDays, iso, formatDate, seasonLabel, escapeHTML, compressImage } from '../utils';
 import { regionScore, regionScoreHTML } from './region';
 import { awardXP, checkMilestones } from './xp';
 import { openHarvests } from './harvests';
@@ -154,26 +154,12 @@ export function openPlantPanel(idx: number): void {
     photoInput.addEventListener('change', () => {
       const file = photoInput.files?.[0];
       if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        // Compress via canvas
-        const img = new Image();
-        img.onload = () => {
-          const MAX = 800;
-          const scale = Math.min(1, MAX / Math.max(img.width, img.height));
-          const canvas = document.createElement('canvas');
-          canvas.width = Math.round(img.width * scale);
-          canvas.height = Math.round(img.height * scale);
-          const ctx = canvas.getContext('2d')!;
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          cell.photo = canvas.toDataURL('image/jpeg', 0.7);
-          import('../state').then(({ save }) => save());
-          flash('Photo enregistrée ✓');
-          openPlantPanel(idx);  // re-render panel
-        };
-        img.src = reader.result as string;
-      };
-      reader.readAsDataURL(file);
+      compressImage(file).then((dataUrl) => {
+        cell.photo = dataUrl;
+        import('../state').then(({ save }) => save());
+        flash('Photo enregistrée ✓');
+        openPlantPanel(idx);
+      }).catch(() => flash('Impossible de lire cette image'));
     });
   }
 
