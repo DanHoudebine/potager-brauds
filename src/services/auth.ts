@@ -132,7 +132,7 @@ async function nativeGoogleSignIn(): Promise<void> {
     const msg = (err as { message?: string }).message ?? '';
     // 12501 = annulé par l'utilisateur
     if (code === 12501 || String(code) === '12501' || msg.includes('12501') || msg.toLowerCase().includes('cancel')) return;
-    showAuthError(`Erreur ${code ?? '?'}: ${msg || 'Connexion impossible. Vérifiez votre réseau et réessayez.'}`);
+    showAuthError('Connexion impossible. Vérifiez votre réseau et réessayez.');
   }
 }
 
