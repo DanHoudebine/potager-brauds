@@ -20,6 +20,8 @@ function buildDefaultState(): AppState {
       tutorialDone: false,
       guideSeen: [],
       region: null,
+      displayName: null,
+      gardenStartDate: null,
     },
     beds: [
       { id: 'b1', name: 'Jardin', type: 'jardin', cols: 4, rows: 3, cells: [
@@ -89,7 +91,7 @@ function buildEmptyState(): AppState {
     ...def,
     profile: {
       surveyed: false, level: null, experience: null, spaceType: null,
-      xp: 0, stars: 0, milestones: [], tutorialDone: false, guideSeen: [], region: null,
+      xp: 0, stars: 0, milestones: [], tutorialDone: false, guideSeen: [], region: null, displayName: null, gardenStartDate: null,
     },
     beds: [{ id: 'b1', name: 'Jardin', type: 'jardin', cols: 4, rows: 3, cells: Array(12).fill(null) }],
     activeBedId: 'b1',

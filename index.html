@@ -708,6 +708,11 @@
       </div>
       <span class="sync-badge local" id="acc-sync-badge">Local</span>
     </div>
+    <button class="acc-row" id="acc-profile">
+      <span class="ai">✏️</span>
+      <div style="flex:1"><div class="at">Mon profil</div><div class="as" id="acc-profile-label">Nom et date de début de jardinage</div></div>
+      <span style="color:var(--ink-soft);font-size:18px">›</span>
+    </button>
     <button class="acc-row" id="acc-harvests">
       <span class="ai">🥕</span>
       <div style="flex:1"><div class="at">Mes récoltes</div><div class="as">Suivi des quantités et comparatif par mois / année</div></div>
@@ -881,6 +886,28 @@
 
 <!-- Firebase SDK (compat, optionnel) -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<!-- Modal profil utilisateur -->
+<div class="modal-backdrop" id="profile-modal-backdrop">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-head">
+      <h2>Mon profil</h2>
+      <button class="close" id="profile-modal-close" aria-label="Fermer">✕</button>
+    </div>
+    <div style="padding:0 20px 20px">
+      <div class="field mb-3">
+        <label>Prénom / surnom</label>
+        <input class="input" type="text" id="profile-name" placeholder="Comment on vous appelle ?" maxlength="40">
+      </div>
+      <div class="field mb-4">
+        <label>Jardinier depuis le</label>
+        <input class="input" type="date" id="profile-start-date">
+        <div class="xsmall muted mt-1" id="profile-start-label"></div>
+      </div>
+      <button class="btn primary" id="profile-save" style="width:100%">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
