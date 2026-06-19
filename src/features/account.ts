@@ -1,7 +1,8 @@
 // ============================================================
 //  Mon compte — préférences, export, reset, déconnexion
 // ============================================================
-import { state, save, resetStored } from '../state';
+import { state, save, resetStored, STORAGE_KEY } from '../state';
+import type { AppState } from '../types';
 import { el, elOpt, openModal, closeModal, confirmDialog, flash } from '../ui/dom';
 import { updateAccountUI, signOut } from '../services/auth';
 import { toggleDarkMode } from '../theme';
@@ -76,6 +77,48 @@ async function exportData(): Promise<void> {
   flash('Sauvegarde téléchargée ✓');
 }
 
+function importData(): void {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'application/json,.json';
+  input.onchange = () => {
+    const file = input.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(String(reader.result));
+      } catch {
+        flash('Fichier illisible ❌');
+        return;
+      }
+      // Validation minimale : doit ressembler à un état d'application.
+      const data = parsed as Partial<AppState>;
+      if (!data || typeof data !== 'object' || !Array.isArray(data.beds) || !data.profile) {
+        flash("Ce fichier n'est pas une sauvegarde valide ❌");
+        return;
+      }
+      confirmDialog({
+        title: 'Restaurer cette sauvegarde ?',
+        msg: 'Vos données actuelles seront entièrement remplacées par celles du fichier. Cette action est irréversible.',
+        yesLabel: 'Oui, restaurer',
+        onYes: () => {
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+          } catch {
+            flash('Restauration impossible (stockage) ❌');
+            return;
+          }
+          location.reload();
+        },
+      });
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
 async function resetEverything(): Promise<void> {
   // Écrit un état vierge (jardin et serres vides) AVANT de recharger, pour que
   // l'app ne ré-injecte pas les données de démonstration au redémarrage.
@@ -120,6 +163,10 @@ export function initAccount(): void {
     openShoppingList();
   });
   el('acc-export').addEventListener('click', () => { void exportData(); });
+  el('acc-import').addEventListener('click', () => {
+    closeModal('acc-backdrop');
+    importData();
+  });
   el('acc-privacy').addEventListener('click', openPrivacyModal);
   el('acc-replay-tutorial').addEventListener('click', () => {
     closeModal('acc-backdrop');
