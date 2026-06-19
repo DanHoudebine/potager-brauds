@@ -193,6 +193,8 @@ export interface Profile {
   tutorialDone: boolean;
   guideSeen: string[];
   region: RegionId | null;
+  displayName: string | null;
+  gardenStartDate: string | null;
 }
 
 export interface Draft {
