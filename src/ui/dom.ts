@@ -65,15 +65,27 @@ interface ConfirmOptions {
   msg: string;
   yesLabel?: string;
   onYes: () => void;
+  /** Bouton secondaire optionnel (ex. « Sauvegarder d'abord ») — ne ferme pas le dialogue. */
+  extraLabel?: string;
+  onExtra?: () => void;
 }
 
 let confirmCb: (() => void) | null = null;
+let confirmExtraCb: (() => void) | null = null;
 
-export function confirmDialog({ title, msg, yesLabel = 'Oui, supprimer', onYes }: ConfirmOptions): void {
+export function confirmDialog({ title, msg, yesLabel = 'Oui, supprimer', onYes, extraLabel, onExtra }: ConfirmOptions): void {
   el('confirm-title').textContent = title;
   el('confirm-msg').textContent = msg;
   el('confirm-yes').textContent = yesLabel;
   confirmCb = onYes;
+  confirmExtraCb = onExtra || null;
+  const extra = el('confirm-extra');
+  if (extraLabel && onExtra) {
+    extra.textContent = extraLabel;
+    extra.style.display = '';
+  } else {
+    extra.style.display = 'none';
+  }
   openModal('confirm-backdrop');
 }
 
@@ -82,13 +94,20 @@ export function initConfirm(): void {
   qsa('[data-confirm-no]').forEach((b) =>
     b.addEventListener('click', () => {
       confirmCb = null;
+      confirmExtraCb = null;
       closeModal('confirm-backdrop');
     })
   );
   el('confirm-yes').addEventListener('click', () => {
     const cb = confirmCb;
     confirmCb = null;
+    confirmExtraCb = null;
     closeModal('confirm-backdrop');
     if (cb) cb();
+  });
+  // Bouton secondaire : exécute l'action sans fermer le dialogue, l'utilisateur
+  // peut ensuite confirmer ou annuler la suppression en connaissance de cause.
+  el('confirm-extra').addEventListener('click', () => {
+    confirmExtraCb?.();
   });
 }

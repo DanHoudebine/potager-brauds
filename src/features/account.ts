@@ -136,9 +136,11 @@ export function initAccount(): void {
   el('acc-reset').addEventListener('click', () => {
     confirmDialog({
       title: 'Tout réinitialiser ?',
-      msg: "Plantes, tâches, journal, progression et questionnaire : tout sera effacé définitivement. L'application redémarrera comme à la première visite.",
+      msg: "Plantes, tâches, journal, progression et questionnaire : tout sera effacé définitivement. Pensez à sauvegarder votre jardin avant — vous pourrez le restaurer plus tard.",
       yesLabel: 'Oui, tout effacer',
       onYes: resetEverything,
+      extraLabel: '💾 Sauvegarder mon jardin d\'abord',
+      onExtra: () => { void exportData(); },
     });
   });
 
