@@ -1,20 +1,31 @@
 {
-  "name": "jardin-de-poche",
-  "version": "1.0.0",
-  "description": "Jardin de Poche - Application de jardinage",
+  "name": "potager-de-poche",
+  "version": "2.0.0",
+  "description": "Potager de Poche - Application de jardinage",
+  "type": "module",
   "scripts": {
-    "build": "node build.js",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
     "cap:sync": "npm run build && npx cap sync",
     "cap:android": "npm run build && npx cap sync && npx cap open android",
     "cap:run": "npm run build && npx cap sync && npx cap run android"
   },
   "dependencies": {
+    "@codetrix-studio/capacitor-google-auth": "3.4.0-rc.4",
     "@capacitor/android": "^6.0.0",
+    "@capacitor/app": "^6.0.3",
     "@capacitor/core": "^6.0.0",
     "@capacitor/geolocation": "^6.0.0",
-    "@capacitor/local-notifications": "^6.0.0"
+    "@capacitor/haptics": "^6.0.3",
+    "@capacitor/keyboard": "^6.0.4",
+    "@capacitor/local-notifications": "^6.0.0",
+    "@capacitor/splash-screen": "^6.0.4",
+    "@capacitor/status-bar": "^6.0.3"
   },
   "devDependencies": {
-    "@capacitor/cli": "^6.0.0"
+    "@capacitor/cli": "^6.0.0",
+    "typescript": "^5.4.0",
+    "vite": "^5.2.0"
   }
 }
