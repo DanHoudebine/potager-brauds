@@ -11,7 +11,7 @@ param(
 # --- ID Android de l'app Firebase (à remplir une fois) ---
 # Trouve-le dans : Firebase Console > Paramètres du projet > Tes apps > Android
 # Format : 1:978848610696:android:XXXXXXXXXXXXXXXX
-$FIREBASE_APP_ID = "1:978848610696:android:REMPLACER_PAR_TON_APP_ID"
+$FIREBASE_APP_ID = "1:978848610696:android:1:978848610696:android:5b21333b573897db3be23d"
 
 # Chemin vers l'APK debug généré par Gradle
 $APK = "android\app\build\outputs\apk\debug\app-debug.apk"
