@@ -7,15 +7,13 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Jardin de Poche">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.open-meteo.com wss://*.firebaseio.com; img-src 'self' data: blob: https:; frame-src 'none'">
+  <meta name="apple-mobile-web-app-title" content="Potager de Poche">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="manifest" href="manifest.json">
-  <title>Jardin de Poche</title>
+  <title>Potager de Poche</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -26,8 +24,8 @@
     <div class="brand">
       <div class="brand-mark">🌱</div>
       <div>
-        <div class="brand-name">Jardin de Poche</div>
-        <div class="brand-sub">des Brauds</div>
+        <div class="brand-name">Potager de Poche</div>
+        <div class="brand-sub">Votre potager au quotidien</div>
       </div>
     </div>
     <button class="nav-item active" data-nav="dashboard"><span class="nav-icon">🏡</span> Tableau de bord</button>
@@ -60,8 +58,8 @@
       <div class="row gap-2">
         <div class="brand-mark" style="width:34px;height:34px;font-size:19px;border-radius:10px">🌱</div>
         <div>
-          <div class="brand-name" style="font-size:18px;line-height:1">Potager</div>
-          <div class="brand-sub" style="font-size:10px">des Brauds</div>
+          <div class="brand-name" style="font-size:18px;line-height:1">Potager de Poche</div>
+          <div class="brand-sub" style="font-size:10px">Votre potager</div>
         </div>
       </div>
       <div class="topbar-actions">
@@ -89,6 +87,9 @@
 
       <!-- Widget météo (rempli par JS) -->
       <div id="weather-widget" style="display:none"></div>
+
+      <!-- Widget lune (rempli par JS) -->
+      <div id="moon-widget" style="display:none"></div>
 
       <div class="stats">
         <div class="stat stat-plants"><div class="ic">🌱</div><div class="v" id="stat-plants">—</div><div class="k">Plantes</div></div>
@@ -127,21 +128,11 @@
         <div class="card">
           <div class="card-title">
             <h3>Météo</h3>
-            <span class="meta">Conditions du jardin</span>
+            <span class="meta" id="wx-card-meta">Conditions du jardin</span>
           </div>
-          <div class="weather-main">
-            <div class="wi">⛅</div>
-            <div>
-              <div class="temp">19°<small>C</small></div>
-              <div class="desc">Partiellement nuageux</div>
-            </div>
+          <div id="wx-card-body">
+            <div class="muted small" style="padding:12px 0">Chargement de la météo…</div>
           </div>
-          <div class="forecast">
-            <div class="day"><div class="d">Dim</div><div class="ic">☀️</div><div class="t">22° <small>13°</small></div></div>
-            <div class="day"><div class="d">Lun</div><div class="ic">🌦️</div><div class="t">17° <small>11°</small></div></div>
-            <div class="day"><div class="d">Mar</div><div class="ic">⛅</div><div class="t">20° <small>12°</small></div></div>
-          </div>
-          <div class="mt-3 xsmall muted">Pas de risque de gel cette semaine ✓</div>
         </div>
       </div>
 
@@ -178,6 +169,7 @@
           <div>
             <div class="name" id="bed-name">—</div>
             <div class="sub" id="bed-sub">—</div>
+            <div id="rotation-hint"></div>
           </div>
           <div class="row gap-2">
             <button class="btn sm" id="rename-bed">✏️ Renommer</button>
@@ -185,6 +177,7 @@
           </div>
         </div>
         <div class="bed-grid-wrap"><div class="bed-grid" id="bed-grid"></div></div>
+        <div class="grid-hint xsmall muted">👆 Touchez une case vide pour y planter • ↔️ Glissez-déposez une plante pour la déplacer</div>
       </div>
 
       <div class="empty" id="garden-empty">
@@ -212,6 +205,7 @@
         <div class="search"><input class="input" id="catalog-search" placeholder="Rechercher tomate, basilic…"></div>
       </div>
       <div id="region-catalog-prompt"></div>
+      <div id="catalog-recommended"></div>
       <div class="filters" id="catalog-filters"></div>
       <div class="grid grid-3" id="catalog-grid"></div>
     </section>
@@ -228,8 +222,10 @@
       <div class="card">
         <div class="cal-head">
           <div class="row gap-2">
+            <button class="icon-btn" id="cal-prev-year" aria-label="Année précédente" title="Année précédente">«</button>
             <button class="icon-btn" id="cal-prev" aria-label="Mois précédent">‹</button>
             <button class="icon-btn" id="cal-next" aria-label="Mois suivant">›</button>
+            <button class="icon-btn" id="cal-next-year" aria-label="Année suivante" title="Année suivante">»</button>
           </div>
           <div class="cal-month" id="cal-month">—</div>
           <button class="btn sm" id="cal-today">Aujourd'hui</button>
@@ -277,7 +273,7 @@
         <div>
           <div class="eyebrow">Rappels</div>
           <h1>Notifications</h1>
-          <div class="sub">Réglez une fois. Potager vous prévient au bon moment.</div>
+          <div class="sub">Réglez une fois. Potager de Poche vous prévient au bon moment.</div>
         </div>
         <button class="btn primary" id="new-reminder-btn">+ Nouveau rappel</button>
       </div>
@@ -534,9 +530,10 @@
       </select>
     </div>
     <div class="grid grid-2">
-      <div class="field"><label>Colonnes</label><input class="input" type="number" id="bed-modal-cols" value="4" min="2" max="10"></div>
-      <div class="field"><label>Rangées</label><input class="input" type="number" id="bed-modal-rows" value="3" min="2" max="10"></div>
+      <div class="field"><label>Colonnes <span class="muted xsmall">(2 à 10 max)</span></label><input class="input" type="number" id="bed-modal-cols" value="4" min="2" max="10"></div>
+      <div class="field"><label>Rangées <span class="muted xsmall">(2 à 10 max)</span></label><input class="input" type="number" id="bed-modal-rows" value="3" min="2" max="10"></div>
     </div>
+    <div class="muted xsmall mt-2">Une parcelle peut contenir jusqu'à 10 × 10 = 100 emplacements.</div>
     <div class="row between mt-4">
       <button class="btn ghost" id="bed-modal-cancel">Annuler</button>
       <button class="btn primary" id="bed-modal-save">Enregistrer</button>
@@ -556,28 +553,29 @@
     <div class="sv-step active" data-step="1">
       <div class="center mb-4">
         <div class="sv-hero">🌱</div>
-        <h2 class="sv-title">Bienvenue dans Jardin de Poche</h2>
+        <h2 class="sv-title">Bienvenue dans Potager de Poche</h2>
         <p class="muted mt-3" style="font-size:15px;line-height:1.6">Votre assistant de jardinage. 3 questions rapides pour personnaliser votre expérience.</p>
       </div>
-      <button class="btn primary sv-cta" onclick="renderSurveyStep(2)">Commencer →</button>
+      <button class="btn primary sv-cta" data-sv-next="2">Commencer →</button>
     </div>
 
     <!-- Étape 2 : Expérience -->
     <div class="sv-step" data-step="2">
+      <button class="sv-back" data-sv-back="1">‹ Retour</button>
       <h2 class="sv-q">Votre expérience en jardinage ?</h2>
       <p class="muted small mb-4">L'interface s'adapte à votre niveau.</p>
       <div class="sv-choices">
-        <button class="sv-choice" onclick="selectExperience('none')">
+        <button class="sv-choice" data-sv-exp="none">
           <div class="sv-ci">🌱</div>
           <div class="sv-cd"><div class="sv-ct">Débutant</div><div class="sv-cs">Je commence, j'ai besoin de guidance</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectExperience('some')">
+        <button class="sv-choice" data-sv-exp="some">
           <div class="sv-ci">🌿</div>
           <div class="sv-cd"><div class="sv-ct">Intermédiaire</div><div class="sv-cs">Quelques saisons d'expérience</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectExperience('lots')">
+        <button class="sv-choice" data-sv-exp="lots">
           <div class="sv-ci">🏆</div>
           <div class="sv-cd"><div class="sv-ct">Expert</div><div class="sv-cs">Plusieurs années, j'ai mes habitudes</div></div>
           <div class="sv-arrow">›</div>
@@ -587,20 +585,21 @@
 
     <!-- Étape 3 : Espace -->
     <div class="sv-step" data-step="3">
+      <button class="sv-back" data-sv-back="2">‹ Retour</button>
       <h2 class="sv-q">Quel espace avez-vous ?</h2>
       <p class="muted small mb-4">Nous séparerons jardin et serre dans l'application.</p>
       <div class="sv-choices">
-        <button class="sv-choice" onclick="selectSpaceType('jardin')">
+        <button class="sv-choice" data-sv-space="jardin">
           <div class="sv-ci">🌿</div>
           <div class="sv-cd"><div class="sv-ct">Jardin uniquement</div><div class="sv-cs">Potager en plein air</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectSpaceType('serre')">
+        <button class="sv-choice" data-sv-space="serre">
           <div class="sv-ci">🏡</div>
           <div class="sv-cd"><div class="sv-ct">Serre uniquement</div><div class="sv-cs">Culture sous abri</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectSpaceType('both')">
+        <button class="sv-choice" data-sv-space="both">
           <div class="sv-ci">🌍</div>
           <div class="sv-cd"><div class="sv-ct">Les deux</div><div class="sv-cs">Jardin extérieur + serre</div></div>
           <div class="sv-arrow">›</div>
@@ -610,40 +609,41 @@
 
     <!-- Étape 4 : Région -->
     <div class="sv-step" data-step="4">
+      <button class="sv-back" data-sv-back="3">‹ Retour</button>
       <h2 class="sv-q">Dans quelle région jardinez-vous ?</h2>
       <p class="muted small mb-4">Le taux de réussite de chaque plante sera affiché pour votre région.</p>
       <div class="sv-choices">
-        <button class="sv-choice" onclick="selectRegion('nord')">
+        <button class="sv-choice" data-sv-region="nord">
           <div class="sv-ci">🌧️</div>
           <div class="sv-cd"><div class="sv-ct">Nord &amp; Bretagne</div><div class="sv-cs">Frais, pluvieux, hivers doux</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectRegion('idf')">
+        <button class="sv-choice" data-sv-region="idf">
           <div class="sv-ci">☁️</div>
           <div class="sv-cd"><div class="sv-ct">Île-de-France &amp; Centre</div><div class="sv-cs">Tempéré, variable, été chaud</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectRegion('ocean')">
+        <button class="sv-choice" data-sv-region="ocean">
           <div class="sv-ci">🌊</div>
           <div class="sv-cd"><div class="sv-ct">Grand Ouest &amp; Atlantique</div><div class="sv-cs">Océanique, doux, humide</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectRegion('sudouest')">
+        <button class="sv-choice" data-sv-region="sudouest">
           <div class="sv-ci">☀️</div>
           <div class="sv-cd"><div class="sv-ct">Sud-Ouest &amp; Occitanie</div><div class="sv-cs">Chaud et humide en été</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectRegion('med')">
+        <button class="sv-choice" data-sv-region="med">
           <div class="sv-ci">🌞</div>
           <div class="sv-cd"><div class="sv-ct">Méditerranée &amp; PACA</div><div class="sv-cs">Très chaud et sec l'été</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectRegion('est')">
+        <button class="sv-choice" data-sv-region="est">
           <div class="sv-ci">🌡️</div>
           <div class="sv-cd"><div class="sv-ct">Est &amp; Rhône-Alpes</div><div class="sv-cs">Continental, hivers froids</div></div>
           <div class="sv-arrow">›</div>
         </button>
-        <button class="sv-choice" onclick="selectRegion('montagne')">
+        <button class="sv-choice" data-sv-region="montagne">
           <div class="sv-ci">⛰️</div>
           <div class="sv-cd"><div class="sv-ct">Montagne</div><div class="sv-cs">Été court, gel possible tardif</div></div>
           <div class="sv-arrow">›</div>
@@ -664,6 +664,7 @@
     <div class="tut-counter">Étape <span id="tut-num">1</span> / <span id="tut-total">6</span></div>
     <h3 id="tut-title" class="mt-2">Titre</h3>
     <p id="tut-text" class="muted small mt-2">Texte</p>
+    <div id="tut-demo" class="tut-demo-wrap" style="display:none"></div>
     <div class="row between mt-4">
       <button class="btn ghost sm" id="tut-skip">Ignorer</button>
       <button class="btn primary" id="tut-next">Suivant →</button>
@@ -676,7 +677,7 @@
   <div class="modal" style="max-width:440px">
     <div class="auth-hero">
       <div class="auth-logo">🌱</div>
-      <h2>Jardin de Poche</h2>
+      <h2>Potager de Poche</h2>
       <div class="sub">Connectez-vous pour synchroniser votre jardin.</div>
     </div>
     <div class="auth-notice" id="auth-firebase-warning" style="display:none">
@@ -707,9 +708,15 @@
       </div>
       <span class="sync-badge local" id="acc-sync-badge">Local</span>
     </div>
-    <button class="acc-row" id="acc-export">
-      <span class="ai">⬇️</span>
-      <div style="flex:1"><div class="at">Exporter mes données</div><div class="as">Téléchargez un fichier JSON de votre jardin</div></div>
+    <button class="acc-row" id="acc-profile">
+      <span class="ai">✏️</span>
+      <div style="flex:1"><div class="at">Mon profil</div><div class="as" id="acc-profile-label">Nom et date de début de jardinage</div></div>
+      <span style="color:var(--ink-soft);font-size:18px">›</span>
+    </button>
+    <button class="acc-row" id="acc-harvests">
+      <span class="ai">🥕</span>
+      <div style="flex:1"><div class="at">Mes récoltes</div><div class="as">Suivi des quantités et comparatif par mois / année</div></div>
+      <span style="color:var(--ink-soft);font-size:18px">›</span>
     </button>
     <button class="acc-row" id="acc-region">
       <span class="ai">🗺️</span>
@@ -728,9 +735,18 @@
       <span class="ai">🛒</span>
       <div style="flex:1"><div class="at">Liste de courses</div><div class="as">Graines et fournitures à acheter</div></div>
     </button>
+    <button class="acc-row" id="acc-share">
+      <span class="ai">🔗</span>
+      <div style="flex:1"><div class="at">Partager mon jardin</div><div class="as">Donnez un code à un proche pour partager vos parcelles</div></div>
+      <span style="color:var(--ink-soft);font-size:18px">›</span>
+    </button>
     <button class="acc-row" id="acc-privacy">
       <span class="ai">🔒</span>
       <div style="flex:1"><div class="at">Politique de confidentialité</div><div class="as">Comment nous utilisons vos données</div></div>
+    </button>
+    <button class="acc-row" id="acc-export">
+      <span class="ai">📤</span>
+      <div style="flex:1"><div class="at">Exporter mes données</div><div class="as">Télécharger une sauvegarde JSON de tout votre jardin</div></div>
     </button>
     <button class="acc-row" id="acc-replay-tutorial">
       <span class="ai">🎓</span>
@@ -744,6 +760,17 @@
       <span class="ai">🚪</span>
       <div style="flex:1"><div class="at">Se déconnecter</div><div class="as">Retour à l'écran de connexion</div></div>
     </button>
+  </div>
+</div>
+
+<!-- ===== SHARE MODAL ===== -->
+<div class="modal-backdrop" id="share-modal-backdrop">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-head">
+      <h2>🔗 Partager mon jardin</h2>
+      <button class="close" id="share-modal-close" aria-label="Fermer">✕</button>
+    </div>
+    <div id="share-modal-body"></div>
   </div>
 </div>
 
@@ -810,6 +837,17 @@
   </div>
 </div>
 
+<!-- ===== HARVEST MODAL ===== -->
+<div class="modal-backdrop" id="harvest-modal-backdrop">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-head">
+      <h2>🥕 Mes récoltes</h2>
+      <button class="close" id="harvest-modal-close" aria-label="Fermer">✕</button>
+    </div>
+    <div id="harvest-modal-body"></div>
+  </div>
+</div>
+
 <!-- ===== SHOPPING LIST MODAL ===== -->
 <div class="modal-backdrop" id="shopping-modal-backdrop">
   <div class="modal" style="max-width:480px">
@@ -829,7 +867,7 @@
       <button class="close" id="privacy-modal-close" aria-label="Fermer">✕</button>
     </div>
     <div class="privacy-body">
-      <h3>Jardin de Poche</h3>
+      <h3>Potager de Poche</h3>
       <p class="small muted">Version 1.0 — Dernière mise à jour : juin 2026</p>
       <h4>Données collectées</h4>
       <p>L'application stocke localement sur votre appareil : votre jardin, vos tâches, votre journal et vos préférences. Ces données ne quittent jamais votre téléphone, sauf si vous choisissez la connexion Google.</p>
@@ -840,17 +878,39 @@
       <h4>Notifications</h4>
       <p>Les notifications sont gérées localement sur votre appareil. Aucune donnée n'est envoyée à des serveurs tiers pour les notifications.</p>
       <h4>Vos droits</h4>
-      <p>Vous pouvez supprimer toutes vos données à tout moment depuis Mon compte → Repartir de zéro. Pour toute question : <strong>danhoudebine@gmail.com</strong></p>
+      <p>Vous pouvez supprimer toutes vos données à tout moment depuis Mon compte → Repartir de zéro. Vos données restent stockées localement sur votre appareil et ne sont jamais transmises à un tiers.</p>
     </div>
     <button class="btn primary" id="privacy-modal-close-btn" style="width:100%;margin-top:16px">Fermer</button>
   </div>
 </div>
 
-<!-- Firebase SDK (compat) -->
+<!-- Firebase SDK (compat, optionnel) -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<!-- Modal profil utilisateur -->
+<div class="modal-backdrop" id="profile-modal-backdrop">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-head">
+      <h2>Mon profil</h2>
+      <button class="close" id="profile-modal-close" aria-label="Fermer">✕</button>
+    </div>
+    <div style="padding:0 20px 20px">
+      <div class="field mb-3">
+        <label>Prénom / surnom</label>
+        <input class="input" type="text" id="profile-name" placeholder="Comment on vous appelle ?" maxlength="40">
+      </div>
+      <div class="field mb-4">
+        <label>Jardinier depuis le</label>
+        <input class="input" type="date" id="profile-start-date">
+        <div class="xsmall muted mt-1" id="profile-start-label"></div>
+      </div>
+      <button class="btn primary" id="profile-save" style="width:100%">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 <script src="firebase-config.js"></script>
-<script src="app.js"></script>
+<script type="module" src="/src/main.ts"></script>
 </body>
 </html>
