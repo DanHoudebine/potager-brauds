@@ -1,7 +1,7 @@
 // ============================================================
 //  Mon compte — préférences, export, reset, déconnexion
 // ============================================================
-import { state, resetStored } from '../state';
+import { state, save, resetStored } from '../state';
 import { el, elOpt, openModal, closeModal, confirmDialog, flash } from '../ui/dom';
 import { updateAccountUI, signOut } from '../services/auth';
 import { toggleDarkMode } from '../theme';
@@ -13,7 +13,43 @@ import { startTutorial } from './tutorial';
 
 export function openAccountModal(): void {
   updateAccountUI();
+  updateProfileLabel();
   openModal('acc-backdrop');
+}
+
+function updateProfileLabel(): void {
+  const lbl = elOpt('acc-profile-label');
+  if (!lbl) return;
+  const name = state.profile?.displayName;
+  const start = state.profile?.gardenStartDate;
+  if (name || start) {
+    const parts = [];
+    if (name) parts.push(name);
+    if (start) {
+      const days = Math.floor((Date.now() - new Date(start).getTime()) / 86400000);
+      parts.push(`${days} jour${days > 1 ? 's' : ''} de jardinage`);
+    }
+    lbl.textContent = parts.join(' · ');
+  } else {
+    lbl.textContent = 'Nom et date de début de jardinage';
+  }
+}
+
+function openProfileModal(): void {
+  const nameEl = elOpt<HTMLInputElement>('profile-name');
+  const dateEl = elOpt<HTMLInputElement>('profile-start-date');
+  if (nameEl) nameEl.value = state.profile?.displayName || '';
+  if (dateEl) dateEl.value = state.profile?.gardenStartDate || '';
+  updateStartLabel();
+  openModal('profile-modal-backdrop');
+}
+
+function updateStartLabel(): void {
+  const dateEl = elOpt<HTMLInputElement>('profile-start-date');
+  const lbl = elOpt('profile-start-label');
+  if (!lbl || !dateEl?.value) { if (lbl) lbl.textContent = ''; return; }
+  const days = Math.floor((Date.now() - new Date(dateEl.value).getTime()) / 86400000);
+  lbl.textContent = days > 0 ? `🌱 ${days} jour${days > 1 ? 's' : ''} de jardinage !` : '';
 }
 
 export function openPrivacyModal(): void {
@@ -104,6 +140,23 @@ export function initAccount(): void {
       yesLabel: 'Oui, tout effacer',
       onYes: resetEverything,
     });
+  });
+
+  el('acc-profile').addEventListener('click', () => {
+    closeModal('acc-backdrop');
+    openProfileModal();
+  });
+  el('profile-modal-close').addEventListener('click', () => closeModal('profile-modal-backdrop'));
+  elOpt<HTMLInputElement>('profile-start-date')?.addEventListener('input', updateStartLabel);
+  el('profile-save').addEventListener('click', () => {
+    const name = (elOpt<HTMLInputElement>('profile-name')?.value || '').trim();
+    const date = elOpt<HTMLInputElement>('profile-start-date')?.value || '';
+    state.profile.displayName = name || null;
+    state.profile.gardenStartDate = date || null;
+    save();
+    closeModal('profile-modal-backdrop');
+    updateProfileLabel();
+    flash('Profil enregistré ✓');
   });
 
   el('region-modal-close').addEventListener('click', () => closeModal('region-modal-backdrop'));

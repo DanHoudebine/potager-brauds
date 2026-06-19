@@ -25,7 +25,10 @@ export function renderDashboard(): void {
 
   const hour = today.getHours();
   const greet = hour < 6 ? 'Bonne nuit' : hour < 12 ? 'Bonjour' : hour < 18 ? 'Bon après-midi' : 'Bonsoir';
-  const userName = getUser() ? (getUser()!.displayName || '').split(' ')[0] : '';
+  const firebaseUser = getUser();
+  const userName = firebaseUser
+    ? (firebaseUser.displayName || '').split(' ')[0]
+    : (state.profile.displayName || '').split(' ')[0];
   el('greeting').textContent = userName ? `${greet}, ${userName} 👋` : `${greet} 👋`;
 
   const heroDeco = elOpt('hero-deco');
