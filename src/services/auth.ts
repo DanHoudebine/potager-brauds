@@ -115,7 +115,7 @@ async function nativeGoogleSignIn(): Promise<void> {
     await GoogleAuth.initialize({
       clientId: '978848610696-92oaec4ef83niats5l1ureb31eppbd08.apps.googleusercontent.com',
       scopes: ['profile', 'email'],
-      grantOfflineAccess: true,
+      grantOfflineAccess: false,
     });
     const gUser = await GoogleAuth.signIn();
 
