@@ -11,6 +11,8 @@ import { openPlantPanel } from '../features/plantPanel';
 import { openQuickAdd } from '../features/quickAdd';
 import { syncGardenTasks } from '../garden-sync';
 import { getRotationForBed } from '../data/rotation';
+import { canAddBed, canUseGridSize, FREE_MAX_CELLS } from '../services/entitlement';
+import { openPaywall } from '../features/paywall';
 
 const TITLE_MAP: Record<string, string> = { all: 'Le potager', jardin: 'Jardin (plein air)', serre: 'Serre (sous abri)' };
 
@@ -159,6 +161,12 @@ export function renderGarden(): void {
 }
 
 export function addBed(): void {
+  // Version gratuite : une seule parcelle. Au-delà → paywall (jamais de blocage
+  // destructif, on n'ouvre simplement pas l'éditeur de nouvelle parcelle).
+  if (!canAddBed(state.beds.length)) {
+    openPaywall('La version gratuite comprend une parcelle. Passez à Pro pour créer autant de jardins et de serres que vous voulez.');
+    return;
+  }
   openBedModal();
 }
 
@@ -182,6 +190,16 @@ function saveBedModal(editId?: string): void {
   const cols = clampInt(el<HTMLInputElement>('bed-modal-cols').value, 2, 10, 4);
   const rows = clampInt(el<HTMLInputElement>('bed-modal-rows').value, 2, 10, 3);
   const type = el<HTMLSelectElement>('bed-modal-type').value as 'jardin' | 'serre';
+  // Version gratuite : grille limitée. On ne bloque qu'une AUGMENTATION au-delà
+  // de la limite (jamais une parcelle déjà existante qu'on garde ou réduit, ni
+  // aucune troncature : le blocage intervient AVANT toute mutation). La modale
+  // reste ouverte pour réduire la taille ou passer à Pro.
+  const existing = editId ? state.beds.find((b) => b.id === editId) : null;
+  const existingCells = existing ? existing.cols * existing.rows : 0;
+  if (!canUseGridSize(cols, rows) && cols * rows > existingCells) {
+    openPaywall(`La version gratuite permet une parcelle jusqu'à ${FREE_MAX_CELLS} cases (par exemple 2 × 5). Passez à Pro pour des parcelles plus grandes.`);
+    return;
+  }
   if (editId) {
     const bed = state.beds.find((b) => b.id === editId);
     if (bed) {

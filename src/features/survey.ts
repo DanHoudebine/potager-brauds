@@ -9,6 +9,7 @@ import { uid } from '../utils';
 import { syncGardenTasks } from '../garden-sync';
 import { startTutorial } from './tutorial';
 import { requestNotificationPermission } from '../services/notifications';
+import { isPro, FREE_MAX_BEDS } from '../services/entitlement';
 
 interface SurveyData {
   experience?: Experience;
@@ -113,8 +114,8 @@ function buildSurveyResult(): void {
         <div class="row gap-2">
           <span style="font-size:28px">🌿</span>
           <div>
-            <div style="font-weight:800;margin-bottom:4px">Accès complet déverrouillé</div>
-            <div class="small muted">32 plantes · Catalogue complet · Toutes les fonctionnalités disponibles</div>
+            <div style="font-weight:800;margin-bottom:4px">Catalogue complet à explorer</div>
+            <div class="small muted">62 plantes · Fiches de culture détaillées · Outils avancés</div>
           </div>
         </div>
       </div>
@@ -159,12 +160,18 @@ function finishSurvey(): void {
     state.beds = state.beds.filter((b) => (b.type || 'jardin') === 'jardin' || hasPlants(b));
   } else if (surveyData.spaceType === 'serre') {
     state.beds = state.beds.filter((b) => b.type === 'serre' || hasPlants(b));
-    if (!state.beds.some((b) => b.type === 'serre')) {
-      state.beds.push({ id: uid('b'), name: 'Serre', type: 'serre', cols: 3, rows: 2, cells: Array(6).fill(null) });
+    // N'ajoute une serre que s'il reste de la place dans la version gratuite.
+    if (!state.beds.some((b) => b.type === 'serre') && (isPro() || state.beds.length < FREE_MAX_BEDS)) {
+      state.beds.push({ id: uid('b'), name: 'Serre', type: 'serre', cols: 2, rows: 5, cells: Array(10).fill(null) });
     }
   }
   if (!state.beds.length) {
-    state.beds = [{ id: uid('b'), name: 'Jardin', type: 'jardin', cols: 4, rows: 3, cells: Array(12).fill(null) }];
+    state.beds = [{ id: uid('b'), name: 'Jardin', type: 'jardin', cols: 2, rows: 5, cells: Array(10).fill(null) }];
+  }
+  // Version gratuite : ne conserver que les parcelles autorisées (contenu de
+  // démonstration uniquement — aucune donnée utilisateur n'est créée ici).
+  if (!isPro() && state.beds.length > FREE_MAX_BEDS) {
+    state.beds = state.beds.slice(0, FREE_MAX_BEDS);
   }
   if (!state.beds.find((b) => b.id === state.activeBedId)) state.activeBedId = state.beds[0].id;
   state.gardenTab = surveyData.spaceType === 'both' ? 'all' : surveyData.spaceType || 'all';

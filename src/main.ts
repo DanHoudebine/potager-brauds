@@ -29,6 +29,7 @@ import { initHarvests } from './features/harvests';
 import { initTutorial } from './features/tutorial';
 import { initSurvey, maybeStartSurvey } from './features/survey';
 import { initShare } from './features/share';
+import { initPaywall } from './features/paywall';
 import { save } from './state';
 
 const PROTECTED_MODALS = ['survey-backdrop', 'auth-backdrop'];
@@ -96,6 +97,7 @@ function wireAll(): void {
   initTutorial();
   initSurvey();
   initShare();
+  initPaywall();
 
   // Click-outside to close (except mandatory modals)
   qsa<HTMLElement>('.modal-backdrop').forEach((bd) =>

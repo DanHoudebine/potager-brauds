@@ -11,11 +11,26 @@ import { openShoppingList } from './shopping';
 import { openHarvests } from './harvests';
 import { openRegionModal } from './region';
 import { startTutorial } from './tutorial';
+import { isPro } from '../services/entitlement';
+import { openPaywall } from './paywall';
 
 export function openAccountModal(): void {
   updateAccountUI();
   updateProfileLabel();
+  updateProLabel();
   openModal('acc-backdrop');
+}
+
+function updateProLabel(): void {
+  const title = elOpt('acc-pro-title');
+  const sub = elOpt('acc-pro-sub');
+  if (isPro()) {
+    if (title) title.textContent = 'Pro ✓ — merci !';
+    if (sub) sub.textContent = 'Toutes les fonctionnalités sont débloquées';
+  } else {
+    if (title) title.textContent = 'Passer à Pro';
+    if (sub) sub.textContent = 'Parcelles illimitées, calendrier perso et bien plus';
+  }
 }
 
 function updateProfileLabel(): void {
@@ -144,6 +159,10 @@ export function initAccount(): void {
   el('account-chip-desktop').addEventListener('click', openAccountModal);
   el('acc-close').addEventListener('click', () => closeModal('acc-backdrop'));
 
+  el('acc-pro').addEventListener('click', () => {
+    closeModal('acc-backdrop');
+    openPaywall();
+  });
   el('acc-harvests').addEventListener('click', () => {
     closeModal('acc-backdrop');
     openHarvests();

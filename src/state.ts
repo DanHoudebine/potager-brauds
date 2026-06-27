@@ -24,24 +24,19 @@ function buildDefaultState(): AppState {
       gardenStartDate: null,
     },
     beds: [
-      { id: 'b1', name: 'Jardin', type: 'jardin', cols: 4, rows: 3, cells: [
+      // Version gratuite : une parcelle 2 × 5 (10 cases). Les comptes Pro
+      // peuvent en ajouter d'autres et les agrandir.
+      { id: 'b1', name: 'Jardin', type: 'jardin', cols: 2, rows: 5, cells: [
         { id: 'c1', plant: 'tomato', planted: '2026-05-01', status: 'healthy', notes: 'Variété : San Marzano. Tuteurée.' },
         { id: 'c2', plant: 'tomato', planted: '2026-05-01', status: 'warn', notes: "Feuilles enroulées, manque d'eau peut-être." },
-        { id: 'c3', plant: 'basil', planted: '2026-05-10', status: 'healthy', notes: 'Plantée à côté des tomates.' },
+        { id: 'c3', plant: 'basil', planted: '2026-05-10', status: 'healthy', notes: 'Planté à côté des tomates.' },
         { id: 'c4', plant: 'lettuce', planted: '2026-04-22', status: 'healthy', notes: 'Variété à couper.' },
-        null, null,
         { id: 'c5', plant: 'leek', planted: '2026-05-05', status: 'urgent', notes: "Pucerons repérés aujourd'hui." },
         { id: 'c6', plant: 'carrot', planted: '2026-04-15', status: 'healthy', notes: 'Éclaircie la semaine dernière.' },
         { id: 'c7', plant: 'strawberry', planted: '2026-04-01', status: 'healthy', notes: 'Premières fleurs ouvertes !' },
         { id: 'c8', plant: 'strawberry', planted: '2026-04-01', status: 'healthy', notes: '' },
-        null,
         { id: 'c9', plant: 'radish', planted: '2026-05-10', status: 'healthy', notes: 'Prêts dans ~2 semaines.' },
-      ] },
-      { id: 'b2', name: 'Serre', type: 'serre', cols: 3, rows: 2, cells: [
-        { id: 'g1', plant: 'pepper', planted: '2026-04-25', status: 'healthy', notes: '' },
-        { id: 'g2', plant: 'eggplant', planted: '2026-04-25', status: 'warn', notes: 'Démarrage lent, surveiller les températures nocturnes.' },
-        { id: 'g3', plant: 'pepper', planted: '2026-04-25', status: 'healthy', notes: '' },
-        null, null, null,
+        null,
       ] },
     ],
     activeBedId: 'b1',
@@ -50,7 +45,7 @@ function buildDefaultState(): AppState {
       { id: 't2', title: 'Récolter les premiers radis', kind: 'harvest', date: iso(now), done: false, plantId: 'radish' },
       { id: 't3', title: 'Pulvériser savon noir sur poireaux (pucerons)', kind: 'treat', date: iso(now), done: false, plantId: 'leek' },
       { id: 't4', title: 'Semer la 2ᵉ série de laitues', kind: 'sow', date: iso(addDays(now, 1)), done: false, plantId: 'lettuce' },
-      { id: 't5', title: 'Arroser les poivrons', kind: 'water', date: iso(addDays(now, 1)), done: false, plantId: 'pepper' },
+      { id: 't5', title: 'Arroser le basilic', kind: 'water', date: iso(addDays(now, 1)), done: false, plantId: 'basil' },
       { id: 't6', title: 'Vérifier le filet des fraisiers', kind: 'other', date: iso(addDays(now, 2)), done: false, plantId: 'strawberry' },
       { id: 't7', title: 'Pincer les gourmands des tomates', kind: 'other', date: iso(addDays(now, 3)), done: false, plantId: 'tomato' },
     ],
@@ -93,7 +88,7 @@ function buildEmptyState(): AppState {
       surveyed: false, level: null, experience: null, spaceType: null,
       xp: 0, stars: 0, milestones: [], tutorialDone: false, guideSeen: [], region: null, displayName: null, gardenStartDate: null,
     },
-    beds: [{ id: 'b1', name: 'Jardin', type: 'jardin', cols: 4, rows: 3, cells: Array(12).fill(null) }],
+    beds: [{ id: 'b1', name: 'Jardin', type: 'jardin', cols: 2, rows: 5, cells: Array(10).fill(null) }],
     activeBedId: 'b1',
     tasks: [],
     journal: [],

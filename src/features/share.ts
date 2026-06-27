@@ -5,6 +5,7 @@ import { state, save } from '../state';
 import { elOpt, openModal, closeModal, flash } from '../ui/dom';
 import { isFirebaseConfigured, getUser } from '../services/auth';
 import { escapeHTML, uid } from '../utils';
+import { requirePro } from './paywall';
 
 function genCode(): string {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -18,6 +19,9 @@ async function shareGarden(): Promise<void> {
   const shareCode = elOpt('share-code');
   const shareBtn = elOpt<HTMLButtonElement>('share-generate-btn');
   if (!shareEl || !shareCode || !shareBtn) return;
+
+  // Générer un code de partage fait partie de Pro (l'import reste gratuit).
+  if (!requirePro('Le partage de votre jardin par code fait partie de Pro.')) return;
 
   if (!isFirebaseConfigured()) {
     flash('Firebase non configuré — partage indisponible en mode local.');
