@@ -74,11 +74,18 @@ Des suggestions de plantation saisonnières et une liste de courses personnalisa
 🏆 PROGRESSION
 Gagnez de l'expérience à chaque action et grimpez les 5 niveaux, de Débutant à Maître du potager.
 
-👥 PARTAGE & COMMUNAUTÉ
-Partagez votre jardin avec vos proches grâce à un simple code, et échangez des graines avec d'autres jardiniers.
+👥 COMMUNAUTÉ
+Échangez des graines avec d'autres jardiniers près de chez vous.
 
 🌗 MODE SOMBRE
 Une interface claire ou sombre, selon vos envies.
+
+🌟 POTAGER DE POCHE PRO — un seul paiement, à vie
+L'application est gratuite et complète. Pour aller plus loin, passez à Pro une seule fois (sans abonnement, sans pub) et débloquez :
+• Parcelles illimitées — autant de jardins et de serres que vous voulez, à la taille que vous voulez
+• Calendrier de plantation personnalisé — quoi semer, planter et récolter chaque mois selon votre région
+• Partage de jardin — un code à donner à vos proches pour partager vos parcelles
+Un achat unique, c'est à vous pour toujours. Pas d'abonnement, jamais.
 
 🔒 VOTRE VIE PRIVÉE D'ABORD
 Toutes vos données sont stockées sur votre appareil. Aucune publicité, aucun traceur, aucune collecte cachée. La connexion Google est facultative et sert uniquement à synchroniser votre jardin entre vos appareils.
@@ -114,9 +121,9 @@ arrosage, météo, compagnonnage, récolte, bio, plantes, fruits
 |-------|--------|
 | Email de contact | danhoudebine@gmail.com |
 | Politique de confidentialité | https://danhoudebine.github.io/potager-brauds/privacy.html *(à activer avant soumission)* |
-| Application gratuite | Oui |
+| Application gratuite | Oui (téléchargement gratuit) |
 | Contient des publicités | Non |
-| Achats intégrés | Non |
+| Achats intégrés | Oui — déblocage « Pro » unique à 6,99 € (sans abonnement) |
 
 ---
 
@@ -137,3 +144,20 @@ arrosage, météo, compagnonnage, récolte, bio, plantes, fruits
 - **Chiffrement en transit** : Oui (HTTPS / Firebase)
 - **Suppression des données** : Oui, depuis « Mon compte → Repartir de zéro »
 - **Localisation** : approximative, utilisée uniquement pour la météo, non stockée
+- **Paiements** : le déblocage Pro est traité par Google Play. Nous ne recevons ni ne stockons aucune donnée bancaire.
+
+---
+
+## Produit d'achat intégré (à créer dans la Play Console — Étape B)
+
+| Champ | Valeur |
+|-------|--------|
+| Type | Produit géré (non-consommable / achat unique) |
+| ID du produit | `pro_unlock` |
+| Nom | Potager de Poche Pro |
+| Prix | 6,99 € |
+| Description | Déblocage à vie : parcelles illimitées, calendrier de plantation personnalisé et partage de jardin. Sans abonnement. |
+
+> ⚠️ Rappel : la première version publiée doit **déjà** contenir le modèle Pro + la
+> facturation branchée (Étape B). Ne pas publier une version 100 % gratuite puis
+> ajouter les limites ensuite (= paywall rétroactif, très mal vu des utilisateurs).
