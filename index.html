@@ -245,6 +245,11 @@
           <span class="lg"><span class="d-dot" style="background:var(--urgent)"></span> Traitements</span>
         </div>
       </div>
+      <button class="acc-row" id="open-planting-cal" style="margin-top:14px;width:100%">
+        <span class="ai">🌱</span>
+        <div style="flex:1;text-align:left"><div class="at">Au potager ce mois-ci <span style="color:var(--green-dark)">🌟 Pro</span></div><div class="as">À semer, planter et récolter selon le mois et votre région</div></div>
+        <span style="color:var(--ink-soft);font-size:18px">›</span>
+      </button>
     </section>
 
     <!-- ===== VUE 5 : JOURNAL ===== -->
@@ -770,6 +775,17 @@
       <span class="ai">🚪</span>
       <div style="flex:1"><div class="at">Se déconnecter</div><div class="as">Retour à l'écran de connexion</div></div>
     </button>
+  </div>
+</div>
+
+<!-- ===== PLANTING CALENDAR (PRO) MODAL ===== -->
+<div class="modal-backdrop" id="planting-cal-backdrop">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-head">
+      <h2>🌱 Au potager ce mois-ci</h2>
+      <button class="close" id="planting-cal-close" aria-label="Fermer">✕</button>
+    </div>
+    <div id="planting-cal-body"></div>
   </div>
 </div>
 

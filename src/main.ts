@@ -30,6 +30,7 @@ import { initTutorial } from './features/tutorial';
 import { initSurvey, maybeStartSurvey } from './features/survey';
 import { initShare } from './features/share';
 import { initPaywall } from './features/paywall';
+import { initPlantingCalendar } from './features/plantingCalendar';
 import { save } from './state';
 
 const PROTECTED_MODALS = ['survey-backdrop', 'auth-backdrop'];
@@ -98,6 +99,7 @@ function wireAll(): void {
   initSurvey();
   initShare();
   initPaywall();
+  initPlantingCalendar();
 
   // Click-outside to close (except mandatory modals)
   qsa<HTMLElement>('.modal-backdrop').forEach((bd) =>
