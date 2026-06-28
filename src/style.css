@@ -1665,18 +1665,6 @@ a { color: var(--green-dark); }
 }
 
 /* ============================================================
-   TROC DE GRAINES
-   ============================================================ */
-.troc-row {
-  display: flex; align-items: center; gap: 12px; padding: 12px 0;
-  border-bottom: 1px solid rgba(90,63,28,.08);
-}
-.troc-row:last-child { border-bottom: none; }
-.troc-ic { font-size: 28px; flex-shrink: 0; }
-.troc-info { flex: 1; min-width: 0; }
-.troc-name { font-size: 14px; font-weight: 800; color: var(--ink); }
-
-/* ============================================================
    PRIVACY POLICY
    ============================================================ */
 .privacy-body { font-size: 14px; line-height: 1.6; }

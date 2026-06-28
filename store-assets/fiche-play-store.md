@@ -74,9 +74,6 @@ Des suggestions de plantation saisonnières et une liste de courses personnalisa
 🏆 PROGRESSION
 Gagnez de l'expérience à chaque action et grimpez les 5 niveaux, de Débutant à Maître du potager.
 
-👥 COMMUNAUTÉ
-Échangez des graines avec d'autres jardiniers près de chez vous.
-
 🌗 MODE SOMBRE
 Une interface claire ou sombre, selon vos envies.
 

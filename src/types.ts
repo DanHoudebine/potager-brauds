@@ -220,18 +220,6 @@ export interface HarvestRecord {
   note?: string;
 }
 
-export interface SeedListing {
-  id: string;
-  plantId: string;
-  plantName?: string;
-  quantity: string;     // free text: "3 sachets", "abondant"
-  notes: string;
-  uid?: string;         // Firebase UID of the owner
-  ownerName?: string;
-  ownerEmail?: string;
-  ts: number;           // timestamp
-}
-
 export interface AppState {
   profile: Profile;
   beds: Bed[];
@@ -247,5 +235,4 @@ export interface AppState {
   weather: WeatherState | null;
   shopping: ShoppingItem[];
   harvests: HarvestRecord[];
-  seeds: SeedListing[];
 }

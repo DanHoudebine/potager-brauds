@@ -74,7 +74,6 @@ function buildDefaultState(): AppState {
     weather: null,
     shopping: [],
     harvests: [],
-    seeds: [],
   };
 }
 
@@ -100,7 +99,6 @@ function buildEmptyState(): AppState {
     weather: null,
     shopping: [],
     harvests: [],
-    seeds: [],
   };
 }
 
@@ -114,7 +112,6 @@ function loadState(): AppState {
     loaded.prefs = { ...def.prefs, ...(saved.prefs || {}) };
     loaded.profile = { ...def.profile, ...(saved.profile || {}) };
     if (!loaded.harvests) loaded.harvests = [];
-    if (!loaded.seeds) loaded.seeds = [];
     return loaded;
   } catch {
     return def;
