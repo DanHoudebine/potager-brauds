@@ -11,7 +11,7 @@ import { openPlantPanel } from '../features/plantPanel';
 import { openQuickAdd } from '../features/quickAdd';
 import { syncGardenTasks } from '../garden-sync';
 import { getRotationForBed } from '../data/rotation';
-import { canAddBed, canUseGridSize, FREE_MAX_CELLS } from '../services/entitlement';
+import { canAddBed, canUseGridSize, FREE_MAX_CELLS, isPro } from '../services/entitlement';
 import { openPaywall } from '../features/paywall';
 
 const TITLE_MAP: Record<string, string> = { all: 'Le potager', jardin: 'Jardin (plein air)', serre: 'Serre (sous abri)' };
@@ -172,11 +172,20 @@ export function addBed(): void {
 
 export function openBedModal(bedId?: string): void {
   const bed = bedId ? state.beds.find((b) => b.id === bedId) : null;
+  const pro = isPro();
   el('bed-modal-title').textContent = bed ? 'Modifier la parcelle' : 'Nouvelle parcelle';
   el<HTMLInputElement>('bed-modal-name').value = bed ? bed.name : '';
-  el<HTMLInputElement>('bed-modal-cols').value = String(bed ? bed.cols : 4);
-  el<HTMLInputElement>('bed-modal-rows').value = String(bed ? bed.rows : 3);
+  // Nouvelle parcelle : par défaut 2 × 5 (10 cases) en gratuit pour rester dans
+  // la limite et éviter de déclencher le paywall à la création ; 4 × 3 en Pro.
+  el<HTMLInputElement>('bed-modal-cols').value = String(bed ? bed.cols : pro ? 4 : 2);
+  el<HTMLInputElement>('bed-modal-rows').value = String(bed ? bed.rows : pro ? 3 : 5);
   el<HTMLSelectElement>('bed-modal-type').value = bed ? bed.type || 'jardin' : state.gardenTab !== 'all' ? state.gardenTab : 'jardin';
+  const hint = elOpt('bed-modal-size-hint');
+  if (hint) {
+    hint.textContent = pro
+      ? 'Une parcelle peut contenir jusqu\'à 10 × 10 = 100 emplacements.'
+      : `Version gratuite : 1 parcelle jusqu'à ${FREE_MAX_CELLS} cases (ex. 2 × 5). Passez à Pro pour des parcelles illimitées et plus grandes.`;
+  }
   el('bed-modal-save').onclick = () => saveBedModal(bedId);
   openModal('bed-modal-backdrop');
 }
