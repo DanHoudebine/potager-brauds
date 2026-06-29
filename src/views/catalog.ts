@@ -21,6 +21,9 @@ interface CatalogFilter {
 
 let filter: CatalogFilter = { q: '', category: 'all', season: 'all', difficulty: 'all' };
 
+// Ordre d'affichage du catalogue : légumes, herbes, fruits, puis arbres fruitiers.
+const CATEGORY_ORDER: Record<string, number> = { legume: 0, herbe: 1, fruit: 2, 'arbre-fruitier': 3 };
+
 export function handleCatalogSearch(q: string): void {
   filter.q = q;
   renderCatalog();
@@ -118,6 +121,9 @@ export function renderCatalog(): void {
     if (filter.difficulty !== 'all' && p.difficulty !== Number(filter.difficulty)) return false;
     return true;
   });
+
+  // Regroupe par type (légumes → herbes → fruits → fruitiers), alphabétique dans chaque groupe.
+  list.sort((a, b) => (CATEGORY_ORDER[a.category] ?? 9) - (CATEGORY_ORDER[b.category] ?? 9) || a.name.localeCompare(b.name, 'fr'));
 
   renderRecommendedSection();
 

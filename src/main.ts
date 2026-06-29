@@ -7,7 +7,7 @@ import { state, activeBed } from './state';
 import { el, qsa, closeModal, initConfirm } from './ui/dom';
 import { setView, refreshView } from './ui/router';
 import { syncGardenTasks } from './garden-sync';
-import { applyTheme } from './theme';
+import { applyTheme, applyColorblind } from './theme';
 import { applyAmbient } from './services/audio';
 import { initNotificationScheduler } from './services/notifications';
 import { initAuth, onEnterApp, onFirebaseSyncDone } from './services/auth';
@@ -136,6 +136,7 @@ function boot(): void {
   renderGarden();
   initNotificationScheduler();
   applyTheme();
+  applyColorblind();
   if (state.prefs?.ambientOn) applyAmbient();
   maybeStartSurvey();
   // Pré-chauffe la facturation Google Play sur natif (no-op sur web/dev).
@@ -160,3 +161,4 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
 
 // Apply theme immediately to avoid a flash before login resolves.
 applyTheme();
+applyColorblind();

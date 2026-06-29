@@ -5,7 +5,7 @@ import { state, save, resetStored, STORAGE_KEY } from '../state';
 import type { AppState } from '../types';
 import { el, elOpt, openModal, closeModal, confirmDialog, flash } from '../ui/dom';
 import { updateAccountUI, signOut } from '../services/auth';
-import { toggleDarkMode } from '../theme';
+import { toggleDarkMode, toggleColorblind } from '../theme';
 import { toggleAmbient } from '../services/audio';
 import { openShoppingList } from './shopping';
 import { openHarvests } from './harvests';
@@ -177,6 +177,7 @@ export function initAccount(): void {
   });
   el('acc-darkmode').addEventListener('click', toggleDarkMode);
   el('acc-ambient').addEventListener('click', toggleAmbient);
+  el('acc-colorblind').addEventListener('click', toggleColorblind);
   el('acc-shopping').addEventListener('click', () => {
     closeModal('acc-backdrop');
     openShoppingList();

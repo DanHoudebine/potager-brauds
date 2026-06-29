@@ -21,3 +21,16 @@ export function toggleDarkMode(): void {
   const at = elOpt('acc-darkmode')?.querySelector('.at');
   if (at) at.textContent = state.prefs.darkMode ? '🌙 Mode sombre' : '☀️ Mode clair';
 }
+
+/** Applique le mode daltonien (couleurs d'état adaptées). */
+export function applyColorblind(): void {
+  document.documentElement.setAttribute('data-cb', state.prefs?.colorblind ? 'on' : 'off');
+}
+
+export function toggleColorblind(): void {
+  state.prefs.colorblind = !state.prefs.colorblind;
+  save();
+  applyColorblind();
+  const at = elOpt('acc-colorblind')?.querySelector('.at');
+  if (at) at.textContent = state.prefs.colorblind ? '👁️ Mode daltonien activé ✓' : '👁️ Mode daltonien';
+}

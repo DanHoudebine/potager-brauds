@@ -49,6 +49,18 @@
 }
 
 /* ============================================================
+   MODE DALTONIEN
+   Remplace les couleurs d'état rouge/vert (peu distinguables pour les
+   daltoniens) par bleu / orange / vermillon (palette Okabe-Ito).
+   ":root[data-cb=on]" prend le dessus sur :root ET sur [data-theme=dark].
+   ============================================================ */
+:root[data-cb="on"] {
+  --healthy: #0072b2; /* vert → bleu */
+  --warn: #e69f00;    /* ambre → orange vif */
+  --urgent: #d55e00;  /* rouge → vermillon */
+}
+
+/* ============================================================
    THÈME SOMBRE
    ============================================================ */
 [data-theme="dark"] {
