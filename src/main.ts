@@ -31,6 +31,7 @@ import { initSurvey, maybeStartSurvey } from './features/survey';
 import { initShare } from './features/share';
 import { initPaywall } from './features/paywall';
 import { initPlantingCalendar } from './features/plantingCalendar';
+import { initBilling } from './services/entitlement';
 import { save } from './state';
 
 const PROTECTED_MODALS = ['survey-backdrop', 'auth-backdrop'];
@@ -137,6 +138,9 @@ function boot(): void {
   applyTheme();
   if (state.prefs?.ambientOn) applyAmbient();
   maybeStartSurvey();
+  // Pré-chauffe la facturation Google Play sur natif (no-op sur web/dev).
+  // Fire-and-forget : ne bloque jamais l'UI, l'entitlement est fail-open.
+  void initBilling();
   // L'app est prête : on retire l'écran de démarrage natif.
   void hideSplash();
 }
