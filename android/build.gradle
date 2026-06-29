@@ -7,7 +7,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.2.1'
+        classpath 'com.android.tools.build:gradle:8.6.0'
         // google-services (Firebase natif) volontairement retiré : cette app
         // utilise Firebase via le SDK web (CDN), pas le SDK natif. Sa présence
         // tirait BouncyCastle 1.79 (classes Java 21) que l'instrumentation
