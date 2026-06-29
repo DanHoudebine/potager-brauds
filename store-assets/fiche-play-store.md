@@ -77,6 +77,9 @@ Gagnez de l'expérience à chaque action et grimpez les 5 niveaux, de Débutant 
 🌗 MODE SOMBRE
 Une interface claire ou sombre, selon vos envies.
 
+♿ ACCESSIBILITÉ
+Mode daltonien intégré : les couleurs d'état (sain, à surveiller, urgent) sont adaptées pour rester bien distinctes.
+
 🌟 POTAGER DE POCHE PRO — un seul paiement, à vie
 L'application est gratuite et complète. Pour aller plus loin, passez à Pro une seule fois (sans abonnement, sans pub) et débloquez :
 • Parcelles illimitées — autant de jardins et de serres que vous voulez, à la taille que vous voulez
@@ -131,6 +134,14 @@ arrosage, météo, compagnonnage, récolte, bio, plantes, fruits
 - Langage grossier : Non
 - Substances contrôlées : Non
 - → Classification attendue : **Tout public / PEGI 3**
+
+---
+
+## Public cible et contenu
+
+- **Tranches d'âge cibles** : **13-15, 16-17, 18 et plus** (ne PAS cocher les tranches < 13 ans → évite les obligations du programme « Conçu pour les familles » et les règles de confidentialité enfants)
+- **L'app attire-t-elle les enfants ?** : Non (app utilitaire de jardinage)
+- **Publicités** : Non
 
 ---
 
