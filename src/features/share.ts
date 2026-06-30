@@ -4,7 +4,7 @@
 import { state, save } from '../state';
 import { elOpt, openModal, closeModal, flash } from '../ui/dom';
 import { isFirebaseConfigured, getUser } from '../services/auth';
-import { escapeHTML, uid } from '../utils';
+import { escapeHTML, uid, clampInt } from '../utils';
 import { requirePro } from './paywall';
 
 function genCode(): string {
@@ -108,18 +108,22 @@ async function importGarden(): Promise<void> {
           if (!data.beds) return;
           const isoDate = (d: Date) => d.toISOString().split('T')[0];
           data.beds.forEach((b: { name: string; type: string; cols: number; rows: number; plants: { plant: string; planted: string }[] }) => {
-            const cells = Array((b.cols || 4) * (b.rows || 3)).fill(null);
+            // Borne cols/rows (données externes Firebase) pour éviter d'allouer
+            // un tableau démesuré si le payload est corrompu.
+            const cols = clampInt(b.cols, 2, 10, 4);
+            const rows = clampInt(b.rows, 2, 10, 3);
+            const cells = Array(cols * rows).fill(null);
             (b.plants || []).forEach((pc, i) => {
               if (i < cells.length) {
-                cells[i] = { id: uid(`c`), plant: pc.plant, planted: pc.planted || isoDate(new Date()), status: 'healthy', notes: '' };
+                cells[i] = { id: uid('c'), plant: pc.plant, planted: pc.planted || isoDate(new Date()), status: 'healthy', notes: '' };
               }
             });
             state.beds.push({
-              id: `b${Date.now()}${Math.random().toString(36).slice(2)}`,
+              id: uid('b'),
               name: b.name || 'Parcelle importée',
               type: (b.type as 'jardin' | 'serre') || 'jardin',
-              cols: b.cols || 4,
-              rows: b.rows || 3,
+              cols,
+              rows,
               cells,
             });
           });

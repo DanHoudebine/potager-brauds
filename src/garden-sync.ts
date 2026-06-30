@@ -23,7 +23,8 @@ export function syncGardenTasks(): void {
 
   state.tasks = (state.tasks || []).filter((t) => {
     if (t.done) return true; // historique conservé
-    if (t.auto && t.date < todayStr) return false; // arrosage auto expiré
+    if (t.auto && t.kind === 'sow' && !isPro()) return false; // rappels semis échelonnés = Pro
+    if (t.auto && t.date < todayStr) return false; // tâche auto expirée
     if (t.plantId && !present.has(t.plantId)) return false; // plante retirée
     return true;
   });
