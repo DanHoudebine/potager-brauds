@@ -161,6 +161,7 @@ export function initAccount(): void {
 
   el('acc-pro').addEventListener('click', () => {
     closeModal('acc-backdrop');
+    if (isPro()) { flash('Vous êtes déjà Pro — merci ! 🌟'); return; }
     openPaywall();
   });
   el('acc-harvests').addEventListener('click', () => {

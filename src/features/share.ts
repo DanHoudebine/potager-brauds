@@ -87,6 +87,13 @@ async function importGarden(): Promise<void> {
       return;
     }
     const data = snap.val();
+    // Le code est annoncé « valable 24h » : on refuse les codes plus anciens.
+    if (data?.ts && Date.now() - data.ts > 24 * 60 * 60 * 1000) {
+      flash('Ce code a expiré (plus de 24h). Demandez un nouveau code.');
+      importBtn.disabled = false;
+      importBtn.textContent = 'Importer';
+      return;
+    }
     const preview = elOpt('import-preview');
     if (preview) {
       const plantsCount = data.beds?.reduce((acc: number, b: { plants: unknown[] }) => acc + (b.plants?.length ?? 0), 0) ?? 0;
