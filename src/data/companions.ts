@@ -26,3 +26,44 @@ export const COMPANION_FLOWERS: CompanionFlower[] = [
   { icon: '🟡', name: 'Souci (calendula)', role: 'Attire syrphes et coccinelles, prédateurs des pucerons.' },
   { icon: '💜', name: 'Lavande', role: 'Éloigne pucerons et fourmis, attire abeilles. Idéale en bordure.' },
 ];
+
+// ── Mauvaises associations (compagnonnage) par identifiant de catalogue ──
+//  Couples de plantes à ÉVITER côte à côte. Établis à partir de COMPANION_DATA
+//  mais exprimés par id de catalogue → repérage fiable, sans correspondance floue.
+const INCOMPATIBLE: [string, string][] = [
+  ['tomato', 'potato'], ['tomato', 'cabbage'], ['tomato', 'red-cabbage'],
+  ['tomato', 'fennel'], ['tomato', 'cucumber'],
+  ['carrot', 'parsley'], ['carrot', 'beetroot'],
+  ['lettuce', 'parsley'],
+  ['zucchini', 'potato'], ['zucchini', 'cucumber'],
+  ['onion', 'pea'], ['onion', 'beans'], ['onion', 'cabbage'], ['onion', 'red-cabbage'],
+  ['leek', 'pea'], ['leek', 'beans'], ['leek', 'cabbage'], ['leek', 'red-cabbage'],
+  ['beans', 'garlic'], ['beans', 'fennel'],
+  ['pea', 'garlic'], ['pea', 'shallot'],
+  ['cabbage', 'strawberry'], ['red-cabbage', 'strawberry'],
+  ['potato', 'cucumber'], ['potato', 'pumpkin'], ['potato', 'squash-spaghetti'],
+  ['potato', 'butternut'], ['potato', 'pumpkin-marron'],
+  ['pepper', 'beans'], ['pepper', 'fennel'],
+  ['chili', 'beans'], ['chili', 'fennel'],
+  ['basil', 'cucumber'],
+];
+
+const pairKey = (a: string, b: string): string => (a < b ? `${a}|${b}` : `${b}|${a}`);
+const INCOMPATIBLE_SET = new Set(INCOMPATIBLE.map(([a, b]) => pairKey(a, b)));
+
+/** Deux plantes (par id de catalogue) sont-elles de mauvaises voisines ? */
+export function areIncompatible(idA: string, idB: string): boolean {
+  return INCOMPATIBLE_SET.has(pairKey(idA, idB));
+}
+
+/** Paires de mauvaises voisines présentes parmi une liste d'ids de plantes. */
+export function findBadPairs(plantIds: string[]): [string, string][] {
+  const uniq = Array.from(new Set(plantIds));
+  const out: [string, string][] = [];
+  for (let i = 0; i < uniq.length; i++) {
+    for (let j = i + 1; j < uniq.length; j++) {
+      if (areIncompatible(uniq[i], uniq[j])) out.push([uniq[i], uniq[j]]);
+    }
+  }
+  return out;
+}

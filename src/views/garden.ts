@@ -11,6 +11,7 @@ import { openPlantPanel } from '../features/plantPanel';
 import { openQuickAdd } from '../features/quickAdd';
 import { syncGardenTasks } from '../garden-sync';
 import { getRotationForBed } from '../data/rotation';
+import { findBadPairs } from '../data/companions';
 import { canAddBed, canUseGridSize, FREE_MAX_CELLS, isPro } from '../services/entitlement';
 import { openPaywall } from '../features/paywall';
 
@@ -37,6 +38,42 @@ function renderRotationHint(bed: Bed): void {
       </div>
       ${result.advice.avoidFamilies.length ? `<div class="rot-avoid xsmall muted">Éviter : ${result.advice.avoidFamilies.map((f) => escapeHTML(f)).join(', ')}</div>` : ''}
     </div>`;
+}
+
+// Compagnonnage en direct (Pro) : alerte sur les mauvais voisins d'une parcelle.
+function renderCompanionHint(bed: Bed): void {
+  const node = elOpt('companion-hint');
+  if (!node) return;
+  const ids = (bed.cells || []).filter(Boolean).map((c) => c!.plant);
+
+  if (!isPro()) {
+    // Aperçu Pro contextuel (seulement quand il y a de quoi comparer).
+    if (ids.length >= 2) {
+      node.innerHTML = `<button class="btn sm" id="companion-pro-teaser" style="margin-top:8px">🤝 Compagnonnage en direct — 🌟 Pro</button>`;
+      elOpt('companion-pro-teaser')?.addEventListener('click', () =>
+        openPaywall('Le compagnonnage en direct (alertes de bons et mauvais voisins sur la grille) fait partie de Pro.')
+      );
+    } else {
+      node.innerHTML = '';
+    }
+    return;
+  }
+
+  const bad = findBadPairs(ids);
+  if (bad.length) {
+    node.innerHTML = `
+      <div style="background:var(--urgent-tint);border:1px solid var(--urgent);border-radius:12px;padding:8px 10px;margin-top:8px;font-size:12px">
+        <div style="font-weight:800;color:var(--urgent);margin-bottom:2px">🤝 Voisinage à revoir</div>
+        ${bad.map(([a, b]) => {
+          const pa = plantById(a); const pb = plantById(b);
+          return `<div>⚠️ ${pa ? pa.icon : ''} ${escapeHTML(pa?.name || a)} déconseillé près de ${pb ? pb.icon : ''} ${escapeHTML(pb?.name || b)}</div>`;
+        }).join('')}
+      </div>`;
+  } else if (ids.length >= 2) {
+    node.innerHTML = `<div style="background:var(--green-tint);border-radius:12px;padding:6px 10px;margin-top:8px;font-size:12px;color:var(--green-dark);font-weight:700">🤝 Bon voisinage ✓</div>`;
+  } else {
+    node.innerHTML = '';
+  }
 }
 
 export function renderGarden(): void {
@@ -83,6 +120,7 @@ export function renderGarden(): void {
   const total = (bed.cols || 4) * (bed.rows || 3);
   el('bed-sub').textContent = `${bed.cols} × ${bed.rows} • ${planted} plantée${planted > 1 ? 's' : ''} • ${total - planted} libre${total - planted > 1 ? 's' : ''}`;
   renderRotationHint(bed);
+  renderCompanionHint(bed);
 
   const grid = el('bed-grid');
   grid.style.setProperty('--cols', String(bed.cols || 4));
