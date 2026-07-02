@@ -132,7 +132,10 @@ async function nativeGoogleSignIn(): Promise<void> {
     const msg = (err as { message?: string }).message ?? '';
     // 12501 = annulé par l'utilisateur
     if (code === 12501 || String(code) === '12501' || msg.includes('12501') || msg.toLowerCase().includes('cancel')) return;
-    showAuthError('Connexion impossible. Vérifiez votre réseau et réessayez.');
+    // Affiche le code d'erreur réel pour pouvoir diagnostiquer sur appareil
+    // (ex. 10 = certificat SHA-1 non enregistré côté Google, 7 = réseau).
+    const detail = code !== undefined && code !== null ? ` (erreur ${code})` : '';
+    showAuthError(`Connexion impossible${detail}. Vérifiez votre réseau et réessayez.`);
   }
 }
 

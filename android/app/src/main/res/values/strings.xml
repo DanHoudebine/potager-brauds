@@ -1,8 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Le Potager des Brauds</string>
-    <string name="title_activity_main">Le Potager des Brauds</string>
+    <string name="app_name">Potager de Poche</string>
+    <string name="title_activity_main">Potager de Poche</string>
     <string name="package_name">com.jardindepoche.app</string>
     <string name="custom_url_scheme">com.jardindepoche.app</string>
-    <string name="server_client_id">813154716183-tgdujrasr772i91lc63fhlg4ef3t0c24.apps.googleusercontent.com</string>
+    <!-- Client OAuth WEB du projet Firebase potager-de-poche (978848610696).
+         Fallback du plugin GoogleAuth ; le runtime passe déjà ce même id. -->
+    <string name="server_client_id">978848610696-92oaec4ef83niats5l1ureb31eppbd08.apps.googleusercontent.com</string>
 </resources>
