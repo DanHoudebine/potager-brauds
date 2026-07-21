@@ -1,5 +1,5 @@
 // ============================================
-//  Service Worker — Jardin de Poche
+//  Service Worker — Potager de Poche
 // ============================================
 //  Stratégie :
 //   - navigation (HTML)  → réseau d'abord, cache en secours (offline)

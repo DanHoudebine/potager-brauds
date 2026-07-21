@@ -119,7 +119,7 @@ arrosage, météo, compagnonnage, récolte, bio, plantes, fruits
 
 | Champ | Valeur |
 |-------|--------|
-| Email de contact | danhoudebine@gmail.com |
+| Email de contact | genomectra@gmail.com |
 | Politique de confidentialité | https://danhoudebine.github.io/potager-brauds/privacy.html *(à activer avant soumission)* |
 | Application gratuite | Oui (téléchargement gratuit) |
 | Contient des publicités | Non |

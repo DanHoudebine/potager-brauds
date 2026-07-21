@@ -1,6 +1,6 @@
 {
-  "name": "Jardin de Poche",
-  "short_name": "Jardin",
+  "name": "Potager de Poche",
+  "short_name": "Potager",
   "description": "Votre jardin connecté",
   "start_url": "/",
   "display": "standalone",

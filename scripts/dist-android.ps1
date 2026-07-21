@@ -4,7 +4,7 @@
 # ============================================================
 
 param(
-    [string]$Testers  = "danhoudebine@gmail.com",
+    [string]$Testers  = "genomectra@gmail.com",
     [string]$Notes    = "Version de test $(Get-Date -Format 'yyyy-MM-dd')"
 )
 
