@@ -33,3 +33,6 @@ Thumbs.db
 
 # Claude Code (contient des chemins locaux)
 .claude/
+
+# Cache du CLI Firebase
+.firebase/
