@@ -11,7 +11,7 @@ import { openShoppingList } from './shopping';
 import { openHarvests } from './harvests';
 import { openRegionModal } from './region';
 import { startTutorial } from './tutorial';
-import { isPro } from '../services/entitlement';
+import { isPro, isWebUnlocked } from '../services/entitlement';
 import { openPaywall } from './paywall';
 
 export function openAccountModal(): void {
@@ -24,7 +24,10 @@ export function openAccountModal(): void {
 function updateProLabel(): void {
   const title = elOpt('acc-pro-title');
   const sub = elOpt('acc-pro-sub');
-  if (isPro()) {
+  if (isWebUnlocked()) {
+    if (title) title.textContent = 'Version complète ✓';
+    if (sub) sub.textContent = 'Toutes les fonctionnalités sont débloquées';
+  } else if (isPro()) {
     if (title) title.textContent = 'Pro ✓ — merci !';
     if (sub) sub.textContent = 'Toutes les fonctionnalités sont débloquées';
   } else {
@@ -161,6 +164,7 @@ export function initAccount(): void {
 
   el('acc-pro').addEventListener('click', () => {
     closeModal('acc-backdrop');
+    if (isWebUnlocked()) { flash('Toutes les fonctionnalités sont déjà débloquées 🌟'); return; }
     if (isPro()) { flash('Vous êtes déjà Pro — merci ! 🌟'); return; }
     openPaywall();
   });

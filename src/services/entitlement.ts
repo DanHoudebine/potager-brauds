@@ -29,9 +29,17 @@ function readPro(): boolean {
 
 let proCached = readPro();
 
+/** Version web : la facturation Google Play n'existe pas hors d'Android, donc
+ *  l'achat est impossible. Afficher un paywall infranchissable n'aurait aucun
+ *  sens : toutes les fonctionnalités sont ouvertes sur le web. La monétisation
+ *  reste inchangée sur Android. */
+export function isWebUnlocked(): boolean {
+  return !Capacitor.isNativePlatform();
+}
+
 /** L'utilisateur a-t-il débloqué Pro ? */
 export function isPro(): boolean {
-  return proCached;
+  return isWebUnlocked() || proCached;
 }
 
 /** Accorde Pro (après un achat ou une restauration réussie) et le persiste. */
